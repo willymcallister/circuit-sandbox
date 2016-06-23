@@ -3388,7 +3388,7 @@ schematic = (function() {
 		c.strokeRect(x-s,y+4*t+t/2,2*s,2*s);
 		c.stroke();
 
-		// rotation control
+		// rotate control
 		r = this.rctl_r;
 		x = this.rctl_x;
 		y = this.rctl_y;
@@ -3405,7 +3405,7 @@ schematic = (function() {
 		c.arc(x,y,r,0,2*Math.PI);
 		c.stroke();
 
-		c.lineWidth = 2;
+		c.lineWidth = 3;
 		r = this.sctl_r - 8;
 		c.fillStyle = grid_style;
 		c.beginPath();	// 3/4 circle
@@ -3413,7 +3413,7 @@ schematic = (function() {
 		c.stroke();
 		c.beginPath();   // arrow
 		c.moveTo(x - 1,y - r + 4);
-		c.lineTo(x + 3,y - r);
+		c.lineTo(x + 4,y - r);
 		c.lineTo(x - 1,y - r - 4);
 		c.lineTo(x - 1,y - r + 4);
 		c.fill();
