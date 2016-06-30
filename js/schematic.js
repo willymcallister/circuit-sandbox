@@ -3184,7 +3184,7 @@ schematic = (function() {
 
 			// graph the result and display in a window
 			var graph = sch.graph(x_values,x_legend,v_values,'Voltage',i_values,'Current');
-			sch.window('Results of Transient Analysis',graph);
+			sch.window('Transient Analysis',graph);
 		    }
 	    })
 	}
@@ -4402,6 +4402,8 @@ schematic = (function() {
 	    var canvas = document.createElement('canvas');
 	    canvas.width = w;
 	    canvas.height = h;
+	    canvas.style.display = 'block';		//gets rid of the little sliver of default padding at the bottom.
+
 
 	    // the graph itself will be drawn here and this image will be copied
 	    // onto canvas, where it can be overlayed with mouse cursors, etc.
@@ -4415,7 +4417,7 @@ schematic = (function() {
 	    c.fillStyle = background_style;
 	    c.fillRect(0,0,w,h);
 	    c.fillStyle = element_style;
-	    c.fillRect(left_margin,top_margin,pwidth,pheight);
+	    c.fillRect(left_margin,top_margin,pwidth,pheight); 
 
 	    // figure out scaling for plots
 	    var x_min = array_min(x_values);
@@ -4710,7 +4712,7 @@ schematic = (function() {
 		// for each plot, interpolate and output value at intersection with marker
 		c.textAlign = 'left';
 		var tx = graph.left_margin + left_margin;
-		var ty = graph.top_margin;
+		var ty = graph.top_margin + 3;
 		if (graph.y_values != undefined) {
 		    for (var plot = 0; plot < graph.y_values.length; plot++) {
 			var values = graph.y_values[plot][2];
