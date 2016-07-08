@@ -3463,7 +3463,24 @@ Schematic.prototype.transient_analysis = function() {
 		c.lineTo(x + 6,y);
 		c.font = "12pt sans-serif";
 		c.fill();
-		c.fillText("R",x - 8, y + 8);
+		//c.fillText("R",x - 8, y + 8);
+
+		c.beginPath();	// R
+		c.beginPath();	// 1/2 circle
+		c.arc(x-1,y,3,-0.5*Math.PI,+0.5*Math.PI);
+		c.stroke();
+		c.moveTo(x-6, y+9);
+		c.lineTo(x-6, y-4);
+		c.stroke();
+		c.moveTo(x-6, y-3);
+		c.lineTo(x, y-3);
+		c.stroke();
+		c.moveTo(x-6, y+3);
+		c.lineTo(x, y+3);
+		c.stroke();
+		c.moveTo(x-1,y+4);
+		c.lineTo(x+3,y+9);
+		c.stroke();
 	}
 	    // delete control
 	    r = this.dctl_r;
