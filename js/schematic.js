@@ -108,8 +108,10 @@ var cktsim = (function() {
 		    }
 		    var rGV = mat_rank(GV);
 		    if (rGV < n_vsrc) {
-		    	alert('Warning!!! Circuit has a voltage source loop or a source or current probe shorted by a wire, please remove the source or the wire causing the short.');
-		    	alert('Warning!!! Simulator might produce meaningless results or no result with illegal circuits.');
+		    	//alert('Warning!!! Circuit has a voltage source loop or a source or current probe shorted by a wire, please remove the source or the wire causing the short.');
+		    	//alert('Warning!!! Simulator might produce meaningless results or no result with illegal circuits.');
+		    	alert(i18n.ckt_alert1);
+		    	alert(i18n.ckt_alert2);
 		    	return false;		
 		    }
 		}
@@ -179,7 +181,8 @@ var cktsim = (function() {
 	}
 
 	    if (!found_ground) { // No ground on schematic
-	    	alert('Please make at least one connection to ground (triangle symbol)');
+	    	//alert('Please make at least one connection to ground (triangle symbol)');
+	    	alert(i18n.ckt_alert3);
 	    	return false;
 	    }
 	    return true;
@@ -297,9 +300,11 @@ var cktsim = (function() {
 	    if (typeof iterations == 'undefined') {
 	    // too many iterations
 	    if (this.current_sources.length > 0) {
-	    	alert('Newton Method Failed, do your current sources have a conductive path to ground?');
+	    	//alert('Newton Method Failed, do your current sources have a conductive path to ground?');
+	    	alert(i18n.ckt_alert4);
 	    } else {
-	    	alert('Newton Method Failed, it may be your circuit or it may be our simulator.');
+	    	//alert('Newton Method Failed, it may be your circuit or it may be our simulator.');
+	    	alert(i18n.ckt_alert5);
 	    }
 
 	    return undefined
@@ -398,7 +403,8 @@ var cktsim = (function() {
 	    no_dc = false;
 	    if ((this.diddc == false) && (no_dc == false)) {
 		if (this.dc() == undefined) { // DC failed, realloc mats and vects.
-			alert('DC failed, trying transient analysis from zero.');		    
+			//alert('DC failed, trying transient analysis from zero.');		    
+			alert(i18n.ckt_alert6);		    
 		    this.finalized = false;  // Reset the finalization.
 		    if (this.finalize() == false) 
 		    	return undefined;
@@ -607,8 +613,10 @@ var cktsim = (function() {
 
             // Get the source used for ac
             if (this.device_map[source_name] === undefined) {
-            	alert('AC analysis refers to unknown source ' + source_name);
-            	return 'AC analysis failed, unknown source';
+            	//alert('AC analysis refers to unknown source ' + source_name);
+            	//return 'AC analysis failed, unknown source';            	
+            	alert(i18n.ckt_alert7 + source_name);
+            	return i18n.ckt_alert8;
             }
             this.device_map[source_name].load_ac(this,this.rhs);
 
@@ -690,7 +698,8 @@ var cktsim = (function() {
 	    	if (this.device_map[name] === undefined) 
 	    		this.device_map[name] = d;
 	    	else {
-	    		alert('Warning: two circuit elements share the same name ' + name);
+	    		//alert('Warning: two circuit elements share the same name ' + name);
+	    		alert(ckt_warning1 + name);
 	    		this.device_map[name] = d;
 	    	}
 	    }
@@ -886,7 +895,8 @@ var cktsim = (function() {
         	var m = M[0].length;
 
         	if (n != b.length || m != x.length)
-        		throw 'Rows of M mismatched to b or cols mismatch to x.';
+        		//throw 'Rows of M mismatched to b or cols mismatch to x.';
+        		throw i18n.ckt_error1;
 
         	for (var i = 0; i < n; i++) {
         		var temp = 0;
@@ -901,9 +911,11 @@ var cktsim = (function() {
         	var m = A[0].length;
 
         	if (n > B.length || m > B[0].length)
-        		throw 'Row or columns of A to large for B';
+        		//throw 'Row or columns of A to large for B';
+        		throw i18n.ckt_error2;
         	if (n > C.length || m > C[0].length)
-        		throw 'Row or columns of A to large for C';
+        		//throw 'Row or columns of A to large for C';
+        		throw i18n.ckt_error3;
         	if ((typeof scalea == 'number') && (typeof scaleb == 'number'))
         		for (var i = 0; i < n; i++)
         			for (var j = 0; j < m; j++)
@@ -917,7 +929,8 @@ var cktsim = (function() {
         							for (var j = 0; j < m; j++)
         								C[i][j] = scalea[i]*A[i][j] + scaleb[i]*B[i][j];
         							else
-        								throw 'scalea and scaleb must be scalars or Arrays';
+        								//throw 'scalea and scaleb must be scalars or Arrays';
+        								throw i18n.ckt_error4;
         						}
 
         // Returns a vector of ones and zeros, ones denote algebraic
@@ -948,7 +961,8 @@ var cktsim = (function() {
         	var n = src.length;
         	var m = src[0].length;
         	if (n > dest.length || m >  dest[0].length)
-        		throw 'Rows or cols > rows or cols of dest';
+        		//throw 'Rows or cols > rows or cols of dest';
+        		throw i18n.ckt_error5;
 
         	for (var i = 0; i < n; i++)
         		for (var j = 0; j < m; j++)
@@ -959,7 +973,8 @@ var cktsim = (function() {
         	var n = src.length;
         	var m = src[0].length;
         	if (n > dest[0].length || m >  dest.length)
-        		throw 'Rows or cols > cols or rows of dest';
+        		//throw 'Rows or cols > cols or rows of dest';
+        		throw i18n.ckt_error6;
 
         	for (var i = 0; i < n; i++)
         		for (var j = 0; j < m; j++)
@@ -2021,24 +2036,28 @@ schematic = (function() {
     var component_style = 'rgb(60,145,229)';  	// color for unselected components, KA default5
     var selected_style = 'rgb(116,207,112)';	// highlight color for selected components, KA CS2
     var grid_style = "rgb(128,128,128)";
-    var annotation_style = 'rgb(255,64,64)';  // color for diagram annotations
-    var property_size = 7;  // point size for Component property text
-    var annotation_size = 7;  // point size for diagram annotations
+    var annotation_style = 'rgb(255,64,64)';  	// color for diagram annotations
+    var cancel_style = 'rgb(232,77,57)';		//cancel X color KA humantities2
+    var ok_style = 'rgb(31,171,84)';			//ok checkmark color KA CS1
+    var property_size = 7;  	// point size for Component property text
+    var annotation_size = 7;  	// point size for diagram annotations
 
     var parts_map = {
-    	'g': [Ground, 'Ground connection'],
-    	'L': [Label, 'Node label'],
-    	'v': [VSource, 'Voltage source'],
-    	'i': [ISource, 'Current source'],
-    	'r': [Resistor, 'Resistor'],
-    	'c': [Capacitor, 'Capacitor'],
-    	'l': [Inductor, 'Inductor'],
-    	'o': [OpAmp, 'Op Amp'],
-    	'd': [Diode, 'Diode'],
-    	'n': [NFet, 'NFet'],
-    	'p': [PFet, 'PFet'],
-    	's': [Probe, 'Voltage probe'],
-    	'a': [Ammeter, 'Current Probe']
+    	//'g': [Ground, 'Ground connection'],
+    	'g': [Ground, i18n.Ground_connection],
+    	//'L': [Label, 'Node label'],
+    	'L': [Label, i18n.Node_label],
+    	'v': [VSource, i18n.Voltage_source],
+    	'i': [ISource, i18n.Current_source],
+    	'r': [Resistor, i18n.Resistor],
+    	'c': [Capacitor, i18n.Capacitor],
+    	'l': [Inductor, i18n.Inductor],
+    	'o': [OpAmp, i18n.Op_Amp],
+    	'd': [Diode, i18n.Diode],
+    	'n': [NFet, i18n.NFet],
+    	'p': [PFet, i18n.PFet],
+    	's': [Probe, i18n.Voltage_probe],
+    	'a': [Ammeter, i18n.Current_probe]
     };
 
 	// global clipboard
@@ -2128,10 +2147,10 @@ schematic = (function() {
 		this.tools['rotate'] = this.add_tool(rotate_icon,'Rotate selected component',this.rotate_selected);
 	    this.toolbar.push(null);  // spacer	
 
-	    this.tools['net'] = this.add_tool('DOWNLOAD','Download netlist',this.download_netlist);
+	    this.tools['net'] = this.add_tool(download_icon,'Download netlist',this.download_netlist);
 	    this.enable_tool('net',true);   
 	    
-	    this.tools['load'] = this.add_tool('IMPORT','Import netlist',this.import_netlist);
+	    this.tools['load'] = this.add_tool(import_icon,'Import netlist',this.import_netlist);
 	    this.enable_tool('load',true);
 	    this.toolbar.push(null);  // spacer	
 	}
@@ -2139,13 +2158,13 @@ schematic = (function() {
 	    // simulation interface if cktsim.js is loaded
 	    if (typeof cktsim != 'undefined') {
 	    	if (analyses.indexOf('dc') != -1) {
-	    		this.tools['dc'] = this.add_tool('DC','DC Analysis',this.dc_analysis);
+	    		this.tools['dc'] = this.add_tool('DC',i18n.DC_Analysis,this.dc_analysis);
 	    		this.enable_tool('dc',true);
 		    this.dc_max_iters = '1000';  // default values dc solution
 		}
 
 		if (analyses.indexOf('ac') != -1) {
-			this.tools['ac'] = this.add_tool('AC','AC Small-Signal Analysis',this.setup_ac_analysis);
+			this.tools['ac'] = this.add_tool('AC',i18n.AC_Small_Signal_Analysis,this.setup_ac_analysis);
 			this.enable_tool('ac',true);
 		    this.ac_npts = '50'; // default values for AC Analysis
 		    this.ac_fstart = '10';
@@ -2154,7 +2173,7 @@ schematic = (function() {
 		}
 
 		if (analyses.indexOf('tran') != -1) {
-			this.tools['tran'] = this.add_tool('TRAN','Transient Analysis',this.transient_analysis);
+			this.tools['tran'] = this.add_tool('TRAN',i18n.Transient_Analysis,this.transient_analysis);
 			this.enable_tool('tran',true);
 		    this.tran_npts = '100';  // default values for transient analysis
 		    this.tran_tstop = '1';
@@ -2283,8 +2302,8 @@ schematic = (function() {
 			schematic_double_click(event);
 		});
 
-		this.canvas.addEventListener('wheel',schematic_mouse_wheel,false);
-		this.canvas.addEventListener('DOMMouseScroll',schematic_mouse_wheel,false);  // for FF
+		//this.canvas.addEventListener('wheel',schematic_mouse_wheel,false);		//removed for mobile, see comment in schematic_mouse_wheel
+		//this.canvas.addEventListener('DOMMouseScroll',schematic_mouse_wheel,false);  // for FF
 		//this.canvas.addEventListener('dblclick',schematic_double_click,false);	// replaced by Hammer.js
 		this.canvas.addEventListener('keydown',schematic_key_down,false);
 		this.canvas.addEventListener('keyup',schematic_key_up,false);
@@ -2590,7 +2609,7 @@ Schematic.prototype.toggle_grid = function() {
 }
 
 	var zoom_factor = 1.25;    // scaling is some power of zoom_factor
-	var zoom_wheel_factor = 1.05;
+	//var zoom_wheel_factor = 1.05;		//removed for mobile, see comment in schematic_mouse_wheel
 	var zoom_min = 0.5;
 	var zoom_max = 4.0;
 	var origin_min = -200;    // in grids
@@ -2867,7 +2886,7 @@ this.redraw_background();
 		this.unselect_all(-1);
 		this.redraw_background();
 
-		var file_lbl = '\n Select netlist ';
+		var file_lbl = i18n.Select_netlist;
 
 		var fields = [];
 		fields[file_lbl] = build_input('file',10,'');
@@ -2962,13 +2981,14 @@ this.redraw_background();
 		this.unselect_all(-1);
 		this.redraw_background();
 
-		var npts_lbl = 'Number of points/decade';
-		var fstart_lbl = 'Starting frequency (Hz)';
-		var fstop_lbl = 'Ending frequency (Hz)';
-		var source_name_lbl = 'Name of V or I source for ac'
+		var npts_lbl = i18n.Number_of_points_per_decade;	//not used
+		var fstart_lbl = i18n.Starting_frequency;
+		var fstop_lbl = i18n.Ending_frequency;
+		var source_name_lbl = i18n.Name_of_V_or_I_source_for_ac;
 
 		if (this.find_probes().length == 0) {
-			alert("AC Analysis: add a voltage probe to the diagram!");
+			//alert("AC Analysis: add a voltage probe to the diagram!");
+			alert(i18n.AC_Analysis_add_a_voltage_probe);
 			return;
 		}
 
@@ -2981,7 +3001,7 @@ this.redraw_background();
 		content.fields = fields;
 		content.sch = this;
 
-		this.dialog('AC Analysis',content,function(content) {
+		this.dialog(i18n.AC_Analysis,content,function(content) {
 			var sch = content.sch;
 
 		    // retrieve parameters, remember for next time
@@ -3053,12 +3073,14 @@ this.redraw_background();
 
 		var all_max = array_max(probe_maxv);
 		if (all_max < 1.0e-16) {
-			alert('Zero ac response, -infinity on DB scale.');
+			//alert('Zero ac response, -infinity on DB scale.');
+			alert(i18n.Zero_ac_response);
 		} else {
 			for (var i = probes.length - 1; i >= 0; --i) {
 				if (probes[i][3] != 'voltage') continue;
 				if ((probe_maxv[i] / all_max) < 1.0e-10) {
-					alert('Near zero ac response, remove ' + probe_color[i] + ' probe');
+					//alert('Near zero ac response, remove ' + probe_color[i] + ' probe');
+					alert(i18n.Near_zero_ac_response + probe_color[i] + i18n.probe);
 					return;
 				}
 			}
@@ -3082,10 +3104,10 @@ this.redraw_background();
 	}
 
 		// graph the result and display in a window
-		var graph2 = this.graph(x_values,'log(Frequency in Hz)',z_values,'degrees');
-		this.window('AC Phase',graph2);
-		var graph1 = this.graph(x_values,'log(Frequency in Hz)',y_values,'dB');
-		this.window('AC Magnitude',graph1,50);
+		var graph2 = this.graph(x_values,i18n.log_Frequency,z_values,i18n.degrees);
+		this.window(i18n.AC_Phase,graph2);
+		var graph1 = this.graph(x_values,i18n.log_Frequency,y_values,'dB');
+		this.window(i18n.AC_Magnitude,graph1,50);
 	}
 }
 
@@ -3093,11 +3115,11 @@ Schematic.prototype.transient_analysis = function() {
 	this.unselect_all(-1);
 	this.redraw_background();
 
-	var npts_lbl = 'Minimum number of timepoints';
-	var tstop_lbl = 'Stop time (seconds)';
+	var npts_lbl = i18n.Minimum_number_of_timepoints;
+	var tstop_lbl = i18n.Stop_time_seconds;
 	var probes = this.find_probes();
 	if (probes.length == 0) {
-		alert("Transient Analysis: add a probe to the diagram!");
+		alert(i18n.Transient_Analysis_add_a_probe);
 		return;
 	}
 
@@ -3108,7 +3130,7 @@ Schematic.prototype.transient_analysis = function() {
 	content.fields = fields;
 	content.sch = this;
 
-	this.dialog('Transient Analysis',content,function(content) {
+	this.dialog(i18n.Transient_Analysis,content,function(content) {
 		var sch = content.sch;
 		var ckt = sch.extract_circuit();
 		if (ckt === null) return;
@@ -3157,7 +3179,7 @@ Schematic.prototype.transient_analysis = function() {
 		}
 
 		var x_values = results['_time_'];
-		var x_legend = 'Time';
+		var x_legend = i18n.Time;
 
 			// set up plot values for each node with a probe
 			var v_values = [];  // voltage values: list of [color, result_array]
@@ -3170,23 +3192,23 @@ Schematic.prototype.transient_analysis = function() {
 				var offset = cktsim.parse_number(probes[i][2]);
 				var v = results[label];
 				if (v == undefined) {
-					alert('The ' + color + ' probe is connected to node ' + '"' + label + '"' + ' which is not an actual circuit node');
+					alert(i18n.The + color + i18n.probe_is_connected_to_node + '"' + label + '"' + i18n.which_is_not_an_actual_circuit_node);
 				} else if (probes[i][3] == 'voltage') {
 					if (color == 'x-axis') {
 						x_values = v;
-						x_legend = 'Voltage';
+						x_legend = i18n.Voltage;
 					} else v_values.push([color,offset,v]);
 				} else {
 					if (color == 'x-axis') {
 						x_values = v;
-						x_legend = 'Current';
+						x_legend = i18n.Current;
 					} else i_values.push([color,offset,v]);
 				}
 			}
 
 			// graph the result and display in a window
-			var graph = sch.graph(x_values,x_legend,v_values,'Voltage',i_values,'Current');
-			sch.window('Transient Analysis',graph);
+			var graph = sch.graph(x_values,x_legend,v_values,i18n.Voltage,i_values,i18n.Current);
+			sch.window(i18n.Transient_Analysis,graph);
 		}
 	})
 }
@@ -3499,13 +3521,13 @@ Schematic.prototype.transient_analysis = function() {
 		c.arc(x,y,r,0,2*Math.PI);
 		c.stroke();
 
-		c.lineWidth = 2;
+		c.lineWidth = 4;
 		c.beginPath();
 
-		c.moveTo(x - 8,y - 8);
-		c.lineTo(x + 8,y + 8);
-		c.moveTo(x + 8,y - 8);
-		c.lineTo(x - 8,y + 8);
+		c.moveTo(x - 6,y - 6);
+		c.lineTo(x + 6,y + 6);
+		c.moveTo(x + 6,y - 6);
+		c.lineTo(x - 6,y + 6);
 		c.stroke();
 	}
 
@@ -3852,6 +3874,7 @@ function schematic_mouse_move(sch) {
 	return false;
 }
 
+/*	Wheel zoom commented out for smart phone. Allows normal panning of a large schematic in a small window.
 function schematic_mouse_wheel(event) {
 	if (!event) event = window.event;
 	else event.preventDefault();
@@ -3875,6 +3898,7 @@ function schematic_mouse_wheel(event) {
 		}
 	}
 }
+*/
 
 function schematic_double_click(event) {
 	if (!event) event = window.event;
@@ -3941,8 +3965,11 @@ Schematic.prototype.dialog = function(title,content,callback) {
 	    dialog.appendChild(body);
 
 	    var ok_button = document.createElement('span');
-	    var ok_icon = document.createElement("img");
-	    ok_icon.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAASCAYAAABB7B6eAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAADBElEQVQ4EaWUX2vTYBTGz/smaZhbB36BdvsM8wNsCN6Jc2mrF4Iizo254QdQISh45cWYf6bbQFRk0GQTBt7qPsD2DZTa4qWgbK0sbfLG57xpuqyDOTSlSd4/+Z3nPOckRP97VMtGiih4pcdFr/QV/4fpnEhv/unK8IoX8bOArhrD9i0VhCRsk9Re8Lxe9uf7A/A4PlWwI3BnRQ7a06rVjkhQCIIp8zlD7bcfSA1zSVLsSnJdoa9/i5CBw5aXcqgLJ+CJbPwjChVG4koCFC5GmSMDyMwmt5m1gucsG0P2rGpCeQJnwcyK5RBnENzvWVT0y/dIqVFpxI9qzmZ97NVta3dmpZNQu+cMHJ4/l4O5OcCV1k1wIQtvBc/qpY0FHQCb11GgqyQFRb8OalEsLnyveF/GdhDkXDdIFu47T+H5/DHlqB6US9TiBQp8h2UJeLgM+CyqzmpDecYaUL87NYrF+XrFq+lMzv5UmW5ZkoPWgmp2jioXpJCRqVrBMpTPMZwgSkB9rFOMURgi7uk2guQ4iJRqgu1CVwj84kLVWTTy9l1tC/eaOGpLtB+sNCobM1jRcBbFvq3JPBc+KQ6uDOcgo0rJTyPrkyMMh5AlFJThkW7kfngzWO2HMzStwQa8m4qaQQipnAXPt5FyDn7uQuyOtM2ZGC8R4GxNWlCF50wEXYPn0wxkW1I7eXjYRdXSphzOXcbLwbUw9RpeGmEaprAkIau0lVN40orN9mvAbzKsH85TcvzzOMOoXvEdwD9AkYUhpEIr3si4E0WA85jFAB6z+6zcgPIT4djXzYCDTGwzhEaq5S2Rty7i4cNMeEEfDBcRPgNm1Gy/aZT8G3q6z5Zkb3LmdInhaSbfyt6laL+9BYiFDJJM9CYN155j/W0P7kJc94Ont/WdkgCY3E6DoGMaJKZg10fUJLUL2YhQ29IK3jXK/nXNYbibZN7H7Q17RU5nOBMOxgUrEvly2JqMD0KSAxZFe8F7FPTaaeEp89g1tYsX0P9Pip7zo+A7i72N3cbojU+4+QMdZJZ6kFq2cwAAAABJRU5ErkJggg=='
+	    var ok_icon = document.createElement("span");
+		ok_icon.setAttribute('class', 'fa fa-fw fa-check fa-2x');
+		ok_icon.style.color = ok_style;
+	    //var ok_icon = document.createElement("img");
+	    //ok_icon.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAASCAYAAABB7B6eAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAADBElEQVQ4EaWUX2vTYBTGz/smaZhbB36BdvsM8wNsCN6Jc2mrF4Iizo254QdQISh45cWYf6bbQFRk0GQTBt7qPsD2DZTa4qWgbK0sbfLG57xpuqyDOTSlSd4/+Z3nPOckRP97VMtGiih4pcdFr/QV/4fpnEhv/unK8IoX8bOArhrD9i0VhCRsk9Re8Lxe9uf7A/A4PlWwI3BnRQ7a06rVjkhQCIIp8zlD7bcfSA1zSVLsSnJdoa9/i5CBw5aXcqgLJ+CJbPwjChVG4koCFC5GmSMDyMwmt5m1gucsG0P2rGpCeQJnwcyK5RBnENzvWVT0y/dIqVFpxI9qzmZ97NVta3dmpZNQu+cMHJ4/l4O5OcCV1k1wIQtvBc/qpY0FHQCb11GgqyQFRb8OalEsLnyveF/GdhDkXDdIFu47T+H5/DHlqB6US9TiBQp8h2UJeLgM+CyqzmpDecYaUL87NYrF+XrFq+lMzv5UmW5ZkoPWgmp2jioXpJCRqVrBMpTPMZwgSkB9rFOMURgi7uk2guQ4iJRqgu1CVwj84kLVWTTy9l1tC/eaOGpLtB+sNCobM1jRcBbFvq3JPBc+KQ6uDOcgo0rJTyPrkyMMh5AlFJThkW7kfngzWO2HMzStwQa8m4qaQQipnAXPt5FyDn7uQuyOtM2ZGC8R4GxNWlCF50wEXYPn0wxkW1I7eXjYRdXSphzOXcbLwbUw9RpeGmEaprAkIau0lVN40orN9mvAbzKsH85TcvzzOMOoXvEdwD9AkYUhpEIr3si4E0WA85jFAB6z+6zcgPIT4djXzYCDTGwzhEaq5S2Rty7i4cNMeEEfDBcRPgNm1Gy/aZT8G3q6z5Zkb3LmdInhaSbfyt6laL+9BYiFDJJM9CYN155j/W0P7kJc94Ont/WdkgCY3E6DoGMaJKZg10fUJLUL2YhQ29IK3jXK/nXNYbibZN7H7Q17RU5nOBMOxgUrEvly2JqMD0KSAxZFe8F7FPTaaeEp89g1tYsX0P9Pip7zo+A7i72N3cbojU+4+QMdZJZ6kFq2cwAAAABJRU5ErkJggg=='
 	    ok_icon.dialog = dialog; 
 	    ok_button.appendChild(ok_icon);
 
@@ -3955,8 +3982,11 @@ Schematic.prototype.dialog = function(title,content,callback) {
 	    ok_button.style.font = '10pt sans-serif';
 
 	    var cancel_button = document.createElement('span');
-	    var cancel_icon = document.createElement("img");
-	    cancel_icon.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAADDUlEQVQ4EVVUS09TQRidmXtnqCQ8Skmgv8E/0MuKH9CaAHYjGhdqXEFMjK+YYJeIK4S4MUZjUBPAGNMu3MmKsnBnXOq2bRRKYQHcR8dzxt5GJrm98zjf+c53vzMVAsNWhGoWg7VmKfjZKAb3uMexWS57/2ZCfJ2e9tN5oxQ8A/YX3kvpniRJ61uwnRvQMydJIoxSohNFTyeqew8J4rn4UZZyayvhunVpamNM+/PEDnhKHJzF6/lafUE2S4WXOWNu7odRZIW1Ukg97HvyKE6WJ6v1RySSFdF1JKXg7ajxr7XDOMYaxFZnjVbtMHoMoiBUUuiuFYkUgqUk1go1Ynx5FCYrE7XdByQB7l3W+FcOQWIFyPHgfTrke5njOPnuQ8SbrDG3oAhcKINkUiSdKPaGtHe/WZqKpbDjJKGSHgYkliqRDpRWfJA4kK1i8BHAmXbkJFMVTl05ctBTxIiTpMtA7jPSlTqitepEydpkdXeRB260SoXtUaPnetJTMnCgUDeYup9AjGpfAbs6Wavf4bGyvbaiS5fbZ/EnKGObmZEEUCNRLh9H4vZIgjLXUxILmyi5sxNzAqDAwexBGL+/4CkP6R1ZX7IjtjaDENqDLWeMrVQUrcFM5wbaHzK4V8+5s3TRBYZzYACtuG3J0qiKq2ZxamPUePOHUUzz9cthQE+ZKw0+g2m7K/meNXgD+spJkh0ASRgnQPdJkJfBGOc+thrRPshiZ1p3yp//lFAZSRR04zsLi/YrfqzTJMGrT+YUD2tPHkexu06yUSo8HzdmAYaMEUozQiV9IuWwprvjVfQuN2b0VTSCiZw1AHLK0UHZCaO7PuJut6MI54jEoudY+kRify1f23M+aZWCQVhjtnfPSMbnFPcpY6W8jjLsZlZrdoAZInLRsY6kureIPfcdJ6r1uYMw4g2gz3hVmN3XuHWYf1b7meMbAHwZN9oYJXGbfQ8+eZ4HCYDobkWmPsOeM23OaE0syvVR7qt8tb7ksLZ80eBbvcbzu1EsPHGb+EkJuE5vABUC9wJ/an/wXk6xfwGsiIP7ApkEaQAAAABJRU5ErkJggg=='
+	    var cancel_icon = document.createElement("span");
+		cancel_icon.setAttribute('class', 'fa fa-fw fa-times fa-2x');
+		cancel_icon.style.color = cancel_style;
+	    //var cancel_icon = document.createElement("img");
+	    //cancel_icon.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAADDUlEQVQ4EVVUS09TQRidmXtnqCQ8Skmgv8E/0MuKH9CaAHYjGhdqXEFMjK+YYJeIK4S4MUZjUBPAGNMu3MmKsnBnXOq2bRRKYQHcR8dzxt5GJrm98zjf+c53vzMVAsNWhGoWg7VmKfjZKAb3uMexWS57/2ZCfJ2e9tN5oxQ8A/YX3kvpniRJ61uwnRvQMydJIoxSohNFTyeqew8J4rn4UZZyayvhunVpamNM+/PEDnhKHJzF6/lafUE2S4WXOWNu7odRZIW1Ukg97HvyKE6WJ6v1RySSFdF1JKXg7ajxr7XDOMYaxFZnjVbtMHoMoiBUUuiuFYkUgqUk1go1Ynx5FCYrE7XdByQB7l3W+FcOQWIFyPHgfTrke5njOPnuQ8SbrDG3oAhcKINkUiSdKPaGtHe/WZqKpbDjJKGSHgYkliqRDpRWfJA4kK1i8BHAmXbkJFMVTl05ctBTxIiTpMtA7jPSlTqitepEydpkdXeRB260SoXtUaPnetJTMnCgUDeYup9AjGpfAbs6Wavf4bGyvbaiS5fbZ/EnKGObmZEEUCNRLh9H4vZIgjLXUxILmyi5sxNzAqDAwexBGL+/4CkP6R1ZX7IjtjaDENqDLWeMrVQUrcFM5wbaHzK4V8+5s3TRBYZzYACtuG3J0qiKq2ZxamPUePOHUUzz9cthQE+ZKw0+g2m7K/meNXgD+spJkh0ASRgnQPdJkJfBGOc+thrRPshiZ1p3yp//lFAZSRR04zsLi/YrfqzTJMGrT+YUD2tPHkexu06yUSo8HzdmAYaMEUozQiV9IuWwprvjVfQuN2b0VTSCiZw1AHLK0UHZCaO7PuJut6MI54jEoudY+kRify1f23M+aZWCQVhjtnfPSMbnFPcpY6W8jjLsZlZrdoAZInLRsY6kureIPfcdJ6r1uYMw4g2gz3hVmN3XuHWYf1b7meMbAHwZN9oYJXGbfQ8+eZ4HCYDobkWmPsOeM23OaE0syvVR7qt8tb7ksLZ80eBbvcbzu1EsPHGb+EkJuE5vABUC9wJ/an/wXk6xfwGsiIP7ApkEaQAAAABJRU5ErkJggg=='
 	    cancel_icon.dialog = dialog;
 	    cancel_button.appendChild(cancel_icon);
 
@@ -4073,8 +4103,11 @@ function build_table(a) {
 	    head.win = win;
 	    win.head = head;
 
-	    var close_button = new Image();
-	    close_button.src = close_icon;
+		var close_button = document.createElement("span");
+		close_button.setAttribute('class', 'fa fa-fw fa-times fa-lg');
+		close_button.style.color = 'white';
+	    //var close_button = new Image();
+	    //close_button.src = close_icon;
 	    close_button.style.cssFloat = 'right';
 	    close_button.addEventListener('click',window_close_button,false);
 	    close_button.win = win;
@@ -4200,7 +4233,11 @@ function build_table(a) {
 		if (icon.search('data:image') != -1) {
 			tool = document.createElement('img');
 			tool.src = icon;
-		} else {
+		} else if (icon.search('fa fa-fw') != -1) {
+			tool = document.createElement('span');
+			tool.setAttribute('class', icon);
+		}
+		else {
 			tool = document.createElement('span');
 			tool.style.font = 'small-caps small sans-serif';
 			var label = document.createTextNode(icon);
@@ -4281,25 +4318,37 @@ function build_table(a) {
 	}
 }
 
-var help_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAc1JREFUOBF1k71LllEYhx/Nj5YaFMIoTANXBRcNXBraGhJpc21qCZwCM+hPaEpRcNAmQQKVIprEQXD2naqhKPqAhkJNTbsu33MfjvL6g+s999dzP/c553mr6rSacC+cDlXt+G1nYi341maVTjPRo5TpYx2HIbgCxr/COizAF4hnj7GzbBKaxPgNFjTiO/EHEIqGubOJaSgf3sZfgmX4cCb3BF/lRu5XTYBN3MYePISLELqM8QzKF91PyehRXSPwsyiaSgWNlpmiroZdvqx6VCR3sbtAXYI5eAnXQd2GmNx11GCM5O0ot+XBPwbP5w6MwWeIN9tcHUIrDINneKJ3/Np9P63lOTwn5vmEXmOYd3LXech6g2XwIK1RtJIrquomdjRx8njprDWxtY86hSLuNu6CX/ZT6Ae35Ncf39577Oy81UEmnSy+jQ7sbugFbRW5+Ct5LFkGt8AmfyHGfoEdWsMw7/b3kv2KVZ00j22MELBQ/qTVwk64AZspFrlf+H2gYrps3CMY09jQ6b6B/6+4COM/4BaoGKTu8RtdB7BXwUP1oZId/EXoARXP5IOrh+uJf8kZZB2Gq+B1f4INqIFyEl92riyIm2lU5M3mSaLgP9d/gb+Fo/NxAAAAAElFTkSuQmCC'
+//var help_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAc1JREFUOBF1k71LllEYhx/Nj5YaFMIoTANXBRcNXBraGhJpc21qCZwCM+hPaEpRcNAmQQKVIprEQXD2naqhKPqAhkJNTbsu33MfjvL6g+s999dzP/c553mr6rSacC+cDlXt+G1nYi341maVTjPRo5TpYx2HIbgCxr/COizAF4hnj7GzbBKaxPgNFjTiO/EHEIqGubOJaSgf3sZfgmX4cCb3BF/lRu5XTYBN3MYePISLELqM8QzKF91PyehRXSPwsyiaSgWNlpmiroZdvqx6VCR3sbtAXYI5eAnXQd2GmNx11GCM5O0ot+XBPwbP5w6MwWeIN9tcHUIrDINneKJ3/Np9P63lOTwn5vmEXmOYd3LXech6g2XwIK1RtJIrquomdjRx8njprDWxtY86hSLuNu6CX/ZT6Ae35Ncf39577Oy81UEmnSy+jQ7sbugFbRW5+Ct5LFkGt8AmfyHGfoEdWsMw7/b3kv2KVZ00j22MELBQ/qTVwk64AZspFrlf+H2gYrps3CMY09jQ6b6B/6+4COM/4BaoGKTu8RtdB7BXwUP1oZId/EXoARXP5IOrh+uJf8kZZB2Gq+B1f4INqIFyEl92riyIm2lU5M3mSaLgP9d/gb+Fo/NxAAAAAElFTkSuQmCC'
+var help_icon = 'fa fa-fw fa-question-circle-o fa-lg';
 
-var cut_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAdpJREFUOBGNkj9IVWEYh69dzdJAKBqsJRpEMdRJqk0cjBZzC6EQEhpysKFBWgTxXyAIYhgqJjboELRIUDgpNAVJWxkEESINoUM1hPk895738iFR/uA5759zvvd87/t9+VxR5Zn9g9U/BvtZ7kim7B9fxTuL/035JFn65gbJ1/AWFuAKhKJgGldEkNpOAivugYX0ZRBSWTBGYP40PIBuA7UKu1BlgM7DCljsNqjKoik8LdgDz+A6jMM05B6Di+oMEn3BX0ti3Q6YgwEDdA5mwHzuAvwAT+ke1EM7fIcPUA0tMAUTcBFUFyxDg0GoCWcTYj5hH5HzEIbgKoRGcCbheJaosN+4M/qX4RJ8g19wHz7BO1gE5+g8XsISKA/gtw8LKHexBf5lB07BNrh9Z3AHbPEsfAXlWteVVIv3AqKlsHfJ2dYbeA5xf2bxY+C4xbz34TO42L79uwV+wkew1WvwBPrgJKh+8ATPGKgxsEibQSJns57EjqEXnNWtLN+K9fo0G78ChxuqxBkFiztsdaJoCk938BDmoRGGYQEKf3HRe1iBbTB+CiGH6um6q1A9zjjYbk0k7ddW3NkG3ISQBVIdLpi+K/m2lepwkfRdPgtit4W7kG7ZF8ba/6n0zQGcX166InaNogAAAABJRU5ErkJggg=='
+//var cut_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAdpJREFUOBGNkj9IVWEYh69dzdJAKBqsJRpEMdRJqk0cjBZzC6EQEhpysKFBWgTxXyAIYhgqJjboELRIUDgpNAVJWxkEESINoUM1hPk895738iFR/uA5759zvvd87/t9+VxR5Zn9g9U/BvtZ7kim7B9fxTuL/035JFn65gbJ1/AWFuAKhKJgGldEkNpOAivugYX0ZRBSWTBGYP40PIBuA7UKu1BlgM7DCljsNqjKoik8LdgDz+A6jMM05B6Di+oMEn3BX0ti3Q6YgwEDdA5mwHzuAvwAT+ke1EM7fIcPUA0tMAUTcBFUFyxDg0GoCWcTYj5hH5HzEIbgKoRGcCbheJaosN+4M/qX4RJ8g19wHz7BO1gE5+g8XsISKA/gtw8LKHexBf5lB07BNrh9Z3AHbPEsfAXlWteVVIv3AqKlsHfJ2dYbeA5xf2bxY+C4xbz34TO42L79uwV+wkew1WvwBPrgJKh+8ATPGKgxsEibQSJns57EjqEXnNWtLN+K9fo0G78ChxuqxBkFiztsdaJoCk938BDmoRGGYQEKf3HRe1iBbTB+CiGH6um6q1A9zjjYbk0k7ddW3NkG3ISQBVIdLpi+K/m2lepwkfRdPgtit4W7kG7ZF8ba/6n0zQGcX166InaNogAAAABJRU5ErkJggg=='
+var cut_icon = 'fa fa-fw fa-scissors fa-lg';
 
-var copy_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAAsTAAALEwEAmpwYAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAB+ElEQVQ4EW2TTUtVURSGvWaaGoEIF8KB4CzEgRSNRJzkRxINnEgRjRxYg/wJQU0MxEmDUAeBKIgOBCkUlGjcJGpgQSAVhKIplNqXX89zOut6lPvCc/fa6+z93rX22SdXcqyzhP/S6X3GHqiEffDZDgzCApTCARR0Jo2yJk/JPYTfMA9fYAW6oQJmoQzcq6EkMhkaJ9iE7/Akkuk4xejzotJkL30yyngTWmAALkJW55j8AccGOATl/q9Rje3cAY3egSZbkNUak1vQCHmIAi4QJ5VqoPtPeAmv0/kwY8hzWALXfYTbcAM6YA6WragTPsEzqIMcvIIZCE0T1MMi+GYnIHSJoE4j38QbGIJiek6yDZrgOtyDGojWa4lLNbJczZQtSPQ/QnwX+uEbXAVf+18IJWvdlJWmkesi7gM3PYDP6fwDo3fshOKteS7Kfwujy8QrYDXeYl+7pu/B2+4688neMPpBQllmtGXOc1iA09LE6gvSSFqhF86DVXm7r4GqBr+zcrASDbImSazJC2iGx+kCS7WFBngLblaOtuLGaN+40NoYEy+VH64LNV+FR9AOsSnO0TFiwkSHblJr/4cTv+vMPK/dNBtn5zSqNN6GnEb+o+cSMvcLzF2BSdDMM8qeDdMk7yXddLEPbSmLuQ3wg8xDVREqyXnDrXz0CJfXd7PRz4TxAAAAAElFTkSuQmCC'
+//var copy_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAAsTAAALEwEAmpwYAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAB+ElEQVQ4EW2TTUtVURSGvWaaGoEIF8KB4CzEgRSNRJzkRxINnEgRjRxYg/wJQU0MxEmDUAeBKIgOBCkUlGjcJGpgQSAVhKIplNqXX89zOut6lPvCc/fa6+z93rX22SdXcqyzhP/S6X3GHqiEffDZDgzCApTCARR0Jo2yJk/JPYTfMA9fYAW6oQJmoQzcq6EkMhkaJ9iE7/Akkuk4xejzotJkL30yyngTWmAALkJW55j8AccGOATl/q9Rje3cAY3egSZbkNUak1vQCHmIAi4QJ5VqoPtPeAmv0/kwY8hzWALXfYTbcAM6YA6WragTPsEzqIMcvIIZCE0T1MMi+GYnIHSJoE4j38QbGIJiek6yDZrgOtyDGojWa4lLNbJczZQtSPQ/QnwX+uEbXAVf+18IJWvdlJWmkesi7gM3PYDP6fwDo3fshOKteS7Kfwujy8QrYDXeYl+7pu/B2+4688neMPpBQllmtGXOc1iA09LE6gvSSFqhF86DVXm7r4GqBr+zcrASDbImSazJC2iGx+kCS7WFBngLblaOtuLGaN+40NoYEy+VH64LNV+FR9AOsSnO0TFiwkSHblJr/4cTv+vMPK/dNBtn5zSqNN6GnEb+o+cSMvcLzF2BSdDMM8qeDdMk7yXddLEPbSmLuQ3wg8xDVREqyXnDrXz0CJfXd7PRz4TxAAAAAElFTkSuQmCC'
+var copy_icon = 'fa fa-fw fa-files-o fa-lg';
 
-var paste_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAbpJREFUOBGFlLtKZEEURbvV8YXBqB+gJibCTGDmgIGRgpGBJkaCYKqfYG7gN5j6wkAmGSZ3GPARmouIoAajMLaPtU73aa4XWzese6tOndpVdW51VyuVyiiswBf4Cu3wAmXdEDC+BUfQBs8Q6uC5AKv1bmWX9z8wnma+nbQEPdAHGlWhKSek6zntdbiGrkbc5CfQaAgmoAYqF4qORiapETiGNNYkk22nwX/ayhJkbhwhojxyUhob1yBlDdV3MOcR3EgsUJxELMxcJVc/oT0DszAF+/ADfoIyLxbQsSh3INZFXUFOsj8Pf2AY/sI4xM7KOyIeyiN10rNt8dUAnIJXph9+geO1VkaMhaybZIFtj0EvLIPHPYQ3xbbfSq6qicfx3l3APXhVpmGxXCNi7yo/8yaj1syjan4H2/CtaOTAR3LcI56Vkm7ta5Sr+SnTzHZxEbpxNMetqzjPr9v8/P5+VHf9FU9vbVEaiHXSwLc05aoW0KI9QE7wCMOQKk8smoSxRnvwG9yiQd+XsAGT8Jk0bc86RMFKM/w3WAOLmzstpcSt9rd3YIIqXkxjFtFbPAeDjX7m0g3FTmi5iZ1X7KBgqVvJRdsAAAAASUVORK5CYII='
+//var paste_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAbpJREFUOBGFlLtKZEEURbvV8YXBqB+gJibCTGDmgIGRgpGBJkaCYKqfYG7gN5j6wkAmGSZ3GPARmouIoAajMLaPtU73aa4XWzese6tOndpVdW51VyuVyiiswBf4Cu3wAmXdEDC+BUfQBs8Q6uC5AKv1bmWX9z8wnma+nbQEPdAHGlWhKSek6zntdbiGrkbc5CfQaAgmoAYqF4qORiapETiGNNYkk22nwX/ayhJkbhwhojxyUhob1yBlDdV3MOcR3EgsUJxELMxcJVc/oT0DszAF+/ADfoIyLxbQsSh3INZFXUFOsj8Pf2AY/sI4xM7KOyIeyiN10rNt8dUAnIJXph9+geO1VkaMhaybZIFtj0EvLIPHPYQ3xbbfSq6qicfx3l3APXhVpmGxXCNi7yo/8yaj1syjan4H2/CtaOTAR3LcI56Vkm7ta5Sr+SnTzHZxEbpxNMetqzjPr9v8/P5+VHf9FU9vbVEaiHXSwLc05aoW0KI9QE7wCMOQKk8smoSxRnvwG9yiQd+XsAGT8Jk0bc86RMFKM/w3WAOLmzstpcSt9rd3YIIqXkxjFtFbPAeDjX7m0g3FTmi5iZ1X7KBgqVvJRdsAAAAASUVORK5CYII='
+var paste_icon = 'fa fa-fw fa-clipboard fa-lg';
 
-var close_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAZpJREFUOBGtlLlKBEEURafHAZdBkMEF/8BIY/FbTI2M/QQDFUbMVMRvEAxEUNRExCXxHwwEIwXXmfLcnveqqxzNfHC5b6vbr6q6u1b7Jyt+6oQQ6uSEblEU3bROTf0DIFDrpLXMp1FN0dLYHvBrLSbl+CJ4GqyAKcs3vGbxMvG8+Zq8MgplAp4AN0B2DVpVV/mwnbISwgu8oBrc2wVOPCf8IyB77lG4hcdswZ7lXo2f4Emr1aVYCJZYtaYv2Bec4+9bvgO/mX8CD0Uhc9KpNqxR9JH4EhdkZ8BFsgvSZPHg8NeBrAtcwEWOyY3aAA1xn9Ew6En8eyCTgLYk04Qz6oGHvTdjCulE28QyCUjo0xgKl8APOZ+IQiqyq24zCbhJ1OM7fL/N6vpJ+q1t2Spt4d38Q7htvshv8wq/advsXb/vkcKBOjG9cLILMGLNm2WmesAD8XgUSh0KTXBqC9L3xCdes9ojPGtr+66/TNDQAkvAz0DfWnqGi8Rz6QDyM6MhU0/jVEyL0pri+EYrkNkCCXb++B/pyvWvyv5H34gwYA5kpakoAAAAAElFTkSuQmCC'
+//var close_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAZpJREFUOBGtlLlKBEEURafHAZdBkMEF/8BIY/FbTI2M/QQDFUbMVMRvEAxEUNRExCXxHwwEIwXXmfLcnveqqxzNfHC5b6vbr6q6u1b7Jyt+6oQQ6uSEblEU3bROTf0DIFDrpLXMp1FN0dLYHvBrLSbl+CJ4GqyAKcs3vGbxMvG8+Zq8MgplAp4AN0B2DVpVV/mwnbISwgu8oBrc2wVOPCf8IyB77lG4hcdswZ7lXo2f4Emr1aVYCJZYtaYv2Bec4+9bvgO/mX8CD0Uhc9KpNqxR9JH4EhdkZ8BFsgvSZPHg8NeBrAtcwEWOyY3aAA1xn9Ew6En8eyCTgLYk04Qz6oGHvTdjCulE28QyCUjo0xgKl8APOZ+IQiqyq24zCbhJ1OM7fL/N6vpJ+q1t2Spt4d38Q7htvshv8wq/advsXb/vkcKBOjG9cLILMGLNm2WmesAD8XgUSh0KTXBqC9L3xCdes9ojPGtr+66/TNDQAkvAz0DfWnqGi8Rz6QDyM6MhU0/jVEyL0pri+EYrkNkCCXb++B/pyvWvyv5H34gwYA5kpakoAAAAAElFTkSuQmCC'
+var close_icon = 'fa fa-fw fa-times fa-lg';
 
-var grid_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAB+klEQVQ4EW2Uu06VQRCAf7l6ELkaFCGCXEKhhGBCS0Vj4QNYWhpKGzregZKO0PEeFPQQEgmh4CK3oNw8EkT5vnN2TjaESb4zO7Pz787uzJ6iqMob1Db0JjvUUwbf4UNyPEm6O/lHkl3UZRPtjA0wuAMak62/CxT99WCc4/C3+tF6mniBPoJbcIP/SZvlKfxJtv4GeAnHcAdXLjQJ72ABvsIOtEIZOmEJ5mENzOIaXsMifINNaIKKuOshmFUubrQLE7mT8XPYg4Hwxx15Vj+KM7ekABf2TsxEMVPFO/LbiC/FQpc4Pbta+V1VxQX6H1wlO7T+PL7spbnbELiz+i+Yuou5szHRHtpu5pH0D8IvKHmcLTCgDX6CC+l3RzN27hxukq3fTT2W8bWM+zA+giWeAXd7D8MwBbbEZzBuHN7CNFj6T2D8GFSkn1+rZm/kYvp7YIvk4nXsg1dREVNXPJbHUSulqqrcn37vTHlWVYXdnsc3x0JerGePatmMis2nP7dzf8TfuJBd6ZEcq+2hV2AWNqoXaz/59rTNynn9PWD23aa36QCswgk8rJqLn0H+1mIRC1R7a6MYVsO38wX8O7GDy+DiKzAHq+DbsyktzjLMwgbU3poTZmOquVi1A3isaj/wD0VwXLbntGPjjfmHppiZGTRrIFFN4/SH3XQPaEljp7s+Ta0AAAAASUVORK5CYII='
+//var grid_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAB+klEQVQ4EW2Uu06VQRCAf7l6ELkaFCGCXEKhhGBCS0Vj4QNYWhpKGzregZKO0PEeFPQQEgmh4CK3oNw8EkT5vnN2TjaESb4zO7Pz787uzJ6iqMob1Db0JjvUUwbf4UNyPEm6O/lHkl3UZRPtjA0wuAMak62/CxT99WCc4/C3+tF6mniBPoJbcIP/SZvlKfxJtv4GeAnHcAdXLjQJ72ABvsIOtEIZOmEJ5mENzOIaXsMifINNaIKKuOshmFUubrQLE7mT8XPYg4Hwxx15Vj+KM7ekABf2TsxEMVPFO/LbiC/FQpc4Pbta+V1VxQX6H1wlO7T+PL7spbnbELiz+i+Yuou5szHRHtpu5pH0D8IvKHmcLTCgDX6CC+l3RzN27hxukq3fTT2W8bWM+zA+giWeAXd7D8MwBbbEZzBuHN7CNFj6T2D8GFSkn1+rZm/kYvp7YIvk4nXsg1dREVNXPJbHUSulqqrcn37vTHlWVYXdnsc3x0JerGePatmMis2nP7dzf8TfuJBd6ZEcq+2hV2AWNqoXaz/59rTNynn9PWD23aa36QCswgk8rJqLn0H+1mIRC1R7a6MYVsO38wX8O7GDy+DiKzAHq+DbsyktzjLMwgbU3poTZmOquVi1A3isaj/wD0VwXLbntGPjjfmHppiZGTRrIFFN4/SH3XQPaEljp7s+Ta0AAAAASUVORK5CYII='
+var grid_icon = 'fa fa-fw fa-table fa-lg';
 
-var delete_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAABYElEQVQ4EX2Ty0oEMRBFg/heKKJLv9nZuFBRBB8L8TW6EwVH/CNBEB/oPaHuUHZnuuB2VVcqJ51UupRSNqQzaSTZFhw0vMdWNXYs7UpL1N1Lv6E9EmGe4He8c8uKryXPA1aeIvEV/oBkmCfy6hjIrQTkM/yRfNmSJhID3+H35W0AWhDXXmp8xcXAXqRZMOrylxjC9ur5UODVNhV3YYcUyKgZSyzkIwCyKGFmTIMMYxJim+cR/4S/ku9BlKtmKrBXKW+T2JAbxd6O5yj13zywpvSDBIDOuDuniuclzLX1Za4++483pT766fKuHAeNsUjTvALduZO6W3On3AAgnkNczYncYkCIy+dtOte9ZzMhbjEQjDPrNqAJy19iSG4xsHw1vM0MqzeWlvLZhuQby7a99RZs+qOz8hBEw9VaMC+8Q4V/C2BAhy6bYfybzxJz0IlUtqWJdCENQTRcLcMelaEh63+BWIQndEzNhAAAAABJRU5ErkJggg=='
+//var delete_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAABYElEQVQ4EX2Ty0oEMRBFg/heKKJLv9nZuFBRBB8L8TW6EwVH/CNBEB/oPaHuUHZnuuB2VVcqJ51UupRSNqQzaSTZFhw0vMdWNXYs7UpL1N1Lv6E9EmGe4He8c8uKryXPA1aeIvEV/oBkmCfy6hjIrQTkM/yRfNmSJhID3+H35W0AWhDXXmp8xcXAXqRZMOrylxjC9ur5UODVNhV3YYcUyKgZSyzkIwCyKGFmTIMMYxJim+cR/4S/ku9BlKtmKrBXKW+T2JAbxd6O5yj13zywpvSDBIDOuDuniuclzLX1Za4++483pT766fKuHAeNsUjTvALduZO6W3On3AAgnkNczYncYkCIy+dtOte9ZzMhbjEQjDPrNqAJy19iSG4xsHw1vM0MqzeWlvLZhuQby7a99RZs+qOz8hBEw9VaMC+8Q4V/C2BAhy6bYfybzxJz0IlUtqWJdCENQTRcLcMelaEh63+BWIQndEzNhAAAAABJRU5ErkJggg=='
+var delete_icon = 'fa fa-fw fa-times fa-lg';
 	
 //var rotate_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAABi0lEQVQ4EWWTvyu1YRjH/YzJLgxeTPgDJOSVdzMaTDKwmJXMjBaDklUoxfQuStkoi4mETVZRSvn5+ZxzX4/7nPOtz3P9vO/7es5zn7q6WjWTakzpZew1jKdY05T5FW4DkeTaIfiGV1jJCtV9xYn2tMMsbMA9uEFwhN8NqtgkxjU5DzcQC7Qf8JblVvGVG9SXvPRYx+YLz4mrJ9gm15H6KxYvZYsv8afAyXZT/hE7B6FifBMD8ASefgZdEFrA+Q/9kcDWfIU1ki5+gVFQLZD/NuY8NU52/CI+JXCDQwhVLzaueOdodJzBFFwla/Nn8mNRxCn9a9zAcdV72VQ8nSwUm5mbgUW49T28qqq7bEqnx7umVI3xKw3DkI0XqTyB7Ut+KzZONGWfk3r6HxgDdeLjL3yBxT3I5e8hufYJ7PWGTkZhKyUt2NAbhcz2pJo94q0sxmzDP4B/JtEDHMOdAXJDa50GyNo0eHeKEd1kExwtTqm21uyxV/kVS8rf09voX9k/0zN4yhmYG4FQafEPT9payLdHenUAAAAASUVORK5CYII='
-var rotate_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAASCAYAAABb0P4QAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAAsTAAALEwEAmpwYAAAB1WlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOkNvbXByZXNzaW9uPjE8L3RpZmY6Q29tcHJlc3Npb24+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgICAgIDx0aWZmOlBob3RvbWV0cmljSW50ZXJwcmV0YXRpb24+MjwvdGlmZjpQaG90b21ldHJpY0ludGVycHJldGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KAtiABQAAAgZJREFUOBF9lDtoVUEURW/8a2WCYkAUbewtLFKkSBBFEgsRwd7KRgURBAsbK+0sbIKlbRrBwhB4hagQhSBBRRCfEBHF+P8kip+15p1DxuTphnXPzJm5e7739jSL6qH4O6r9xG2wHr7ALLyC1EoKP7PSLa6I5C7iLfgAmifvKbfgGGimVnVC92cabqL5I6RRt/iI9oGw+a/p6uh0PgzvEifhPnyOnMvMQY5QVv80dQ/VRthZSouPrRRPwyfQ8FfEQaJaZqqZ5NLtlHVjajuFJ5CzfEp5TTTW/SL1d9A8R7a8Npo19ZDS9GTks2+ZlaOYcJSlI9X1dfHyGWIa3oucHuUGDFOYhTa8g7fwEm7DIVDOsDb25TnQ9Bt4O4qc1QZw0zWdAHMezBCMw26YBtUHh0HDr1F31mfB/ZyBZh840mUrlS5SNn+qyh2PXC7X084TNzfnUkT1gncxP7s9JtGzTijPGzxfR9076TbIfOSuGkdB9x/gaH4pfr/mxiCVF/8gCds0tP/3qLeIRQd42mEKzsHzqF8gppyFcn/VJfAd99H4BrZA0X6eJq90quUvkyd4NHJplMam74DvyV5QZRV5KPXyPEk7eoU2g8q9zr/NDnJ+NSdA5aDNCBVfvmYWeSWUG2z+phVUzy7NOy1Vm6P5J3kM1+EFaCIteAgPoA0LkKa2a1pHqk3zB+2GhBueIAFhAAAAAElFTkSuQmCC'
+//var rotate_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAASCAYAAABb0P4QAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAAsTAAALEwEAmpwYAAAB1WlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOkNvbXByZXNzaW9uPjE8L3RpZmY6Q29tcHJlc3Npb24+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgICAgIDx0aWZmOlBob3RvbWV0cmljSW50ZXJwcmV0YXRpb24+MjwvdGlmZjpQaG90b21ldHJpY0ludGVycHJldGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KAtiABQAAAgZJREFUOBF9lDtoVUEURW/8a2WCYkAUbewtLFKkSBBFEgsRwd7KRgURBAsbK+0sbIKlbRrBwhB4hagQhSBBRRCfEBHF+P8kip+15p1DxuTphnXPzJm5e7739jSL6qH4O6r9xG2wHr7ALLyC1EoKP7PSLa6I5C7iLfgAmifvKbfgGGimVnVC92cabqL5I6RRt/iI9oGw+a/p6uh0PgzvEifhPnyOnMvMQY5QVv80dQ/VRthZSouPrRRPwyfQ8FfEQaJaZqqZ5NLtlHVjajuFJ5CzfEp5TTTW/SL1d9A8R7a8Npo19ZDS9GTks2+ZlaOYcJSlI9X1dfHyGWIa3oucHuUGDFOYhTa8g7fwEm7DIVDOsDb25TnQ9Bt4O4qc1QZw0zWdAHMezBCMw26YBtUHh0HDr1F31mfB/ZyBZh840mUrlS5SNn+qyh2PXC7X084TNzfnUkT1gncxP7s9JtGzTijPGzxfR9076TbIfOSuGkdB9x/gaH4pfr/mxiCVF/8gCds0tP/3qLeIRQd42mEKzsHzqF8gppyFcn/VJfAd99H4BrZA0X6eJq90quUvkyd4NHJplMam74DvyV5QZRV5KPXyPEk7eoU2g8q9zr/NDnJ+NSdA5aDNCBVfvmYWeSWUG2z+phVUzy7NOy1Vm6P5J3kM1+EFaCIteAgPoA0LkKa2a1pHqk3zB+2GhBueIAFhAAAAAElFTkSuQmCC'
+var rotate_icon = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIxOC45cHgiIGhlaWdodD0iMTkuMnB4IiB2aWV3Qm94PSIwIDAgMTguOSAxOS4yIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAxOC45IDE5LjI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+DQoJLnN0MHtmb250LWZhbWlseTonUHJveGltYU5vdmEtQm9sZCc7fQ0KCS5zdDF7Zm9udC1zaXplOjE2cHg7fQ0KCS5zdDJ7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO30NCgkuc3Qze2ZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MztzdHJva2UtbWl0ZXJsaW1pdDoxMDt9DQo8L3N0eWxlPg0KPHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgMSAtMC4yNjIxIDE4LjEzNjkpIiBjbGFzcz0ic3QwIHN0MSI+UjwvdGV4dD4NCjxwb2x5Z29uIGNsYXNzPSJzdDIiIHBvaW50cz0iMTQuOSwxNS44IDExLjgsMTAuOSAxNy42LDExICIvPg0KPHBhdGggY2xhc3M9InN0MyIgZD0iTTE0LjcsMTAuN2MwLTQuOC00LjctOC43LTEwLjYtOC43Ii8+DQo8L3N2Zz4NCg=='
 
 // spacer icon: available, but not used
 var spacer_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAASCAYAAAB4i6/FAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAADklEQVQYGWNgGAVDOwQAAcIAAVPQQlcAAAAASUVORK5CYII='
+
+var download_icon = 'fa fa-fw fa-download fa-lg';
+
+var import_icon = 'fa fa-fw fa-upload fa-lg';
 
 	///////////////////////////////////////////////////////////////////////////////
 	//
@@ -4960,7 +5009,8 @@ function graph_mouse_move(event) {
 	    //document.onselectstart = function () { return false; };
 
 	    canvas.style.borderColor = normal_style;
-	    part.sch.message(part.tip+': drag onto diagram to insert');
+	    part.sch.message(part.tip+i18n.drag_onto_diagram);
+	    //part.sch.message(part.tip);
 	    return false;
 	}
 
@@ -5311,7 +5361,7 @@ Component.prototype.select_rect = function(s) {
 		content.fields = fields;
 		content.component = this;
 
-		this.sch.dialog('Edit Properties',content,function(content) {
+		this.sch.dialog(i18n.Edit_Properties,content,function(content) {
 			for (var i in content.fields)
 				content.component.properties[i] = content.fields[i].value;
 			content.component.sch.redraw_background();
@@ -5393,7 +5443,7 @@ Component.prototype.clear_labels = function() {
 		// possibly label other cp's for this device?
 		this.parent.propagate_label(label);
 	} else if (this.label != '0' && label != '0' && this.label != label)
-	alert("Node has two conflicting labels: "+this.label+", "+label);
+	alert(i18n.Node_has_two_conflicting_labels+this.label+', '+label);
 }
 
 ConnectionPoint.prototype.update_location = function() {
@@ -5667,6 +5717,8 @@ ConnectionPoint.prototype.update_location = function() {
 	////////////////////////////////////////////////////////////////////////////////
 
 	var probe_colors = ['red','green','blue','cyan','magenta','yellow','black','x-axis'];
+	var probe_cnames = i18n_probe_cnames;	// color names, see i18n string file, en-US.js, etc.
+
 	var probe_colors_rgb = {
 		'red': 'rgb(232,77,57)',
 		'green': 'rgb(31,171,84)',
@@ -5725,14 +5777,15 @@ ConnectionPoint.prototype.update_location = function() {
 	Probe.prototype.edit_properties = function(x,y) {
 		if (inside(this.bbox,x,y)) {
 			var fields = [];
-			fields['Plot color'] = build_select(probe_colors,this.properties['color']);
+			var n = probe_colors.indexOf(this.properties['color']);
+			fields['Plot color'] = build_select(probe_cnames,probe_cnames[n]);
 			fields['Plot offset'] = build_input('text',10,this.properties['offset']);
 
 			var content = build_table(fields);
 			content.fields = fields;
 			content.component = this;
 
-			this.sch.dialog('Edit Properties',content,function(content) {
+			this.sch.dialog(i18n.Edit_Properties,content,function(content) {
 				var color_choice = content.fields['Plot color'];
 				content.component.properties['color'] = probe_colors[color_choice.selectedIndex];
 				content.component.properties['offset'] = content.fields['Plot offset'].value;
@@ -6028,7 +6081,7 @@ Diode.prototype.edit_properties = function(x,y) {
 		content.fields = fields;
 		content.component = this;
 
-		this.sch.dialog('Edit Properties',content,function(content) {
+		this.sch.dialog(i18n.Edit_Properties,content,function(content) {
 			content.component.properties['name'] = content.fields['name'].value;
 			content.component.properties['area'] = content.fields['area'].value;
 			content.component.properties['type'] = diode_types[content.fields['type'].selectedIndex];
@@ -6334,7 +6387,7 @@ function source_type_changed(event) {
 				this.src = cktsim.parse_source(this.properties['value']);
 			var content = this.build_content(this.src);
 
-			this.sch.dialog('Edit Properties',content,function(content) {
+			this.sch.dialog(i18n.Edit_Properties,content,function(content) {
 				var c = content.component;
 				var fields = content.fields;
 
