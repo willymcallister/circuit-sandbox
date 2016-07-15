@@ -39,12 +39,13 @@ Zero_ac_response: 'Zero ac response, -infinity on DB scale.',
 Near_zero_ac_response: 'Near zero ac response, remove ',
 probe: ' probe',
 
+// Alerts and warnings from the circuit simulator
 ckt_alert1: 'Warning!!! Circuit has a voltage source loop or a source or current probe shorted by a wire, please remove the source or the wire causing the short.',
 ckt_alert2: 'Warning!!! Simulator might produce meaningless results or no result with illegal circuits.',
 ckt_warning1: 'Warning: two circuit elements share the same name ',
 ckt_alert3: 'Please make at least one connection to ground (triangle symbol)',
-ckt_alert4: 'Newton Method Failed, do your current sources have a conductive path to ground?',
-ckt_alert5: 'Newton Method Failed, it may be your circuit or it may be our simulator.',
+ckt_alert4: 'Newton Method failed, do your current sources have a conductive path to ground?',
+ckt_alert5: 'Newton Method failed, it may be your circuit or it may be our simulator.',
 ckt_alert6: 'DC failed, trying transient analysis from zero.',
 ckt_alert7: 'AC analysis refers to unknown source ',
 ckt_alert8: 'AC analysis failed, unknown source',	
@@ -57,7 +58,6 @@ ckt_error5: 'Rows or cols > rows or cols of dest',
 ckt_error6: 'Rows or cols > cols or rows of dest',	    	    
 
 // new since sharing with Jake
-
 log_Frequency: 'log(Frequency in Hz)',
 degrees: 'degrees',
 AC_Phase: 'AC Phase',
@@ -77,75 +77,45 @@ Voltage: 'Voltage',
 Current: 'Current',
 Time: 'Time',
 Node_has_two_conflicting_labels: 'Node has two conflicting labels: ',
-//normal: 'normal',
-//ideal: 'ideal'
-//area: 'area',
 
+DC_value: 'DC value',
+
+impulse: 'impulse',
+Height: 'Height',
+Width: 'Width (secs)',
+
+step: 'step',
+Initial_value: 'Initial value',
+Plateau_value: 'Plateau value',
+Delay_until_step: 'Delay until step (secs)',
+Rise_time: 'Rise time (secs)',
+
+square: 'square',
+Frequency: 'Frequency (Hz)',
+Duty_cycle: 'Duty cycle (%)',
+
+triangle: 'triangle',
+
+pwl: 'pwl',
+Comma_separated_list: 'Comma-separated list of alternating times and values',
+
+pwl_repeating: 'pwl_repeating',
+
+pulse: 'pulse',
+Delay_until_pulse: 'Delay until pulse (secs)',
+Time_for_first_transition: 'Time for first transition (secs)',
+Time_for_second_transition: 'Time for second transition (secs)',
+Pulse_width: 'Pulse width (secs)',
+Period: 'Period (secs)',
+
+sin: 'sin',
+Offset_value: 'Offset value',
+Amplitude: 'Amplitude',
+Delay_until_sin_starts: 'Delay until sin starts (secs)',
+Phase_offset_degrees: 'Phase offset (degrees)',
 
 last_line: 'last line, no comma'
 };
 
+// translated color names, not to be confused with variables: probe_names or probe_colors or probe_colors_rgb
 var i18n_probe_cnames = ['red','green','blue','cyan','magenta','yellow','black','x-axis'];
-
-
-
-/*
-	var probe_colors = ['red','green','blue','cyan','magenta','yellow','black','x-axis'];
-// These are names AND keys of a case statement, need to separate function.
-
-'<Probe ('
-'Plot color'	//maybe not needed
-'Plot offset'	//maybe not needed
-'Edit Properties'
-
-
-'normal'
-'ideal'
-'area'
-
-'name'
-
-'source '
-'name'
-'value'
-
-'dc': ['DC value'],
-
-		'impulse': ['Height',
-		'Width (secs)'],
-
-		'step': ['Initial value',
-		'Plateau value',
-		'Delay until step (secs)',
-		'Rise time (secs)'],
-
-		'square': ['Initial value',
-		'Plateau value',
-		'Frequency (Hz)',
-		'Duty cycle (%)'],
-
-		'triangle': ['Initial value',
-		'Plateau value',
-		'Frequency (Hz)'],
-
-		'pwl': ['Comma-separated list of alternating times and values'],
-
-		'pwl_repeating': ['Comma-separated list of alternating times and values'],
-
-		'pulse': ['Initial value',
-		'Plateau value',
-		'Delay until pulse (secs)',
-		'Time for first transition (secs)',
-		'Time for second transition (secs)',
-		'Pulse width (secs)',
-		'Period (secs)'],
-
-		'sin': ['Offset value',
-		'Amplitude',
-		'Frequency (Hz)',
-		'Delay until sin starts (secs)',
-		'Phase offset (degrees)']
-
-		'Plot color'
-		'Plot offset'
-*/
