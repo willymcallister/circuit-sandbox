@@ -40,124 +40,82 @@ Near_zero_ac_response: 'Cerca de respuesta de ac a cero, sacar ',
 probe: ' sonda',
 
 // Alerts and warnings from the circuit simulator
-ckt_alert1: 'Warning!!! Circuit has a voltage source loop or a source or current probe shorted by a wire, please remove the source or the wire causing the short.',
-ckt_alert2: 'Warning!!! Simulator might produce meaningless results or no result with illegal circuits.',
-ckt_warning1: 'Warning: two circuit elements share the same name ',
-ckt_alert3: 'Please make at least one connection to ground (triangle symbol)',
-ckt_alert4: 'Newton Method Failed, do your current sources have a conductive path to ground?',
-ckt_alert5: 'Newton Method Failed, it may be your circuit or it may be our simulator.',
-ckt_alert6: 'DC failed, trying transient analysis from zero.',
-ckt_alert7: 'AC analysis refers to unknown source ',
-ckt_alert8: 'AC analysis failed, unknown source',
+ckt_alert1: '¡¡¡Advertencia!!! Circuito tiene un circuito de fuente de tensión o una fuente o sonda de corriente en cortocircuito por un cable, por favor, elimine la fuente o el cable que causa el corto.',
+ckt_alert2: '¡¡¡Advertencia!!! Simulador podría producir resultados sin sentido o sin resultado con circuitos ilegales.',
+ckt_warning1: 'Advertencia: dos elementos de circuito comparten el mismo nombre ',
+ckt_alert3: 'Por favor, haga al menos una conexión a tierra (símbolo del triángulo)',
+ckt_alert4: 'Método de Newton falló. ¿Sus fuentes de corriente tienen un camino conductor a tierra?',
+ckt_alert5: 'Método de Newton no, puede ser su circuito o puede ser nuestro simulador.',
+ckt_alert6: 'DC falló, tratando análisis transitorio de cero.',
+ckt_alert7: 'Análisis AC se refiere a fuente desconocida ',
+ckt_alert8: 'Análisis AC falló, fuente desconocida',
 
-ckt_error1: 'Rows of M mismatched to b or cols mismatch to x.',
-ckt_error2: 'Row or columns of A to large for B',
-ckt_error3: 'Row or columns of A to large for C',
-ckt_error4: 'scalea and scaleb must be scalars or Arrays',
-ckt_error5: 'Rows or cols > rows or cols of dest',
-ckt_error6: 'Rows or cols > cols or rows of dest',	 
+ckt_error1: 'Las filas de M cargado no coincide con b cols desajuste a x.',
+ckt_error2: 'Fila o columnas de A es demasiado grande para B',
+ckt_error3: 'Fila o columnas de A es demasiado grande para C',
+ckt_error4: 'scalea y scaleb deben ser escalares o Matrices',
+ckt_error5: 'Las filas ni columnas > filas ni columnas de destino',
+ckt_error6: 'Las filas ni columnas > columnas ni filas de destino',	 
 
 // added since sharing with Jake
-Minimum_number_of_timepoints: 'Minimum number of timepoints',
-Stop_time_seconds: 'Stop time (seconds)',
-Transient_Analysis_add_a_probe: 'Transient Analysis: add a probe to the diagram!',
+log_Frequency: 'log (Frecuencia en Hz)',
+degrees: 'grados',
+AC_Phase: 'Fase de CA',
+AC_Magnitude: 'Magnitud de AC',
+
+Minimum_number_of_timepoints: 'Número mínimo de puntos de tiempo',
+Stop_time_seconds: 'Detener el tiempo (segundos)',
+Transient_Analysis_add_a_probe: 'Análisis de transitorios: añadir un sondeo al diagrama!',
+
+//Use creating phrasing to get this right: 
+// alert('The ' + color + ' probe is connected to node ' + '"' + label + '"' + ' which is not an actual circuit node');
+The: 'El sonda ',
+probe_is_connected_to_node: ' está conectado al nodo ',
+which_is_not_an_actual_circuit_node: ' que no es un nodo de circuito real',
+
 Voltage: 'Voltaje',
 Current: 'Corriente',
 Time: 'Tiempo',
-Node_has_two_conflicting_labels: 'Node has two conflicting labels: ',
+Node_has_two_conflicting_labels: 'Nodo tiene dos etiquetas en conflicto: ',
+
+DC_value: 'Valor de DC',
+
+impulse: 'impulso',
+Height: 'Altura',
+Width: 'Ancho (segundos)',
+
+step: 'paso',
+Initial_value: 'Valor inicial',
+Plateau_value: 'Valor meseta',					//??
+Delay_until_step: 'Retardo hasta que el paso (seg)',
+Rise_time: 'Tiempo de subida (seg)',
+
+square: 'cuadrado',
+Frequency: 'Frecuencia (Hz)',
+Duty_cycle: 'Ciclo de trabajo (%)',
+
+triangle: 'triángulo',
+
+pwl: 'pwl',
+Comma_separated_list: 'Lista separada por comas de los tiempos y valores alternos',
+
+pwl_repeating: 'pwl_repeating',
+
+pulse: 'pulso',
+Delay_until_pulse: 'Retardo hasta que el pulso (seg)',
+Time_for_first_transition: 'Tiempo para la primera transición (seg)',
+Time_for_second_transition: 'Tiempo para la segunda transición (seg)',
+Pulse_width: 'Ancho de pulso (segundos)',
+Period: 'Período (seg)',
+
+sin: 'sin',
+Offset_value: 'Valor de desplazamiento',
+Amplitude: 'Amplitud',
+Delay_until_sin_starts: 'Retardo hasta que se inicia el sino (seg)',	//??
+Phase_offset_degrees: 'Desplazamiento de fase (grados)',
 
 last_line: 'last, no comma'
 };
 
-// translateable color names, not to be confused with variables: probe_names or probe_colors or probe_colors_rgb
+// translated color names, not to be confused with variables: probe_names or probe_colors or probe_colors_rgb
 var i18n_probe_cnames = ["rojo", "verde", "azul", "cian", "magenta", "amarillo", "negro",'x-axis'];
-
-
-/*
-
-
-'log(Frequency in Hz)'
-'degrees'
-'AC Phase'
-'log(Frequency in Hz)'
-'dB'
-'AC Magnitude'
-
-'Minimum number of timepoints'
-'Stop time (seconds)'
-"Transient Analysis: add a probe to the diagram!"
-'Transient Analysis'
-' probe is connected to node '
-' which is not an actual circuit node')
-'Voltage'
-'Current'
-'Voltage'
-'Current'
-'Transient Analysis'
-
-"Node has two conflicting labels: "
-
-	var probe_colors = ['red','green','blue','cyan','magenta','yellow','black','x-axis'];
-// These are names AND keys of a case statement, need to separate function.
-
-'<Probe ('
-'Plot color'	//maybe not needed
-'Plot offset'	//maybe not needed
-'Edit Properties'
-
-'<Ammeter ('
-'<Resistor '
-'<Capacitor '
-'<Inductor '
-'<Diode '
-'normal'
-'ideal'
-'area'
-
-'name'
-'W/L'
-'<NFet '
-'<PFet '
-'<OpAmp'
-
-'source '
-'name'
-'value'
-
-'dc': ['DC value'],
-
-		'impulse': ['Height',
-		'Width (secs)'],
-
-		'step': ['Initial value',
-		'Plateau value',
-		'Delay until step (secs)',
-		'Rise time (secs)'],
-
-		'square': ['Initial value',
-		'Plateau value',
-		'Frequency (Hz)',
-		'Duty cycle (%)'],
-
-		'triangle': ['Initial value',
-		'Plateau value',
-		'Frequency (Hz)'],
-
-		'pwl': ['Comma-separated list of alternating times and values'],
-
-		'pwl_repeating': ['Comma-separated list of alternating times and values'],
-
-		'pulse': ['Initial value',
-		'Plateau value',
-		'Delay until pulse (secs)',
-		'Time for first transition (secs)',
-		'Time for second transition (secs)',
-		'Pulse width (secs)',
-		'Period (secs)'],
-
-		'sin': ['Offset value',
-		'Amplitude',
-		'Frequency (Hz)',
-		'Delay until sin starts (secs)',
-		'Phase offset (degrees)']
-*/

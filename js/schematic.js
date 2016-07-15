@@ -2130,27 +2130,27 @@ schematic = (function() {
 	    this.toolbar = [];
 
 	    if (!this.diagram_only) {
-	    	this.tools['help'] = this.add_tool(help_icon,'Help: display help page',this.help);
+	    	this.tools['help'] = this.add_tool(help_icon,i18n.Help,this.help);
 	    	this.enable_tool('help',true);
 		this.toolbar.push(null);  // spacer
 	}
 
 	if (this.edits_allowed) {
-		this.tools['grid'] = this.add_tool(grid_icon,'Grid: toggle grid display',this.toggle_grid);
+		this.tools['grid'] = this.add_tool(grid_icon,i18n.Grid,this.toggle_grid);
 		this.enable_tool('grid',true);
-		this.tools['cut'] = this.add_tool(cut_icon,'Cut: cut selected components to the clipboard',this.cut);
-		this.tools['copy'] = this.add_tool(copy_icon,'Copy: copy selected components to the clipboard',this.copy);
-		this.tools['paste'] = this.add_tool(paste_icon,'Paste: copy clipboard to the schematic',this.paste);
+		this.tools['cut'] = this.add_tool(cut_icon,i18n.Cut,this.cut);
+		this.tools['copy'] = this.add_tool(copy_icon,i18n.Copy,this.copy);
+		this.tools['paste'] = this.add_tool(paste_icon,i18n.Paste,this.paste);
 		this.toolbar.push(null);  // spacer
 
-		this.tools['delete'] = this.add_tool(delete_icon,'Delete selected components',this.delete_selected);
-		this.tools['rotate'] = this.add_tool(rotate_icon,'Rotate selected component',this.rotate_selected);
+		this.tools['delete'] = this.add_tool(delete_icon,i18n.Delete,this.delete_selected);
+		this.tools['rotate'] = this.add_tool(rotate_icon,i18n.Rotate,this.rotate_selected);
 	    this.toolbar.push(null);  // spacer	
 
-	    this.tools['net'] = this.add_tool(download_icon,'Download netlist',this.download_netlist);
+	    this.tools['net'] = this.add_tool(download_icon,i18n.Download_netlist,this.download_netlist);
 	    this.enable_tool('net',true);   
 	    
-	    this.tools['load'] = this.add_tool(import_icon,'Import netlist',this.import_netlist);
+	    this.tools['load'] = this.add_tool(import_icon,i18n.Import_netlist,this.import_netlist);
 	    this.enable_tool('load',true);
 	    this.toolbar.push(null);  // spacer	
 	}
@@ -6283,40 +6283,40 @@ Diode.prototype.edit_properties = function(x,y) {
 	var source_functions = {
 		'dc': ['DC value'],
 
-		'impulse': ['Height',
-		'Width (secs)'],
+		'impulse': [i18n.Height,
+		i18n.Width],
 
-		'step': ['Initial value',
-		'Plateau value',
-		'Delay until step (secs)',
-		'Rise time (secs)'],
+		'step': [i18n.Initial_value,
+		i18n.Plateau_value,
+		i18n.Delay_until_step,
+		i18n.Rise_time],
 
-		'square': ['Initial value',
-		'Plateau value',
-		'Frequency (Hz)',
-		'Duty cycle (%)'],
+		'square': [i18n.Initial_value,
+		i18n.Plateau_value,
+		i18n.Frequency,
+		i18n.Duty_cycle],
 
-		'triangle': ['Initial value',
-		'Plateau value',
-		'Frequency (Hz)'],
+		'triangle': [i18n.Initial_value,
+		i18n.Plateau_value,
+		i18n.Frequency],
 
-		'pwl': ['Comma-separated list of alternating times and values'],
+		'pwl': [i18n.Comma_separated_list],
 
-		'pwl_repeating': ['Comma-separated list of alternating times and values'],
+		'pwl_repeating': [i18n.Comma_separated_list],
 
-		'pulse': ['Initial value',
-		'Plateau value',
-		'Delay until pulse (secs)',
-		'Time for first transition (secs)',
-		'Time for second transition (secs)',
-		'Pulse width (secs)',
-		'Period (secs)'],
+		'pulse': [i18n.Initial_value,
+		i18n.Plateau_value,
+		i18n.Delay_until_pulse,
+		i18n.Time_for_first_transition,
+		i18n.Time_for_second_transition,
+		i18n.Pulse_width,
+		i18n.Period],
 
-		'sin': ['Offset value',
-		'Amplitude',
-		'Frequency (Hz)',
-		'Delay until sin starts (secs)',
-		'Phase offset (degrees)']
+		'sin': [i18n.Offset_value,
+		i18n.Amplitude,
+		i18n.Frequency,
+		i18n.Delay_until_sin_starts,
+		i18n.Phase_offset_degrees]
 	}
 
 	// build property editor div
