@@ -2043,9 +2043,7 @@ schematic = (function() {
     var annotation_size = 7;  	// point size for diagram annotations
 
     var parts_map = {
-    	//'g': [Ground, 'Ground connection'],
     	'g': [Ground, i18n.Ground_connection],
-    	//'L': [Label, 'Node label'],
     	'L': [Label, i18n.Node_label],
     	'v': [VSource, i18n.Voltage_source],
     	'i': [ISource, i18n.Current_source],
@@ -2252,6 +2250,8 @@ schematic = (function() {
 		}, false);
 
 		this.canvas.addEventListener('touchstart', function(event) {
+			var numTouch = event.changedTouches.length;
+			if (numTouch >= 2) return;		//let 2 or more touches be for scrolling the window
 			var touch = event.changedTouches[0];
 
 			if (!event) event = window.event;
@@ -2345,7 +2345,7 @@ schematic = (function() {
 	    if (!this.diagram_only) {
 		//table.frame = 'box';
 		table.style.borderStyle = 'solid';
-		table.style.borderWidth = '2px';
+		table.style.borderWidth = '1px';
 		table.style.borderColor = normal_style;
 		table.style.backgroundColor = background_style;
 	}
@@ -3748,7 +3748,7 @@ Schematic.prototype.transient_analysis = function() {
 	    	sch.delete_selected();
 	    	event.preventDefault();
 	    	return false;
-	    } else {				//clicked in schematic area
+	    } else {											//clicked in schematic area
 	    	var x = mx/sch.scale + sch.origin_x;
 	    	var y = my/sch.scale + sch.origin_y;
 	    	sch.cursor_x = Math.round(x/sch.grid) * sch.grid;
@@ -3758,7 +3758,7 @@ Schematic.prototype.transient_analysis = function() {
 		var cplist = sch.connection_points[sch.cursor_x + ',' + sch.cursor_y];
 		if (cplist && !event.shiftKey) {
 		    //sch.unselect_all(-1);		//commented out for touch interface
-		    //QQQ leaving this in unselects the pending new tap-tap component. 
+		    //QQQ Leaving this in unselects the pending new tap-tap component. 
 		    //(dragging a new component to the schematic canvas does not trigger this mouse_down handler)
 		    //side effect: commenting this out leaves currently selected parts green when you add a new wire.
 		    //Is there a way to tell if the selected part is pending vs already there?
@@ -3790,6 +3790,25 @@ Schematic.prototype.transient_analysis = function() {
 		}
 	}
 }
+
+if (sch.new_part) {
+		// grab incoming part, turn off selection of parts bin
+		var part = sch.new_part;
+		sch.new_part = undefined;
+		part.select(false);
+
+		// unselect everything else in the schematic, add part and select it
+		sch.unselect_all(-1);
+		sch.redraw_background();  // so we see any components that got unselected
+
+		// make a clone of the component in the parts bin
+		part = part.component.clone(sch.cursor_x,sch.cursor_y);
+		part.add(sch);  // add it to schematic
+		part.set_select(true);
+
+		// and start dragging it
+		sch.drag_begin();
+	}
 
 sch.redraw_background();
 return false;
