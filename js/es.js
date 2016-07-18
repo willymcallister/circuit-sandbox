@@ -119,3 +119,17 @@ last_line: 'last, no comma'
 
 // translated color names, not to be confused with variables: probe_names or probe_colors or probe_colors_rgb
 var i18n_probe_cnames = ["rojo", "verde", "azul", "cian", "magenta", "amarillo", "negro",'x-axis'];
+
+var strSHelp = "CIRCUITO SALVADERA AYUDA \n\n"; // Ayuda incrustado
+var strAddC = "Añadir componente: Haga clic en una parte en la papelera, a continuación, haga clic en el esquema para añadir. \n\n";
+var strAddW = "Añadir alambre: Los cables comienzan a partir de los puntos de conexión (círculos abiertos) Haga clic en una conexión para iniciar un hilo, arrastre y suelte. \n\n";
+var strSel = "Seleccionar: Arrastre un rectángulo para seleccionar los componentes. Shift clic para incluir otro componente. \n\n";
+var strMove = "Mover: Haga clic para seleccionar, a continuación, arrastre a una nueva ubicación. \n\n";
+var strDel = "Borrar: Seleccionar, a continuación, haga clic en el icono X o golpear RETROCESO. \n\n";
+var strRot = "Rotar/Reflejar: Haga clic para seleccionar, a continuación, haga clic en el icono de rotación o escriba la letra \"r\" para girar 90. Repetir para más rotaciones y reflexiones. \n\n";
+var strProp = "Propiedades: Haga doble clic en un componente para cambiar los valores. \n\n";
+var strNum = "Sufijos numéricos se puede introducir en la notación de ingeniería: \n\
+T\t10^12\t\tm\t10^-3 \n\
+G\t10^9 \t\tu\t10^-6  \n\
+M\t10^6 \t\tn\t10^-9  \n\
+k\t10^3 \t\tp\t10^-12 \t\tf\t10^-15";
