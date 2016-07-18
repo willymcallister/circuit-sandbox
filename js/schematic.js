@@ -2029,7 +2029,8 @@ function prepare_schematics() {
 }
 
 schematic = (function() {
-	var background_style 	= 'rgb(240,241,242)';
+	var background_style = 'rgb(250,250,250)';	//KAgray98
+	var border_style = 'rgb(214,216,218)';		//KAgray85
 	var element_style = 'rgb(255,255,255)';
 	var thumb_style = 'rgb(128,128,128)';
     var normal_style = 'rgb(0,0,0)';  			// default drawing color
@@ -2179,7 +2180,7 @@ schematic = (function() {
 		}
 	}
 
-	    // set up diagram canvas
+	    // set up schematic diagram canvas
 	    this.canvas = document.createElement('canvas');
 	    this.width = input.getAttribute('width');
 	    this.width = parseInt(this.width == undefined ? '400' : this.width);
@@ -2188,7 +2189,6 @@ schematic = (function() {
 	    this.height = parseInt(this.height == undefined ? '300' : this.height);
 	    this.canvas.height = this.height;
 	    this.canvas.style.display = 'block'; //gets rid of the little sliver of default padding at the bottom.
-
 
 	    this.sctl_r = 16;   				// scrolling control parameters
 	    this.sctl_x = this.sctl_r + 8;
@@ -2216,8 +2216,9 @@ schematic = (function() {
 		this.canvas.tabIndex = 1; // so we get keystrokes
 		this.canvas.style.borderStyle = 'solid';
 		this.canvas.style.borderWidth = '1px';
-		this.canvas.style.borderColor = stroke_style;
+		this.canvas.style.borderColor = border_style;
 		this.canvas.style.outline = 'none';
+		this.canvas.style.borderRadius = '4px';		//apply radius
 	}
 
 	this.canvas.schematic = this;
@@ -2345,10 +2346,12 @@ schematic = (function() {
 	    table.rules = 'none';
 	    if (!this.diagram_only) {
 		//table.frame = 'box';
-		table.style.borderStyle = 'solid';
-		table.style.borderWidth = '1px';
-		table.style.borderColor = normal_style;
+		table.style.borderStyle = 'solid';	
+		table.style.borderWidth = '0px';			//removed border
+		table.style.borderColor = border_style;
 		table.style.backgroundColor = background_style;
+		table.style.borderRadius = '4px';			//apply radius
+
 	}
 
 	    // add tools to DOM
@@ -5022,7 +5025,7 @@ function graph_mouse_move(event) {
 	    //part.sch.saved_onselectstart = document.onselectstart;
 	    //document.onselectstart = function () { return false; };
 
-	    canvas.style.borderColor = normal_style;
+	    canvas.style.borderColor = border_style;
 	    part.sch.message(part.tip+i18n.drag_onto_diagram);
 	    //part.sch.message(part.tip);
 	    return false;
