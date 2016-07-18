@@ -3272,17 +3272,16 @@ Schematic.prototype.transient_analysis = function() {
 	    if (!this.diagram_only && this.show_grid) {
 		// grid
 		c.strokeStyle = grid_style;
-		var o = 0.0;		// half pixel offset for sharp lines with odd pixel width
 		var first_x = this.origin_x;
 		var last_x = first_x + this.width/this.scale;
 		var first_y = this.origin_y;
 		var last_y = first_y + this.height/this.scale;
 
 		for (var i = this.grid*Math.ceil(first_x/this.grid); i < last_x; i += this.grid)
-			this.draw_line(c,i+o,first_y,i+o,last_y,1);
+			this.draw_line(c,i,first_y,i,last_y,1);
 
 		for (var i = this.grid*Math.ceil(first_y/this.grid); i < last_y; i += this.grid)
-			this.draw_line(c,first_x,i+o,last_x,i+o,1);
+			this.draw_line(c,first_x,i,last_x,i,1);
 	}
 
 	    // unselected components
