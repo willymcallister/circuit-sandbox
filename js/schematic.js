@@ -2035,7 +2035,8 @@ schematic = (function() {
     var normal_style = 'rgb(0,0,0)';  			// default drawing color
     var component_style = 'rgb(60,145,229)';  	// color for unselected components, KA default5
     var selected_style = 'rgb(116,207,112)';	// highlight color for selected components, KA CS2
-    var grid_style = "rgb(128,128,128)";
+    var stroke_style = "rgb(128,128,128)";		// on-screen icons
+    var grid_style = "rgb(240,240,240)";
     var annotation_style = 'rgb(255,64,64)';  	// color for diagram annotations
     var cancel_style = 'rgb(232,77,57)';		//cancel X color KA humantities2
     var ok_style = 'rgb(31,171,84)';			//ok checkmark color KA CS1
@@ -2196,7 +2197,7 @@ schematic = (function() {
 	    this.zctl_x = this.sctl_x;			// zoom control parameters
 	    this.zctl_y = this.sctl_y + this.sctl_r + 8;
 	    this.zctl_w = 26;
-	    this.zctl_h = 3.2*this.zctl_w;	    
+	    this.zctl_h = 3*this.zctl_w;	    
 
 	    this.rctl_r = this.sctl_r;   		// rotation control parameters
 	    this.rctl_x = this.sctl_x;
@@ -2215,7 +2216,7 @@ schematic = (function() {
 		this.canvas.tabIndex = 1; // so we get keystrokes
 		this.canvas.style.borderStyle = 'solid';
 		this.canvas.style.borderWidth = '1px';
-		this.canvas.style.borderColor = grid_style;
+		this.canvas.style.borderColor = stroke_style;
 		this.canvas.style.outline = 'none';
 	}
 
@@ -2570,6 +2571,7 @@ Schematic.prototype.unselect_all = function(which) {
 	}
 
 	Schematic.prototype.help = function() {
+/* Embedded help strings are now in i18n strings files: en-US.js, es.js, and the like
 		var strSHelp = "CIRCUIT SANDBOX HELP\n\n";		//embedded Help 
 		var strAddC = "Add component: Click on a part in the bin, then click on schematic to add.\n\n";
 		var strAddW = "Add wire: Wires start at connection points (open circles). Click on a connection to start a wire, drag, and release.\n\n";
@@ -2584,7 +2586,7 @@ Schematic.prototype.unselect_all = function(which) {
 		M\t10^6 \t\tn\t10^-9  \n\
 		k\t10^3 \t\tp\t10^-12 \n\
 		\t\t   \t\tf\t10^-15";
-
+*/
 		var strHelp = strSHelp + strAddC + strAddW + strSel + strMove + strDel + strRot + strProp + strNum;
 		window.confirm(strHelp);	
 	}
@@ -3259,8 +3261,9 @@ Schematic.prototype.transient_analysis = function() {
 	// Also redraws dynamic portion.
 	Schematic.prototype.redraw_background = function() {
 		var c = this.bg_image.getContext('2d');
+		//c.scale(2,2);	//retina display - doesn't look good
 
-		c.lineCap = 'round';
+		c.lineCap = 'butt';	// butt(D) | *round | square
 
 	    // paint background color
 	    c.fillStyle = element_style;
@@ -3269,16 +3272,17 @@ Schematic.prototype.transient_analysis = function() {
 	    if (!this.diagram_only && this.show_grid) {
 		// grid
 		c.strokeStyle = grid_style;
+		var o = 0.0;		// half pixel offset for sharp lines with odd pixel width
 		var first_x = this.origin_x;
 		var last_x = first_x + this.width/this.scale;
 		var first_y = this.origin_y;
 		var last_y = first_y + this.height/this.scale;
 
 		for (var i = this.grid*Math.ceil(first_x/this.grid); i < last_x; i += this.grid)
-			this.draw_line(c,i,first_y,i,last_y,0.1);
+			this.draw_line(c,i+o,first_y,i+o,last_y,1);
 
 		for (var i = this.grid*Math.ceil(first_y/this.grid); i < last_y; i += this.grid)
-			this.draw_line(c,first_x,i,last_x,i,0.1);
+			this.draw_line(c,first_x,i+o,last_x,i+o,1);
 	}
 
 	    // unselected components
@@ -3381,9 +3385,10 @@ Schematic.prototype.transient_analysis = function() {
 
 	    // scroll/zoom/rotate/delete controls
 	    if (!this.diagram_only) {
+	    	var o = 0.5;		// half pixel offset for sharp lines with odd pixel width
 	    	var r = this.sctl_r;
-	    	var x = this.sctl_x;
-	    	var y = this.sctl_y;
+	    	var x = this.sctl_x+o;
+	    	var y = this.sctl_y+o;
 
 		// filled circle with border
 		c.fillStyle = element_style;
@@ -3391,14 +3396,14 @@ Schematic.prototype.transient_analysis = function() {
 		c.arc(x,y,r,0,2*Math.PI);
 		c.fill();
 
-		c.strokeStyle = grid_style;
+		c.strokeStyle = stroke_style;
 		c.lineWidth = 0.5;
 		c.beginPath();
 		c.arc(x,y,r,0,2*Math.PI);
 		c.stroke();
 
 		// direction markers for scroll
-		c.lineWidth = 3;
+		c.lineWidth = 2;
 		c.beginPath();
 
 		c.moveTo(x + 4,y - r + 8);   // north
@@ -3424,27 +3429,27 @@ Schematic.prototype.transient_analysis = function() {
 		y = this.zctl_y;
 		var w = this.zctl_w;
 		var h = this.zctl_h;
-		var s = w/4;		// portion of width = stroke length
-		var t = h/6;		// portion of height
+		var s = 6;			// 1/2 horiz stroke length
+		var t = 12;			//     vert symbol spacing
 		c.lineWidth = 0.5;
 		c.fillStyle = element_style;    // background
-		c.fillRect(x-w/2,y,w,h);
-		c.strokeStyle = grid_style;     // border
-		c.strokeRect(x-w/2,y,w,h);
-		c.lineWidth = 1.6;
+		c.fillRect(x-w/2+o,y+o,w,h);
+		c.strokeStyle = stroke_style;     // border
+		c.strokeRect(x-w/2+o,y+o,w,h);
+		c.lineWidth = 1;
 		c.beginPath();
-		// zoom in label
-		c.moveTo(x-s,y+t); c.lineTo(x+s,y+t); c.moveTo(x,y+t-s); c.lineTo(x,y+t+s);
-		// zoom out label
-		c.moveTo(x-s,y+3*t); c.lineTo(x+s,y+3*t);
-		// surround label
-		c.strokeRect(x-s,y+4*t+t/2,2*s,2*s);
+		// zoom in plus
+		c.moveTo(x-s,y+t+o); c.lineTo(x+s+1,y+t+o); c.moveTo(x+o,y+t-s); c.lineTo(x+o,y+t+s+1);
+		// zoom out minus
+		c.moveTo(x-s,y+3*t+o); c.lineTo(x+s+1,y+3*t+o);
+		// zoom all box
+		c.strokeRect(x-s+o,y+4*t+t/2+o,2*s,2*s);
 		c.stroke();
 
 		// rotate control
 		r = this.rctl_r;
-		x = this.rctl_x;
-		y = this.rctl_y;
+		x = this.rctl_x+o;
+		y = this.rctl_y+o;
 
 		// filled circle with border
 		c.fillStyle = element_style;
@@ -3452,62 +3457,51 @@ Schematic.prototype.transient_analysis = function() {
 		c.arc(x,y,r,0,2*Math.PI);
 		c.fill();
 
-		c.strokeStyle = grid_style;
+		c.strokeStyle = stroke_style;
 		c.lineWidth = 0.5;
 		c.beginPath();
 		c.arc(x,y,r,0,2*Math.PI);
 		c.stroke();
 
-/*		c.lineWidth = 2;
-		r = this.sctl_r - 8;
-		c.fillStyle = grid_style;
-		c.beginPath();	// 3/4 circle
-		c.arc(x,y,r,0,1.5*Math.PI);
-		c.stroke();
-		c.beginPath();   // arrow
-		c.moveTo(x - 1,y - r + 4);
-		c.lineTo(x + 4,y - r);
-		c.lineTo(x - 1,y - r - 4);
-		c.lineTo(x - 1,y - r + 4);
-		c.fill();
-*/
-		//new rotate icon
+		// rotate control
 		c.lineWidth = 2;
 		r = this.sctl_r - 6;
-		c.fillStyle = grid_style;
-		c.beginPath();	// 1/4 circle
-		c.arc(x,y,r,-0.6*Math.PI,0);
+		c.fillStyle = stroke_style;
+		c.beginPath();
+		c.arc(x,y,r,-0.6*Math.PI,0);	// 1/4 circle
 		c.stroke();
-		c.beginPath();   // arrow
-		c.moveTo(x + 6,y );
+		c.lineWidth = 1;		
+		c.beginPath();   				// arrowhead
+		c.moveTo(x + 6,y);
 		c.lineTo(x + 10,y + 4);
 		c.lineTo(x + 14,y);
 		c.lineTo(x + 6,y);
-		c.font = "12pt sans-serif";
 		c.fill();
-		//c.fillText("R",x - 8, y + 8);
+		c.stroke();
+		c.font = "13pt sans-serif";
+		c.fillText("R",x - 8, y + 8);	//Why does this R jump around during rotate?
 
-		c.beginPath();	// R
-		c.beginPath();	// 1/2 circle
-		c.arc(x-1,y,3,-0.5*Math.PI,+0.5*Math.PI);
+		c.lineWidth = 2;	// drawn R character
+		c.beginPath();		// 1/2 circle
+		c.arc(x-1,y,4,-0.5*Math.PI,+0.5*Math.PI);
 		c.stroke();
-		c.moveTo(x-6, y+9);
-		c.lineTo(x-6, y-4);
+		c.moveTo(x-6+o, y+10);
+		c.lineTo(x-6+o, y-4);
 		c.stroke();
-		c.moveTo(x-6, y-3);
-		c.lineTo(x, y-3);
+		c.moveTo(x-6+o, y-4);
+		c.lineTo(x, y-4);
 		c.stroke();
-		c.moveTo(x-6, y+3);
-		c.lineTo(x, y+3);
+		c.moveTo(x-6+o, y+4);
+		c.lineTo(x, y+4);
 		c.stroke();
-		c.moveTo(x-1,y+4);
-		c.lineTo(x+3,y+9);
-		c.stroke();
-	}
+		c.moveTo(x-2,y+4);
+		c.lineTo(x+4,y+10);
+		c.stroke(); 
+	
 	    // delete control
 	    r = this.dctl_r;
-	    x = this.dctl_x;
-	    y = this.dctl_y;
+	    x = this.dctl_x+o;
+	    y = this.dctl_y+o;
 
 		// filled circle with border
 		c.fillStyle = element_style;
@@ -3515,20 +3509,21 @@ Schematic.prototype.transient_analysis = function() {
 		c.arc(x,y,r,0,2*Math.PI);
 		c.fill();
 
-		c.strokeStyle = grid_style;
+		c.strokeStyle = stroke_style;
 		c.lineWidth = 0.5;
 		c.beginPath();
 		c.arc(x,y,r,0,2*Math.PI);
 		c.stroke();
 
-		c.lineWidth = 4;
+		c.lineWidth = 5;	// big X
+		c.lineCap = 'round';
 		c.beginPath();
-
-		c.moveTo(x - 6,y - 6);
-		c.lineTo(x + 6,y + 6);
-		c.moveTo(x + 6,y - 6);
-		c.lineTo(x - 6,y + 6);
+		c.moveTo(x - 5,y - 5);
+		c.lineTo(x + 5,y + 5);
+		c.moveTo(x + 5,y - 5);
+		c.lineTo(x - 5,y + 5);
 		c.stroke();
+	}
 	}
 
 	// draws a cross cursor
@@ -3757,12 +3752,13 @@ Schematic.prototype.transient_analysis = function() {
 		// is mouse over a connection point?  If so, start dragging a wire
 		var cplist = sch.connection_points[sch.cursor_x + ',' + sch.cursor_y];
 		if (cplist && !event.shiftKey) {
-		    //sch.unselect_all(-1);		//commented out for touch interface
-		    //QQQ Leaving this in unselects the pending new tap-tap component. 
-		    //(dragging a new component to the schematic canvas does not trigger this mouse_down handler)
-		    //side effect: commenting this out leaves currently selected parts green when you add a new wire.
-		    //Is there a way to tell if the selected part is pending vs already there?
-		    //Can you ask "is mouse dragging a new part? If so put it down." Consider testing for !sch.dragging
+		    //sch.unselect_all(-1);		//commented out for touch
+		    //With touch, we can't drag a new part onto the schematic (there isn't a "touch_enter" event).
+		    //So we do a "tap-tap" sequence to add parts. 
+		    //Parts are selected from the bin and added to the component list (add_part). 
+		    //The next tap inside the schematic area places the new part.
+		    //If we uncomment the unselect_all above, it would unselect the pending new component and it does not get placed. 
+		    //Side effect: Commenting out unselect_all above leaves any currently selected parts still selected.
 		    sch.wire = [sch.cursor_x,sch.cursor_y,sch.cursor_x,sch.cursor_y];
 		} else {
 		    // give all components a shot at processing the selection event
@@ -4792,7 +4788,7 @@ if (z_values != undefined && z_values.length > 0) {
 	    // draw dashed vertical marker that follows mouse
 	    var x = graph.left_margin + cursor_x;
 	    var end_y = graph.top_margin + graph.pheight + graph.tick_length;
-	    c.strokeStyle = grid_style;
+	    c.strokeStyle = stroke_style;
 	    c.lineWidth = 1;
 	    c.beginPath();
 	    c.dashedLineTo(x,graph.top_margin,x,end_y,cursor_pattern);
@@ -5288,7 +5284,7 @@ Component.prototype.add = function(sch) {
 		     }
 
 		     Component.prototype.draw = function(c) {
-	    /*
+	    /* for debug: puts X on connection points
 	    for (var i = this.connections.length - 1; i >= 0; --i) {
 		var cp = this.connections[i];
 		cp.draw_x(c);
@@ -5490,8 +5486,8 @@ ConnectionPoint.prototype.update_location = function() {
 	}
 
 	ConnectionPoint.prototype.draw_x = function(c) {
-		this.parent.draw_line(c,this.offset_x-2,this.offset_y-2,this.offset_x+2,this.offset_y+2,grid_style);
-		this.parent.draw_line(c,this.offset_x+2,this.offset_y-2,this.offset_x-2,this.offset_y+2,grid_style);
+		this.parent.draw_line(c,this.offset_x-2,this.offset_y-2,this.offset_x+2,this.offset_y+2);
+		this.parent.draw_line(c,this.offset_x+2,this.offset_y-2,this.offset_x-2,this.offset_y+2);
 	}
 
 	ConnectionPoint.prototype.display_voltage = function(c,vmap) {
