@@ -2029,18 +2029,18 @@ function prepare_schematics() {
 }
 
 schematic = (function() {
-	var background_style = 'rgb(250,250,250)';	//KAgray98
-	var border_style = 'rgb(214,216,218)';		//KAgray85
 	var element_style = 'rgb(255,255,255)';
-	var thumb_style = 'rgb(128,128,128)';
-    var normal_style = 'rgb(0,0,0)';  			// default drawing color
-    var component_style = 'rgb(60,145,229)';  	// color for unselected components, KA default5
-    var selected_style = 'rgb(116,207,112)';	// highlight color for selected components, KA CS2
-    var stroke_style = "rgb(128,128,128)";		// on-screen icons
-    var grid_style = "rgb(240,240,240)";
+	var background_style = 'rgb(246,247,247)';	// KAgray97
+    var grid_style = "rgb(240,241,242)";		// KAgray95
+	var border_style = 'rgb(214,216,218)';		// KAgray85
+	var stroke_style = 'rgb(186,190,194)';		// KAgray76 on-schematic icons
+    var normal_style = 'rgb(0,0,0)';  			// black wire drawing color
+    var component_style = 'rgb(60,145,229)';  	// KA default5 color for unselected components
+    var selected_style = 'rgb(116,207,112)';	// KA CS2 highlight color for selected components
+    var icon_style = 'rgb(33,36,44)';			// KAgray17 main menu icons 
     var annotation_style = 'rgb(255,64,64)';  	// color for diagram annotations
-    var cancel_style = 'rgb(232,77,57)';		//cancel X color KA humantities2
-    var ok_style = 'rgb(31,171,84)';			//ok checkmark color KA CS1
+    var cancel_style = 'rgb(232,77,57)';		// cancel X icon KA humanities2
+    var ok_style = 'rgb(31,171,84)';			// ok checkmark icon KA CS1
     var property_size = 7;  	// point size for Component property text
     var annotation_size = 7;  	// point size for diagram annotations
 
@@ -2218,7 +2218,8 @@ schematic = (function() {
 		this.canvas.style.borderWidth = '1px';
 		this.canvas.style.borderColor = border_style;
 		this.canvas.style.outline = 'none';
-		this.canvas.style.borderRadius = '4px';		//apply radius
+		this.canvas.style.borderRadius = '4px';
+		this.canvas.style.marginLeft = '10px';
 	}
 
 	this.canvas.schematic = this;
@@ -2591,7 +2592,18 @@ Schematic.prototype.unselect_all = function(which) {
 		\t\t   \t\tf\t10^-15";
 */
 		var strHelp = strSHelp + strAddC + strAddW + strSel + strMove + strDel + strRot + strProp + strNum;
-		window.confirm(strHelp);	
+		//window.confirm(strHelp);
+
+		var content = document.createElement('div');
+		var lineBreak = document.createElement('br');
+
+		var nstrAddC = document.createTextNode(strAddC);
+		content.appendChild(nstrAddC);
+		content.appendChild(lineBreak);
+		var nstrAddW = document.createTextNode(strAddW);
+		content.appendChild(nstrAddW);
+
+	    this.dialog(i18n.Circuit_Sandbox_Help,content);	
 	}
 
 	// zoom diagram around given coords
@@ -3480,8 +3492,8 @@ Schematic.prototype.transient_analysis = function() {
 		c.lineTo(x + 6,y);
 		c.fill();
 		c.stroke();
-		c.font = "13pt sans-serif";
-		c.fillText("R",x - 8, y + 8);	//Why does this R jump around during rotate?
+		//c.font = "13pt sans-serif";
+		//c.fillText("R",x - 8, y + 8);	//QQQ Why does this R jump around during rotate?
 
 		c.lineWidth = 2;	// drawn R character
 		c.beginPath();		// 1/2 circle
@@ -3985,8 +3997,6 @@ Schematic.prototype.dialog = function(title,content,callback) {
 	    var ok_icon = document.createElement("span");
 		ok_icon.setAttribute('class', 'fa fa-fw fa-check fa-2x');
 		ok_icon.style.color = ok_style;
-	    //var ok_icon = document.createElement("img");
-	    //ok_icon.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAASCAYAAABB7B6eAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAADBElEQVQ4EaWUX2vTYBTGz/smaZhbB36BdvsM8wNsCN6Jc2mrF4Iizo254QdQISh45cWYf6bbQFRk0GQTBt7qPsD2DZTa4qWgbK0sbfLG57xpuqyDOTSlSd4/+Z3nPOckRP97VMtGiih4pcdFr/QV/4fpnEhv/unK8IoX8bOArhrD9i0VhCRsk9Re8Lxe9uf7A/A4PlWwI3BnRQ7a06rVjkhQCIIp8zlD7bcfSA1zSVLsSnJdoa9/i5CBw5aXcqgLJ+CJbPwjChVG4koCFC5GmSMDyMwmt5m1gucsG0P2rGpCeQJnwcyK5RBnENzvWVT0y/dIqVFpxI9qzmZ97NVta3dmpZNQu+cMHJ4/l4O5OcCV1k1wIQtvBc/qpY0FHQCb11GgqyQFRb8OalEsLnyveF/GdhDkXDdIFu47T+H5/DHlqB6US9TiBQp8h2UJeLgM+CyqzmpDecYaUL87NYrF+XrFq+lMzv5UmW5ZkoPWgmp2jioXpJCRqVrBMpTPMZwgSkB9rFOMURgi7uk2guQ4iJRqgu1CVwj84kLVWTTy9l1tC/eaOGpLtB+sNCobM1jRcBbFvq3JPBc+KQ6uDOcgo0rJTyPrkyMMh5AlFJThkW7kfngzWO2HMzStwQa8m4qaQQipnAXPt5FyDn7uQuyOtM2ZGC8R4GxNWlCF50wEXYPn0wxkW1I7eXjYRdXSphzOXcbLwbUw9RpeGmEaprAkIau0lVN40orN9mvAbzKsH85TcvzzOMOoXvEdwD9AkYUhpEIr3si4E0WA85jFAB6z+6zcgPIT4djXzYCDTGwzhEaq5S2Rty7i4cNMeEEfDBcRPgNm1Gy/aZT8G3q6z5Zkb3LmdInhaSbfyt6laL+9BYiFDJJM9CYN155j/W0P7kJc94Ont/WdkgCY3E6DoGMaJKZg10fUJLUL2YhQ29IK3jXK/nXNYbibZN7H7Q17RU5nOBMOxgUrEvly2JqMD0KSAxZFe8F7FPTaaeEp89g1tYsX0P9Pip7zo+A7i72N3cbojU+4+QMdZJZ6kFq2cwAAAABJRU5ErkJggg=='
 	    ok_icon.dialog = dialog; 
 	    ok_button.appendChild(ok_icon);
 
@@ -4002,8 +4012,6 @@ Schematic.prototype.dialog = function(title,content,callback) {
 	    var cancel_icon = document.createElement("span");
 		cancel_icon.setAttribute('class', 'fa fa-fw fa-times fa-2x');
 		cancel_icon.style.color = cancel_style;
-	    //var cancel_icon = document.createElement("img");
-	    //cancel_icon.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAADDUlEQVQ4EVVUS09TQRidmXtnqCQ8Skmgv8E/0MuKH9CaAHYjGhdqXEFMjK+YYJeIK4S4MUZjUBPAGNMu3MmKsnBnXOq2bRRKYQHcR8dzxt5GJrm98zjf+c53vzMVAsNWhGoWg7VmKfjZKAb3uMexWS57/2ZCfJ2e9tN5oxQ8A/YX3kvpniRJ61uwnRvQMydJIoxSohNFTyeqew8J4rn4UZZyayvhunVpamNM+/PEDnhKHJzF6/lafUE2S4WXOWNu7odRZIW1Ukg97HvyKE6WJ6v1RySSFdF1JKXg7ajxr7XDOMYaxFZnjVbtMHoMoiBUUuiuFYkUgqUk1go1Ynx5FCYrE7XdByQB7l3W+FcOQWIFyPHgfTrke5njOPnuQ8SbrDG3oAhcKINkUiSdKPaGtHe/WZqKpbDjJKGSHgYkliqRDpRWfJA4kK1i8BHAmXbkJFMVTl05ctBTxIiTpMtA7jPSlTqitepEydpkdXeRB260SoXtUaPnetJTMnCgUDeYup9AjGpfAbs6Wavf4bGyvbaiS5fbZ/EnKGObmZEEUCNRLh9H4vZIgjLXUxILmyi5sxNzAqDAwexBGL+/4CkP6R1ZX7IjtjaDENqDLWeMrVQUrcFM5wbaHzK4V8+5s3TRBYZzYACtuG3J0qiKq2ZxamPUePOHUUzz9cthQE+ZKw0+g2m7K/meNXgD+spJkh0ASRgnQPdJkJfBGOc+thrRPshiZ1p3yp//lFAZSRR04zsLi/YrfqzTJMGrT+YUD2tPHkexu06yUSo8HzdmAYaMEUozQiV9IuWwprvjVfQuN2b0VTSCiZw1AHLK0UHZCaO7PuJut6MI54jEoudY+kRify1f23M+aZWCQVhjtnfPSMbnFPcpY6W8jjLsZlZrdoAZInLRsY6kureIPfcdJ6r1uYMw4g2gz3hVmN3XuHWYf1b7meMbAHwZN9oYJXGbfQ8+eZ4HCYDobkWmPsOeM23OaE0syvVR7qt8tb7ksLZ80eBbvcbzu1EsPHGb+EkJuE5vABUC9wJ/an/wXk6xfwGsiIP7ApkEaQAAAABJRU5ErkJggg=='
 	    cancel_icon.dialog = dialog;
 	    cancel_button.appendChild(cancel_icon);
 
@@ -4111,24 +4119,29 @@ function build_table(a) {
 
 	    // div to hold the title
 	    var head = document.createElement('div');
-	    head.style.backgroundColor = 'rgb(202,51,124)';		// KA Science1
-	    head.style.font = '12pt sans-serif';
-	    head.style.color = 'white';
+	    head.style.backgroundColor = 'white'; //'rgb(202,51,124)';		// KA Science1
+	    head.style.font = '10pt sans-serif';
+	    head.style.color = 'black';
+	    head.style.fontWeight = 'bold';
 	    head.style.textAlign = 'center';
 	    head.style.padding = '5px';
+	    head.style.borderBottom = '1px solid';
+	    head.style.borderColor = border_style;
+	    head.style.borderRadius = '4px 4px 0px 0px';
 	    head.appendChild(document.createTextNode(title));
 	    head.win = win;
 	    win.head = head;
 
 		var close_button = document.createElement("span");
 		close_button.setAttribute('class', 'fa fa-fw fa-times fa-lg');
-		close_button.style.color = 'white';
+		close_button.style.color = border_style;
 	    //var close_button = new Image();
 	    //close_button.src = close_icon;
 	    close_button.style.cssFloat = 'right';
 	    close_button.addEventListener('click',window_close_button,false);
 	    close_button.win = win;
 	    head.appendChild(close_button);
+	    
 
 	    win.appendChild(head);
 
@@ -4149,7 +4162,10 @@ function build_table(a) {
 	    win.style.position = 'absolute';
 	    win.style.left = win.left + 'px';
 	    win.style.top = win.top + 'px';
-	    win.style.border = '2px solid';
+	    win.style.border = '1px solid';
+	    win.style.borderColor = border_style;
+	    win.style.borderRadius = '4px';
+
 
 	    this.canvas.parentNode.insertBefore(win,this.canvas);
 	    bring_to_front(win,true);
@@ -4253,10 +4269,12 @@ function build_table(a) {
 		} else if (icon.search('fa fa-fw') != -1) {
 			tool = document.createElement('span');
 			tool.setAttribute('class', icon);
+			tool.style.color = icon_style;
 		}
 		else {
 			tool = document.createElement('span');
 			tool.style.font = 'small-caps small sans-serif';
+			tool.style.color = icon_style;
 			var label = document.createTextNode(icon);
 			tool.appendChild(label);
 		}
@@ -4265,7 +4283,7 @@ function build_table(a) {
 	    tool.style.borderWidth = '1px';
 	    tool.style.borderStyle = 'solid';
 	    tool.style.borderColor = background_style;
-	    tool.style.padding = '2px';
+	    tool.style.padding = '8px 2px 8px 2px';
 	    tool.style.verticalAlign = 'middle';
 	    tool.style.cursor = 'default';
 
@@ -4307,7 +4325,7 @@ function build_table(a) {
 		var tool = event.target;
 
 		if (tool.enabled) {
-			tool.style.borderColor = normal_style;
+			tool.style.borderColor = border_style;
 			tool.sch.message(tool.tip);
 			tool.opacity = 1.0;
 		}

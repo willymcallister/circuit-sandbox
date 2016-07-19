@@ -114,6 +114,8 @@ Amplitude: 'Amplitude',
 Delay_until_sin_starts: 'Delay until sin starts (secs)',
 Phase_offset_degrees: 'Phase offset (degrees)',
 
+Circuit_Sandbox_Help: 'CIRCUIT SANDBOX HELP',
+
 last_line: 'last line, no comma'
 };
 
