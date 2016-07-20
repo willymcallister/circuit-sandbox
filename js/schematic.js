@@ -2897,6 +2897,11 @@ schematic = (function() {
 	    this.input.value = JSON.stringify(netlist);
 
 	    download(this.input.value, "ckt.txt", "text/plain");
+
+	    // Also save data to the browser's local store
+		localStorage.setItem("ckt", this.input.value);
+		console.log( "wrote ckt to localStorage = " + localStorage.getItem("ckt"));
+
 	}
 
 	Schematic.prototype.import_netlist = function() {
@@ -2912,6 +2917,7 @@ schematic = (function() {
 		content.fields = fields;
 		content.sch = this;
 
+		if (false) {
 		this.dialog(i18n.Import_netlist,content,function(content) {
 			var sch = content.sch;
 
@@ -2940,6 +2946,17 @@ schematic = (function() {
             	reader.readAsText(file);
             }
         });
+		}
+
+        // Access stored ctk data from browser's localStorage
+        var imported_netlist = localStorage.getItem("ckt");
+
+		content.sch.components = [];
+		content.sch.connection_points = [];
+		content.sch.load_schematic(imported_netlist);
+		content.sch.zoomall();
+
+		console.log( "ckt from localStorage = " + imported_netlist);
 	}
 
 	Schematic.prototype.extract_circuit = function() {
