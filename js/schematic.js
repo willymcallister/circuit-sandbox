@@ -2030,18 +2030,19 @@ function prepare_schematics() {
 
 schematic = (function() {
 	var element_style = 'rgb(255,255,255)';
-	var background_style = 'rgb(246,247,247)';	// KAgray97
-	var grid_style = 'rgb(246,247,247)';		// KAgray97
-    //var grid_style = "rgb(240,241,242)";		// KAgray95
-	var border_style = 'rgb(214,216,218)';		// KAgray85
-	var stroke_style = 'rgb(186,190,194)';		// KAgray76 on-schematic icons
+	var background_style = 'rgb(246,247,247)';	// KA gray97 #F6F7F7
+	var grid_style = 'rgb(246,247,247)';		// KA gray97 #F6F7F7
+    //var grid_style = "rgb(240,241,242)";		// KA gray95 #F0F1F2
+	var border_style = 'rgb(214,216,218)';		// KA gray85 #D6D8DA
+	var stroke_style = 'rgb(186,190,194)';		// KA gray76 on-schematic icons
     var normal_style = 'rgb(0,0,0)';  			// black wire drawing color
-    var component_style = 'rgb(60,145,229)';  	// KA default5 color for unselected components
-    var selected_style = 'rgb(116,207,112)';	// KA CS2 highlight color for selected components
-    var icon_style = 'rgb(33,36,44)';			// KAgray17 main menu icons 
-    var annotation_style = 'rgb(255,64,64)';  	// color for diagram i and v annotations
-    var cancel_style = 'rgb(232,77,57)';		// cancel X icon KA humanities2
-    var ok_style = 'rgb(31,171,84)';			// ok checkmark icon KA CS1
+    var component_style = 'rgb(60,145,229)';  	// KA default5 #3C91E5 unselected components
+    var selected_style = 'rgb(116,207,112)';	// KA CS2 #74CF70 highlight selected components
+    var icon_style = 'rgb(33,36,44)';			// KA gray17 #21242C main menu icons 
+    //var annotation_style = 'rgb(255,64,64)';  	// #FF4040 i and v annotations
+    var annotation_style = 'rgb(249,104,93)';	// KA humanities5 #F9685D v and i annotations 
+    var cancel_style = 'rgb(232,77,57)';		// KA humanities1 #E84D39 cancel X icon 
+    var ok_style = 'rgb(31,171,84)';			// KA CS1 #1FAB54 ok checkmark icon 
     var property_size = 7;  	// point size for Component property text
     var annotation_size = 7;  	// point size for diagram annotations
 
