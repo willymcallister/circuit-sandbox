@@ -69,55 +69,55 @@ var cktsim = (function() {
 	Circuit.prototype.finalize = function() {
 		if (!this.finalized) {
 			this.finalized = true;
-		this.N = this.node_index + 1;  // number of nodes
+			this.N = this.node_index + 1;  // number of nodes
 
-		// give each device a chance to finalize itself
-		for (var i = this.devices.length - 1; i >= 0; --i)
-			this.devices[i].finalize(this);
+			// give each device a chance to finalize itself
+			for (var i = this.devices.length - 1; i >= 0; --i)
+				this.devices[i].finalize(this);
 
-		// set up augmented matrix and various temp vectors
-		this.matrix = mat_make(this.N, this.N+1);
-		this.Gl = mat_make(this.N, this.N);  // Matrix for linear conductances
-		this.G = mat_make(this.N, this.N);  // Complete conductance matrix
-		this.C = mat_make(this.N, this.N);  // Matrix for linear L's and C's
+			// set up augmented matrix and various temp vectors
+			this.matrix = mat_make(this.N, this.N+1);
+			this.Gl = mat_make(this.N, this.N);  // Matrix for linear conductances
+			this.G = mat_make(this.N, this.N);  // Complete conductance matrix
+			this.C = mat_make(this.N, this.N);  // Matrix for linear L's and C's
 
-		this.soln_max = new Array(this.N);   // max abs value seen for each unknown
-		this.abstol = new Array(this.N);
-		this.solution = new Array(this.N);
-		this.rhs = new Array(this.N);
-		for (var i = this.N - 1; i >= 0; --i) {	    
-			this.soln_max[i] = 0.0;
-			this.abstol[i] = this.ntypes[i] == T_VOLTAGE ? v_abstol : i_abstol;
-			this.solution[i] = 0.0;
-			this.rhs[i] = 0.0;
+			this.soln_max = new Array(this.N);   // max abs value seen for each unknown
+			this.abstol = new Array(this.N);
+			this.solution = new Array(this.N);
+			this.rhs = new Array(this.N);
+			for (var i = this.N - 1; i >= 0; --i) {	    
+				this.soln_max[i] = 0.0;
+				this.abstol[i] = this.ntypes[i] == T_VOLTAGE ? v_abstol : i_abstol;
+				this.solution[i] = 0.0;
+				this.rhs[i] = 0.0;
+			}
+
+			// Load up the linear elements once and for all
+			for (var i = this.devices.length - 1; i >= 0; --i) {
+				this.devices[i].load_linear(this)
+			}
+
+			// Check for voltage source loops. 
+			var n_vsrc = this.voltage_sources.length;
+			if (n_vsrc > 0) { // At least one voltage source
+			    var GV = mat_make(n_vsrc, this.N);  // Loop check
+			    for (var i = n_vsrc - 1; i >= 0; --i) {
+			    	var branch = this.voltage_sources[i].branch;
+			    	for (var j = this.N - 1; j >= 0; j--)
+			    		GV[i][j] = this.Gl[branch][j];
+			    }
+			    var rGV = mat_rank(GV);
+			    if (rGV < n_vsrc) {
+			    	//alert('Warning!!! Circuit has a voltage source loop or a source or current probe shorted by a wire, please remove the source or the wire causing the short.');
+			    	//alert('Warning!!! Simulator might produce meaningless results or no result with illegal circuits.');
+			    	alert(i18n.ckt_alert1);
+			    	alert(i18n.ckt_alert2);
+			    	return false;		
+			    }
+			}
 		}
-
-		// Load up the linear elements once and for all
-		for (var i = this.devices.length - 1; i >= 0; --i) {
-			this.devices[i].load_linear(this)
-		}
-
-		// Check for voltage source loops. 
-		var n_vsrc = this.voltage_sources.length;
-		if (n_vsrc > 0) { // At least one voltage source
-		    var GV = mat_make(n_vsrc, this.N);  // Loop check
-		    for (var i = n_vsrc - 1; i >= 0; --i) {
-		    	var branch = this.voltage_sources[i].branch;
-		    	for (var j = this.N - 1; j >= 0; j--)
-		    		GV[i][j] = this.Gl[branch][j];
-		    }
-		    var rGV = mat_rank(GV);
-		    if (rGV < n_vsrc) {
-		    	//alert('Warning!!! Circuit has a voltage source loop or a source or current probe shorted by a wire, please remove the source or the wire causing the short.');
-		    	//alert('Warning!!! Simulator might produce meaningless results or no result with illegal circuits.');
-		    	alert(i18n.ckt_alert1);
-		    	alert(i18n.ckt_alert2);
-		    	return false;		
-		    }
-		}
+		return true;		
 	}
-	return true;		
-}
 
 	// load circuit from JSON netlist (see schematic.js)
 	Circuit.prototype.load_netlist = function(netlist) {
@@ -283,16 +283,16 @@ var cktsim = (function() {
 
 	    // Define -f and df/dx for Newton solver
 	    function load_dc(ckt,soln,rhs) {
-		// rhs is initialized to -Gl * soln
-		mat_v_mult(ckt.Gl, soln, rhs, -1.0);
-		// G matrix is initialized with linear Gl
-		mat_copy(ckt.Gl,ckt.G);
-		// Now load up the nonlinear parts of rhs and G
-		for (var i = ckt.devices.length - 1; i >= 0; --i)
-			ckt.devices[i].load_dc(ckt,soln,rhs);
-		// G matrix is copied in to the system matrix
-		mat_copy(ckt.G,ckt.matrix);
-	}
+			// rhs is initialized to -Gl * soln
+			mat_v_mult(ckt.Gl, soln, rhs, -1.0);
+			// G matrix is initialized with linear Gl
+			mat_copy(ckt.Gl,ckt.G);
+			// Now load up the nonlinear parts of rhs and G
+			for (var i = ckt.devices.length - 1; i >= 0; --i)
+				ckt.devices[i].load_dc(ckt,soln,rhs);
+			// G matrix is copied in to the system matrix
+			mat_copy(ckt.G,ckt.matrix);
+		}
 
 	    // find the operating point
 	    var iterations = this.find_solution(load_dc,dc_max_iters);
@@ -308,24 +308,24 @@ var cktsim = (function() {
 	    }
 
 	    return undefined
-	} else {
-		// Note that a dc solution was computed
-		this.diddc = true;
-		// create solution dictionary
-		var result = [];
-		// capture node voltages
-		for (var name in this.node_map) {
-			var index = this.node_map[name];
-			result[name] = (index == -1) ? 0 : this.solution[index];
+		} else {
+			// Note that a dc solution was computed
+			this.diddc = true;
+			// create solution dictionary
+			var result = [];
+			// capture node voltages
+			for (var name in this.node_map) {
+				var index = this.node_map[name];
+				result[name] = (index == -1) ? 0 : this.solution[index];
+			}
+			// capture branch currents from voltage sources
+			for (var i = this.voltage_sources.length - 1; i >= 0; --i) {
+				var v = this.voltage_sources[i];
+				result['I('+v.name+')'] = this.solution[v.branch];
+			}
+			return result;
 		}
-		// capture branch currents from voltage sources
-		for (var i = this.voltage_sources.length - 1; i >= 0; --i) {
-			var v = this.voltage_sources[i];
-			result['I('+v.name+')'] = this.solution[v.branch];
-		}
-		return result;
 	}
-}
 
 	// Transient analysis (needs work!)
 	Circuit.prototype.tran = function(ntpts, tstart, tstop, probenames, no_dc) {
@@ -402,18 +402,18 @@ var cktsim = (function() {
 	    // Otherwise, do the setup also done in dc.
 	    no_dc = false;
 	    if ((this.diddc == false) && (no_dc == false)) {
-		if (this.dc() == undefined) { // DC failed, realloc mats and vects.
-			//alert('DC failed, trying transient analysis from zero.');		    
-			alert(i18n.ckt_alert6);		    
-		    this.finalized = false;  // Reset the finalization.
-		    if (this.finalize() == false) 
-		    	return undefined;
+			if (this.dc() == undefined) { // DC failed, realloc mats and vects.
+				//alert('DC failed, trying transient analysis from zero.');		    
+				alert(i18n.ckt_alert6);		    
+			    this.finalized = false;  // Reset the finalization.
+			    if (this.finalize() == false) 
+			    	return undefined;
+			}
 		}
-	}
-	else {
-		if (this.finalize() == false) // Allocate matrices and vectors.
-			return undefined;
-	}
+		else {
+			if (this.finalize() == false) // Allocate matrices and vectors.
+				return undefined;
+		}
 
 	    // Tired of typing this, and using "with" generates hate mail.
 	    var N = this.N;
@@ -424,20 +424,20 @@ var cktsim = (function() {
 	    for (var i = N; i >= 0; --i) response[i] = [];
 
 	    // Allocate back vectors for up to a second order method
-	this.old3sol = new Array(this.N);
-	this.old3q = new Array(this.N);
-	this.old2sol = new Array(this.N);
-	this.old2q = new Array(this.N);
-	this.oldsol = new Array(this.N);
-	this.oldq = new Array(this.N);
-	this.q = new Array(this.N);
-	this.oldc = new Array(this.N);
-	this.c = new Array(this.N);
-	this.alpha0 = 1.0;
-	this.alpha1 = 0.0;
-	this.alpha2 = 0.0;
-	this.beta0 = new Array(this.N);
-	this.beta1 = new Array(this.N);
+		this.old3sol = new Array(this.N);
+		this.old3q = new Array(this.N);
+		this.old2sol = new Array(this.N);
+		this.old2q = new Array(this.N);
+		this.oldsol = new Array(this.N);
+		this.oldq = new Array(this.N);
+		this.q = new Array(this.N);
+		this.oldc = new Array(this.N);
+		this.c = new Array(this.N);
+		this.alpha0 = 1.0;
+		this.alpha1 = 0.0;
+		this.alpha2 = 0.0;
+		this.beta0 = new Array(this.N);
+		this.beta1 = new Array(this.N);
 
 	    // Mark a set of algebraic variable (don't miss hidden ones!).
 	    this.ar = this.algebraic(this.C);
@@ -494,89 +494,89 @@ var cktsim = (function() {
 	    // Start with two pseudo-Euler steps, maximum 50000 steps/period
 	    var max_nsteps = this.periods*50000;
 	    for(var step_index = -3; step_index < max_nsteps; step_index++) {
-		// Save the just computed solution, and move back q and c.
-		for (var i = this.N - 1; i >= 0; --i) {
-			if (step_index >= 0)
-				response[i].push(this.solution[i]);
-			this.oldc[i] = this.c[i];
-			this.old3sol[i] = this.old2sol[i];
-			this.old2sol[i] = this.oldsol[i];
-			this.oldsol[i] = this.solution[i];
-			this.old3q[i] = this.oldq[i];
-			this.old2q[i] = this.oldq[i];
-			this.oldq[i] = this.q[i];
-		}
-
-		if (step_index < 0) {  // Take a prestep using BE
-			this.old3t = this.old2t - (this.oldt-this.old2t)
-			this.old2t = this.oldt - (tstart-this.oldt)
-			this.oldt = tstart - (this.time - this.oldt);
-			this.time = tstart;
-			beta0 = 1.0;  
-			beta1 = 0.0;		
-		} else {  // Take a regular step
-		    // Save the time, and rotate time wheel
-		    response[this.N].push(this.time);
-		    this.old3t = this.old2t;
-		    this.old2t = this.oldt;
-		    this.oldt = this.time;
-		    // Make sure we come smoothly in to the interval end.
-		    if (this.time >= tstop) break;  // We're done.
-		    else if(this.time + new_step > tstop)
-		    	this.time = tstop;
-		    else if(this.time + 1.5*new_step > tstop)
-		    	this.time += (2/3)*(tstop - this.time);
-		    else
-		    	this.time += new_step;
-
-		    // Use trap (average old and new crnts.
-		    	beta0 = 0.5;
-		    	beta1 = 0.5;	
-		    }
-
-		// For trap rule, turn off current avging for algebraic eqns
-		for (var i = this.N - 1; i >= 0; --i) {
-			this.beta0[i] = beta0 + this.ar[i]*beta1;
-			this.beta1[i] = (1.0 - this.ar[i])*beta1;
-		}
-
-		// Loop to find NR converging timestep with okay LTE
-		while (true) {
-		    // Set the timestep coefficients (alpha2 is for bdf2).
-		    this.alpha0 = 1.0/(this.time - this.oldt);
-		    this.alpha1 = -this.alpha0;
-		    this.alpha2 = 0;
-
-		    // If timestep is 1/10,000th of tstop, just use BE.
-		    if ((this.time-this.oldt) < 1.0e-4*tstop) {
-		    	for (var i = this.N - 1; i >= 0; --i) {
-		    		this.beta0[i] = 1.0;
-		    		this.beta1[i] = 0.0;
-		    	}
-		    }  
-		    // Use Newton to compute the solution.
-		    var iterations = this.find_solution(load_tran,max_tran_iters);
-
-		    // If NR succeeds and stepsize is at min, accept and newstep=maxgrowth*minstep.
-		    // Else if Newton Fails, shrink step by a factor and try again
-		    // Else LTE picks new step, if bigger accept current step and go on.
-		    if ((iterations != undefined) && 
-		    	(step_index <= 0 || (this.time-this.oldt) < (1+reltol)*this.min_step)) {
-		    	if (step_index > 0) new_step = time_step_increase_factor*this.min_step;
-		    break;
-		    } else if (iterations == undefined) {  // NR nonconvergence, shrink by factor
-		    	this.time = this.oldt + 
-		    	(this.time - this.oldt)/nr_step_decrease_factor;
-		    } else {  // Check the LTE and shrink step if needed.
-		    	new_step = pick_step(this, step_index);
-		    	if (new_step < (1.0 - reltol)*(this.time - this.oldt)) {
-			    this.time = this.oldt + new_step;  // Try again   
+			// Save the just computed solution, and move back q and c.
+			for (var i = this.N - 1; i >= 0; --i) {
+				if (step_index >= 0)
+					response[i].push(this.solution[i]);
+				this.oldc[i] = this.c[i];
+				this.old3sol[i] = this.old2sol[i];
+				this.old2sol[i] = this.oldsol[i];
+				this.oldsol[i] = this.solution[i];
+				this.old3q[i] = this.oldq[i];
+				this.old2q[i] = this.oldq[i];
+				this.oldq[i] = this.q[i];
 			}
-			else
-			    break;  // LTE okay, new_step for next step
+
+			if (step_index < 0) {  // Take a prestep using BE
+				this.old3t = this.old2t - (this.oldt-this.old2t)
+				this.old2t = this.oldt - (tstart-this.oldt)
+				this.oldt = tstart - (this.time - this.oldt);
+				this.time = tstart;
+				beta0 = 1.0;  
+				beta1 = 0.0;		
+			} else {  // Take a regular step
+			    // Save the time, and rotate time wheel
+			    response[this.N].push(this.time);
+			    this.old3t = this.old2t;
+			    this.old2t = this.oldt;
+			    this.oldt = this.time;
+			    // Make sure we come smoothly in to the interval end.
+			    if (this.time >= tstop) break;  // We're done.
+			    else if(this.time + new_step > tstop)
+			    	this.time = tstop;
+			    else if(this.time + 1.5*new_step > tstop)
+			    	this.time += (2/3)*(tstop - this.time);
+			    else
+			    	this.time += new_step;
+
+			    // Use trap (average old and new crnts.
+			    	beta0 = 0.5;
+			    	beta1 = 0.5;	
+			    }
+
+			// For trap rule, turn off current avging for algebraic eqns
+			for (var i = this.N - 1; i >= 0; --i) {
+				this.beta0[i] = beta0 + this.ar[i]*beta1;
+				this.beta1[i] = (1.0 - this.ar[i])*beta1;
+			}
+
+			// Loop to find NR converging timestep with okay LTE
+			while (true) {
+			    // Set the timestep coefficients (alpha2 is for bdf2).
+			    this.alpha0 = 1.0/(this.time - this.oldt);
+			    this.alpha1 = -this.alpha0;
+			    this.alpha2 = 0;
+
+			    // If timestep is 1/10,000th of tstop, just use BE.
+			    if ((this.time-this.oldt) < 1.0e-4*tstop) {
+			    	for (var i = this.N - 1; i >= 0; --i) {
+			    		this.beta0[i] = 1.0;
+			    		this.beta1[i] = 0.0;
+			    	}
+			    }  
+			    // Use Newton to compute the solution.
+			    var iterations = this.find_solution(load_tran,max_tran_iters);
+
+			    // If NR succeeds and stepsize is at min, accept and newstep=maxgrowth*minstep.
+			    // Else if Newton Fails, shrink step by a factor and try again
+			    // Else LTE picks new step, if bigger accept current step and go on.
+			    if ((iterations != undefined) && 
+			    	(step_index <= 0 || (this.time-this.oldt) < (1+reltol)*this.min_step)) {
+			    	if (step_index > 0) new_step = time_step_increase_factor*this.min_step;
+			    break;
+			    } else if (iterations == undefined) {  // NR nonconvergence, shrink by factor
+			    	this.time = this.oldt + 
+			    	(this.time - this.oldt)/nr_step_decrease_factor;
+			    } else {  // Check the LTE and shrink step if needed.
+			    	new_step = pick_step(this, step_index);
+			    	if (new_step < (1.0 - reltol)*(this.time - this.oldt)) {
+				    this.time = this.oldt + new_step;  // Try again   
+				}
+				else
+				    break;  // LTE okay, new_step for next step
+				}
+			}
 		}
-	}
-}
 
 	    // create solution dictionary
 	    var result = [];
@@ -877,109 +877,109 @@ var cktsim = (function() {
 	//  Note, Matrices are stored using nested javascript arrays.
 	////////////////////////////////////////////////////////////////////////////////
 
-        // Allocate an NxM matrix
-        function mat_make(N,M) {
-        	var mat = new Array(N);	
-        	for (var i = N - 1; i >= 0; --i) {	    
-        		mat[i] = new Array(M);
-        		for (var j = M - 1; j >= 0; --j) {	    
-        			mat[i][j] = 0.0;
-        		}
-        	}
-        	return mat;
-        }
+    // Allocate an NxM matrix
+    function mat_make(N,M) {
+    	var mat = new Array(N);	
+    	for (var i = N - 1; i >= 0; --i) {	    
+    		mat[i] = new Array(M);
+    		for (var j = M - 1; j >= 0; --j) {	    
+    			mat[i][j] = 0.0;
+    		}
+    	}
+    	return mat;
+    }
 
-        // Form b = scale*Mx
-        function mat_v_mult(M,x,b,scale) {
-        	var n = M.length;
-        	var m = M[0].length;
+    // Form b = scale*Mx
+    function mat_v_mult(M,x,b,scale) {
+    	var n = M.length;
+    	var m = M[0].length;
 
-        	if (n != b.length || m != x.length)
-        		//throw 'Rows of M mismatched to b or cols mismatch to x.';
-        		throw i18n.ckt_error1;
+    	if (n != b.length || m != x.length)
+    		//throw 'Rows of M mismatched to b or cols mismatch to x.';
+    		throw i18n.ckt_error1;
 
-        	for (var i = 0; i < n; i++) {
-        		var temp = 0;
-        		for (var j = 0; j < m; j++) temp += M[i][j]*x[j];
-		b[i] = scale*temp;  // Recall the neg in the name
-}
-}
+    	for (var i = 0; i < n; i++) {
+    		var temp = 0;
+    		for (var j = 0; j < m; j++) temp += M[i][j]*x[j];
+			b[i] = scale*temp;  // Recall the neg in the name
+		}
+	}
 
-        // C = scalea*A + scaleb*B, scalea, scaleb eithers numbers or arrays (row scaling)
-        function mat_scale_add(A, B, scalea, scaleb, C) {
-        	var n = A.length;
-        	var m = A[0].length;
+    // C = scalea*A + scaleb*B, scalea, scaleb eithers numbers or arrays (row scaling)
+    function mat_scale_add(A, B, scalea, scaleb, C) {
+    	var n = A.length;
+    	var m = A[0].length;
 
-        	if (n > B.length || m > B[0].length)
-        		//throw 'Row or columns of A to large for B';
-        		throw i18n.ckt_error2;
-        	if (n > C.length || m > C[0].length)
-        		//throw 'Row or columns of A to large for C';
-        		throw i18n.ckt_error3;
-        	if ((typeof scalea == 'number') && (typeof scaleb == 'number'))
-        		for (var i = 0; i < n; i++)
-        			for (var j = 0; j < m; j++)
-        				C[i][j] = scalea*A[i][j] + scaleb*B[i][j];
-        			else if ((typeof scaleb == 'number') && (scalea instanceof Array))
-        				for (var i = 0; i < n; i++)
-        					for (var j = 0; j < m; j++)
-        						C[i][j] = scalea[i]*A[i][j] + scaleb*B[i][j];
-        					else if ((typeof scaleb instanceof Array) && (scalea instanceof Array))
-        						for (var i = 0; i < n; i++)
-        							for (var j = 0; j < m; j++)
-        								C[i][j] = scalea[i]*A[i][j] + scaleb[i]*B[i][j];
-        							else
-        								//throw 'scalea and scaleb must be scalars or Arrays';
-        								throw i18n.ckt_error4;
-        						}
+    	if (n > B.length || m > B[0].length)
+    		//throw 'Row or columns of A to large for B';
+    		throw i18n.ckt_error2;
+    	if (n > C.length || m > C[0].length)
+    		//throw 'Row or columns of A to large for C';
+    		throw i18n.ckt_error3;
+    	if ((typeof scalea == 'number') && (typeof scaleb == 'number'))
+    		for (var i = 0; i < n; i++)
+    			for (var j = 0; j < m; j++)
+    				C[i][j] = scalea*A[i][j] + scaleb*B[i][j];
+    			else if ((typeof scaleb == 'number') && (scalea instanceof Array))
+    				for (var i = 0; i < n; i++)
+    					for (var j = 0; j < m; j++)
+    						C[i][j] = scalea[i]*A[i][j] + scaleb*B[i][j];
+    					else if ((typeof scaleb instanceof Array) && (scalea instanceof Array))
+    						for (var i = 0; i < n; i++)
+    							for (var j = 0; j < m; j++)
+    								C[i][j] = scalea[i]*A[i][j] + scaleb[i]*B[i][j];
+    							else
+    								//throw 'scalea and scaleb must be scalars or Arrays';
+    								throw i18n.ckt_error4;
+    }
 
-        // Returns a vector of ones and zeros, ones denote algebraic
-        // variables (rows that can be removed without changing rank(M).
-        	Circuit.prototype.algebraic = function(M) {
-        		var Nr = M.length
-        		var Mc = mat_make(Nr, Nr);
-        		mat_copy(M,Mc);
-        		var R = mat_rank(Mc);
+    // Returns a vector of ones and zeros, ones denote algebraic
+    // variables (rows that can be removed without changing rank(M).
+	Circuit.prototype.algebraic = function(M) {
+		var Nr = M.length
+		var Mc = mat_make(Nr, Nr);
+		mat_copy(M,Mc);
+		var R = mat_rank(Mc);
 
-        		var one_if_alg = new Array(Nr);
+		var one_if_alg = new Array(Nr);
 	    for (var row = 0; row < Nr; row++) {  // psuedo gnd row small
 	    	for (var col = Nr - 1; col >= 0; --col)
 	    		Mc[row][col] = 0;
-		if (mat_rank(Mc) == R)  // Zeroing row left rank unchanged
-			one_if_alg[row] = 1;
-		else { // Zeroing row changed rank, put back
-			for (var col = Nr - 1; col >= 0; --col)
-				Mc[row][col] = M[row][col];
-			one_if_alg[row] = 0;
+			if (mat_rank(Mc) == R)  // Zeroing row left rank unchanged
+				one_if_alg[row] = 1;
+			else { // Zeroing row changed rank, put back
+				for (var col = Nr - 1; col >= 0; --col)
+					Mc[row][col] = M[row][col];
+				one_if_alg[row] = 0;
+			}
 		}
+		return one_if_alg;
 	}
-	return one_if_alg;
-}
 
-        // Copy A -> using the bounds of A
-        function mat_copy(src,dest) {
-        	var n = src.length;
-        	var m = src[0].length;
-        	if (n > dest.length || m >  dest[0].length)
-        		//throw 'Rows or cols > rows or cols of dest';
-        		throw i18n.ckt_error5;
+    // Copy A -> using the bounds of A
+    function mat_copy(src,dest) {
+    	var n = src.length;
+    	var m = src[0].length;
+    	if (n > dest.length || m >  dest[0].length)
+    		//throw 'Rows or cols > rows or cols of dest';
+    		throw i18n.ckt_error5;
 
-        	for (var i = 0; i < n; i++)
-        		for (var j = 0; j < m; j++)
-        			dest[i][j] = src[i][j];
-        	}
-        // Copy and transpose A -> using the bounds of A
-        function mat_copy_transposed(src,dest) {
-        	var n = src.length;
-        	var m = src[0].length;
-        	if (n > dest[0].length || m >  dest.length)
-        		//throw 'Rows or cols > cols or rows of dest';
-        		throw i18n.ckt_error6;
+    	for (var i = 0; i < n; i++)
+    		for (var j = 0; j < m; j++)
+    			dest[i][j] = src[i][j];
+    }
+    // Copy and transpose A -> using the bounds of A
+    function mat_copy_transposed(src,dest) {
+    	var n = src.length;
+    	var m = src[0].length;
+    	if (n > dest[0].length || m >  dest.length)
+    		//throw 'Rows or cols > cols or rows of dest';
+    		throw i18n.ckt_error6;
 
-        	for (var i = 0; i < n; i++)
-        		for (var j = 0; j < m; j++)
-        			dest[j][i] = src[i][j];
-        	}
+    	for (var i = 0; i < n; i++)
+    		for (var j = 0; j < m; j++)
+    			dest[j][i] = src[i][j];
+    }
 
 
 	// Uses GE to determine rank.
@@ -1004,44 +1004,44 @@ var cktsim = (function() {
 	    var the_rank = 0;
 	    var start_col = 0;
 	    for (var row = 0; row < Nr; row++) {
-		// Search for first nonzero column in the remaining rows.
-		for (var col = start_col; col < Nc; col++) {
-			var max_v = Math.abs(M[row][col]);
-			var max_row = row;
-			for (var i = row + 1; i < Nr; i++) {
-				temp = Math.abs(M[i][col]);
-				if (temp > max_v) { max_v = temp; max_row = i; }
+			// Search for first nonzero column in the remaining rows.
+			for (var col = start_col; col < Nc; col++) {
+				var max_v = Math.abs(M[row][col]);
+				var max_row = row;
+				for (var i = row + 1; i < Nr; i++) {
+					temp = Math.abs(M[i][col]);
+					if (temp > max_v) { max_v = temp; max_row = i; }
+				}
+			    // if max_v non_zero, column is nonzero, eliminate in subsequent rows
+			    if (Math.abs(max_v) > eps*max_abs_entry) {
+			    	start_col = col+1;
+			    	the_rank += 1;
+			        // Swap rows to get max in M[row][col]
+			        temp = M[row];
+			        M[row] = M[max_row];
+			        M[max_row] = temp;
+
+				// now eliminate this column for all subsequent rows
+				for (var i = row + 1; i < Nr; i++) {
+				    temp = M[i][col]/M[row][col];   // multiplier for current row
+				    if (temp != 0)  // subtract 
+				    	for (var j = col; j < Nc; j++) M[i][j] -= M[row][j]*temp;
+				    }
+				// Now move on to the next row
+				break;
+				}
 			}
-		    // if max_v non_zero, column is nonzero, eliminate in subsequent rows
-		    if (Math.abs(max_v) > eps*max_abs_entry) {
-		    	start_col = col+1;
-		    	the_rank += 1;
-		        // Swap rows to get max in M[row][col]
-		        temp = M[row];
-		        M[row] = M[max_row];
-		        M[max_row] = temp;
-
-			// now eliminate this column for all subsequent rows
-			for (var i = row + 1; i < Nr; i++) {
-			    temp = M[i][col]/M[row][col];   // multiplier for current row
-			    if (temp != 0)  // subtract 
-			    	for (var j = col; j < Nc; j++) M[i][j] -= M[row][j]*temp;
-			    }
-			// Now move on to the next row
-			break;
 		}
-	}
-}
 
-return the_rank;
-}
+		return the_rank;
+	}
 
 	// Solve Mx=b and return vector x using R^TQ^T factorization. 
-        // Multiplication by R^T implicit, should be null-space free soln.
-        // M should have the extra column!
-        // Almost everything is in-lined for speed, sigh.
-        function mat_solve_rq(M, rhs) {
-        	var scale;
+    // Multiplication by R^T implicit, should be null-space free soln.
+    // M should have the extra column!
+    // Almost everything is in-lined for speed, sigh.
+    function mat_solve_rq(M, rhs) {
+    	var scale;
 	    var Nr = M.length;  // Number of rows
 	    var Nc = M[0].length;  // Number of columns
 
@@ -1054,50 +1054,50 @@ return the_rank;
 	    var mat_scale = 0; // Sets the scale for comparison to zero.
 	    var max_nonzero_row = Nr-1;  // Assumes M nonsingular.
 	    for (var row = 0; row < Nr; row++) {  
-		// Find largest row with largest 2-norm
-		var max_row = row;
-		var maxsumsq = 0;
-		for (var rowp = row; rowp < Nr; rowp++) {
-			var Mr = M[rowp];
-			var sumsq = 0;
-		    for (var col = Nc-2; col >= 0; --col)  // Last col=rhs
-		    	sumsq += Mr[col]*Mr[col];
-		    if ((row == rowp) || (sumsq > maxsumsq)) {
-		    	max_row = rowp;
-		    	maxsumsq = sumsq;
-		    }
-		}
-		if (max_row > row) { // Swap rows if not max row
-			var temp = M[row];
-			M[row] = M[max_row];
-			M[max_row] = temp;
-		}
+			// Find largest row with largest 2-norm
+			var max_row = row;
+			var maxsumsq = 0;
+			for (var rowp = row; rowp < Nr; rowp++) {
+				var Mr = M[rowp];
+				var sumsq = 0;
+			    for (var col = Nc-2; col >= 0; --col)  // Last col=rhs
+			    	sumsq += Mr[col]*Mr[col];
+			    if ((row == rowp) || (sumsq > maxsumsq)) {
+			    	max_row = rowp;
+			    	maxsumsq = sumsq;
+			    }
+			}
+			if (max_row > row) { // Swap rows if not max row
+				var temp = M[row];
+				M[row] = M[max_row];
+				M[max_row] = temp;
+			}
 
-		// Calculate row norm, save if this is first (largest)
-		var row_norm = Math.sqrt(maxsumsq);
-		if (row == 0) mat_scale = row_norm;
+			// Calculate row norm, save if this is first (largest)
+			var row_norm = Math.sqrt(maxsumsq);
+			if (row == 0) mat_scale = row_norm;
 
-		// Check for all zero rows
-		if (row_norm > mat_scale*eps)
-			scale = 1.0/row_norm;
-		else {
-		    max_nonzero_row = row - 1;  // Rest will be nullspace of M
-		    break;
-		}
+			// Check for all zero rows
+			if (row_norm > mat_scale*eps)
+				scale = 1.0/row_norm;
+			else {
+			    max_nonzero_row = row - 1;  // Rest will be nullspace of M
+			    break;
+			}
 
-		// Nonzero row, eliminate from rows below
-		var Mr = M[row];
-		for (var col =  Nc-1; col >= 0; --col) // Scale rhs also
-			Mr[col] *= scale;
-		for (var rowp = row + 1; rowp < Nr; rowp++) { // Update.
-			var Mrp = M[rowp];
-			var inner = 0;
-		    for (var col =  Nc-2; col >= 0; --col)  // Project 
-		    	inner += Mr[col]*Mrp[col];
-		    for (var col =  Nc-1; col >= 0; --col) // Ortho (rhs also)
-		    	Mrp[col] -= inner *Mr[col];
+			// Nonzero row, eliminate from rows below
+			var Mr = M[row];
+			for (var col =  Nc-1; col >= 0; --col) // Scale rhs also
+				Mr[col] *= scale;
+			for (var rowp = row + 1; rowp < Nr; rowp++) { // Update.
+				var Mrp = M[rowp];
+				var inner = 0;
+			    for (var col =  Nc-2; col >= 0; --col)  // Project 
+			    	inner += Mr[col]*Mrp[col];
+			    for (var col =  Nc-1; col >= 0; --col) // Ortho (rhs also)
+			    	Mrp[col] -= inner *Mr[col];
+			}
 		}
-	}
 
 	    // Last Column of M has inv(R^T)*rhs.  Scale rows of Q to get x.
 	    var x = new Array(Nc-1);
@@ -1127,46 +1127,46 @@ return the_rank;
 
 	    // gaussian elimination
 	    for (var col = 0; col < N ; col++) {
-		// find pivot: largest abs(v) in this column of remaining rows
-		var max_v = Math.abs(M[col][col]);
-		var max_col = col;
-		for (i = col + 1; i < N; i++) {
-			temp = Math.abs(M[i][col]);
-			if (temp > max_v) { max_v = temp; max_col = i; }
-		}
+			// find pivot: largest abs(v) in this column of remaining rows
+			var max_v = Math.abs(M[col][col]);
+			var max_col = col;
+			for (i = col + 1; i < N; i++) {
+				temp = Math.abs(M[i][col]);
+				if (temp > max_v) { max_v = temp; max_col = i; }
+			}
 
-		// if no value found, generate a small conductance to gnd
-		// otherwise swap current row with pivot row
-		if (max_v == 0) M[col][col] = eps; 
-		else {
-			temp = M[col];
-			M[col] = M[max_col];
-			M[max_col] = temp;
-		}
+			// if no value found, generate a small conductance to gnd
+			// otherwise swap current row with pivot row
+			if (max_v == 0) M[col][col] = eps; 
+			else {
+				temp = M[col];
+				M[col] = M[max_col];
+				M[max_col] = temp;
+			}
 
-		// now eliminate this column for all subsequent rows
-		for (i = col + 1; i < N; i++) {
-		    temp = M[i][col]/M[col][col];   // multiplier we'll use for current row
-		    if (temp != 0)
-			// subtract current row from row we're working on
-			// remember to process b too!
-			for (j = col; j <= N; j++) M[i][j] -= M[col][j]*temp;
+			// now eliminate this column for all subsequent rows
+			for (i = col + 1; i < N; i++) {
+			    temp = M[i][col]/M[col][col];   // multiplier we'll use for current row
+			    if (temp != 0)
+				// subtract current row from row we're working on
+				// remember to process b too!
+				for (j = col; j <= N; j++) M[i][j] -= M[col][j]*temp;
+			}
 		}
-}
 
 	    // matrix is now upper triangular, so solve for elements of x starting
 	    // with the last row
 	    var x = new Array(N);
 	    for (i = N-1; i >= 0; --i) {
-		temp = M[i][N];   // grab b[i] from augmented matrix as RHS
-		// subtract LHS term from RHS using known x values
-		for (j = N-1; j > i; --j) temp -= M[i][j]*x[j];
-		// now compute new x value
-	x[i] = temp/M[i][i];
-}
+			temp = M[i][N];   // grab b[i] from augmented matrix as RHS
+			// subtract LHS term from RHS using known x values
+			for (j = N-1; j > i; --j) temp -= M[i][j]*x[j];
+			// now compute new x value
+			x[i] = temp/M[i][i];
+		}
 
-return x;
-}
+		return x;
+	}
 
 	// test solution code, expect x = [2,3,-1]
 	//M = [[2,1,-1,8],[-3,-1,2,-11],[-2,1,2,-3]];
@@ -1186,9 +1186,9 @@ return x;
 	Device.prototype.finalize = function() {
 	}
 
-        // Load the linear elements in to Gl and C
-        Device.prototype.load_linear = function(ckt) {
-        }
+    // Load the linear elements in to Gl and C
+    Device.prototype.load_linear = function(ckt) {
+    }
 
 	// load linear system equations for dc analysis
 	// (inductors shorted and capacitors opened)
@@ -1280,7 +1280,7 @@ return x;
 			}
 			return result*multiplier;
 		}
-	}
+		}
 	    // read decimal integer or floating-point number
 	    while (true) {
 	    	if (s.charAt(index) >= '0' && s.charAt(index) <= '9')
@@ -1551,15 +1551,15 @@ return x;
 		src.inflection_point = function(t) {  // closure
 			if (repeat)
 			// make time periodic if values are to be repeated
-		t = Math.fmod(t,tv_pairs[nvals-2]);
-		for (var i = 0; i < nvals; i += 2) {
-			var next_t = tv_pairs[i];
-			if (t < next_t) return next_t;
+			t = Math.fmod(t,tv_pairs[nvals-2]);
+			for (var i = 0; i < nvals; i += 2) {
+				var next_t = tv_pairs[i];
+				if (t < next_t) return next_t;
+			}
+			return undefined;
 		}
-		return undefined;
 	}
-}
-}
+	}
 
 	// helper function: return args[index] if present, else default_v
 	function arg_value(args,index,default_v) {
@@ -1841,26 +1841,25 @@ return x;
 	Opamp.prototype = new Device();
 	Opamp.prototype.constructor = Opamp;
 	Opamp.prototype.load_linear = function(ckt) {
-            // MNA stamp for VCVS: 1/A(v(no) - v(ng)) - (v(np)-v(nn))) = 0.
-var invA = 1.0/this.gain;
-ckt.add_to_Gl(this.no,this.branch,1);
-ckt.add_to_Gl(this.ng,this.branch,-1);
-ckt.add_to_Gl(this.branch,this.no,invA);
-ckt.add_to_Gl(this.branch,this.ng,-invA);
-ckt.add_to_Gl(this.branch,this.np,-1);
-ckt.add_to_Gl(this.branch,this.nn,1);
-}
+        // MNA stamp for VCVS: 1/A(v(no) - v(ng)) - (v(np)-v(nn))) = 0.
+		var invA = 1.0/this.gain;
+		ckt.add_to_Gl(this.no,this.branch,1);
+		ckt.add_to_Gl(this.ng,this.branch,-1);
+		ckt.add_to_Gl(this.branch,this.no,invA);
+		ckt.add_to_Gl(this.branch,this.ng,-invA);
+		ckt.add_to_Gl(this.branch,this.np,-1);
+		ckt.add_to_Gl(this.branch,this.nn,1);
+		}
 
-Opamp.prototype.load_dc = function(ckt,soln,rhs) {
-	    // Op-amp is linear.
-	}
+	Opamp.prototype.load_dc = function(ckt,soln,rhs) {
+		    // Op-amp is linear.
+		}
 
 	Opamp.prototype.load_ac = function(ckt) {
 	}
 
 	Opamp.prototype.load_tran = function(ckt) {
 	}
-
 
 	///////////////////////////////////////////////////////////////////////////////
 	//
@@ -1877,18 +1876,18 @@ Opamp.prototype.load_dc = function(ckt,soln,rhs) {
 		this.ratio = ratio;
 		if (type != 'n' && type != 'p')
 			{ throw 'fet type is not n or p';
+		}
+		this.type_sign = (type == 'n') ? 1 : -1;
+		this.vt = 0.5;
+		this.kp = 20e-6;
+		this.beta = this.kp * this.ratio;
+		this.lambda = 0.05;
 	}
-	this.type_sign = (type == 'n') ? 1 : -1;
-	this.vt = 0.5;
-	this.kp = 20e-6;
-	this.beta = this.kp * this.ratio;
-	this.lambda = 0.05;
-}
-Fet.prototype = new Device();
-Fet.prototype.constructor = Fet;
+	Fet.prototype = new Device();
+	Fet.prototype.constructor = Fet;
 
-Fet.prototype.load_linear = function(ckt) {
-	    // FET's are nonlinear, just like javascript progammers
+	Fet.prototype.load_linear = function(ckt) {
+		// FET's are nonlinear, just like javascript progammers
 	}
 
 	Fet.prototype.load_dc = function(ckt,soln,rhs) {
@@ -1903,34 +1902,34 @@ Fet.prototype.load_linear = function(ckt) {
 	    var vgst = vgs - this.vt;
 	    with (this) {
 	    	var gmgs,ids,gds;
-		if (vgst > 0.0 ) { // vgst < 0, transistor off, no subthreshold here.
-			if (vgst < vds) { /* Saturation. */
-				gmgs =  beta * (1 + (lambda * vds)) * vgst;
-				ids = type_sign * 0.5 * gmgs * vgst;
-				gds = 0.5 * beta * vgst * vgst * lambda;
-			} else {  /* Linear region */
-				gmgs =  beta * (1 + lambda * vds);
-				ids = type_sign * gmgs * vds * (vgst - 0.50 * vds);
-				gds = gmgs * (vgst - vds) + beta * lambda * vds * (vgst - 0.5 * vds);
-				gmgs *= vds;
+			if (vgst > 0.0 ) { // vgst < 0, transistor off, no subthreshold here.
+				if (vgst < vds) { /* Saturation. */
+					gmgs =  beta * (1 + (lambda * vds)) * vgst;
+					ids = type_sign * 0.5 * gmgs * vgst;
+					gds = 0.5 * beta * vgst * vgst * lambda;
+				} else {  /* Linear region */
+					gmgs =  beta * (1 + lambda * vds);
+					ids = type_sign * gmgs * vds * (vgst - 0.50 * vds);
+					gds = gmgs * (vgst - vds) + beta * lambda * vds * (vgst - 0.5 * vds);
+					gmgs *= vds;
+				}
+			    ckt.add_to_rhs(d,-ids,rhs);  // current flows into the drain
+			    ckt.add_to_rhs(s, ids,rhs);   // and out the source		    
+			    ckt.add_conductance(d,s,gds);
+			    ckt.add_to_G(s,s, gmgs);
+			    ckt.add_to_G(d,s,-gmgs);
+			    ckt.add_to_G(d,g, gmgs);
+			    ckt.add_to_G(s,g,-gmgs);
 			}
-		    ckt.add_to_rhs(d,-ids,rhs);  // current flows into the drain
-		    ckt.add_to_rhs(s, ids,rhs);   // and out the source		    
-		    ckt.add_conductance(d,s,gds);
-		    ckt.add_to_G(s,s, gmgs);
-		    ckt.add_to_G(d,s,-gmgs);
-		    ckt.add_to_G(d,g, gmgs);
-		    ckt.add_to_G(s,g,-gmgs);
 		}
 	}
-}
 
-Fet.prototype.load_tran = function(ckt,soln,rhs) {
-	this.load_dc(ckt,soln,rhs);
-}
+	Fet.prototype.load_tran = function(ckt,soln,rhs) {
+		this.load_dc(ckt,soln,rhs);
+	}
 
-Fet.prototype.load_ac = function(ckt) {
-}
+	Fet.prototype.load_ac = function(ckt) {
+	}
 
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -2350,10 +2349,10 @@ schematic = (function() {
 	    if (!this.diagram_only) {
 			//table.frame = 'box';
 			table.style.borderStyle = 'solid';	
-			table.style.borderWidth = '0px';			//removed border
+			table.style.borderWidth = '1px';			//outside border
 			table.style.borderColor = border_style;
 			table.style.backgroundColor = background_style;
-			table.style.borderRadius = '4px';			//apply radius
+			table.style.borderRadius = '4px';
 		}
 
 	    // add tools to DOM
@@ -2897,7 +2896,7 @@ schematic = (function() {
 	    var netlist = this.json();
 	    this.input.value = JSON.stringify(netlist);
 
-	    download(this.input.value, "ckt.txt", "text/plain");
+	    //download(this.input.value, "ckt.txt", "text/plain");	//QQQ
 
 	    // Also save data to the browser's local store
 		localStorage.setItem("ckt", this.input.value);
