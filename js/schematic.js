@@ -2327,8 +2327,9 @@ schematic = (function() {
 	    	this.status_div = document.createElement('div');
 	    	this.status = document.createTextNode('');
 	    	this.status_div.appendChild(this.status);
-	    	this.status_div.style.height = status_height + 'px';
-	    	this.status_div.style.font = '12pt sans-serif';
+	    	this.status_div.style.height = '20px';
+	    	this.status_div.style.marginLeft = '12px';
+	    	this.status_div.style.font = '10pt sans-serif';
 	    } else this.status_div = undefined;
 
         this.connection_points = []; // location string => list of cp's
@@ -2438,7 +2439,6 @@ schematic = (function() {
 
 	var part_w = 42;   // size of a parts bin compartment
 	var part_h = 42;
-	var status_height = 20;
 
 	Schematic.prototype.add_component = function(new_c) {
 		this.components.push(new_c);
@@ -3931,7 +3931,7 @@ schematic = (function() {
 		return false;
 	}
 
-	/*	Wheel zoom commented out for smart phone. Allows normal panning of a large schematic in a small window.
+	/* Wheel zoom commented out for smart phone. Allows normal panning of a large schematic in a small window.
 	function schematic_mouse_wheel(event) {
 		if (!event) event = window.event;
 		else event.preventDefault();
@@ -3954,8 +3954,8 @@ schematic = (function() {
 			    sch.redraw_background();
 			}
 		}
-	}
-*/
+	} */
+
 
 	function schematic_double_click(event) {
 		if (!event) event = window.event;
