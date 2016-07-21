@@ -40,9 +40,11 @@ Near_zero_ac_response: 'Near zero ac response, remove ',
 probe: ' probe',
 
 // Alerts and warnings from the circuit simulator
+Alert: 'Alert',
 ckt_alert1: 'Warning!!! Circuit has a voltage source loop or a source or current probe shorted by a wire, please remove the source or the wire causing the short.',
 ckt_alert2: 'Warning!!! Simulator might produce meaningless results or no result with illegal circuits.',
 ckt_warning1: 'Warning: two circuit elements share the same name ',
+
 ckt_alert3: 'Please make at least one connection to ground (triangle symbol)',
 ckt_alert4: 'Newton Method failed, do your current sources have a conductive path to ground?',
 ckt_alert5: 'Newton Method failed, it may be your circuit or it may be our simulator.',

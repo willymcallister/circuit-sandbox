@@ -183,7 +183,13 @@ var cktsim = (function() {
 	    if (!found_ground) { // No ground on schematic
 	    	//alert('Please make at least one connection to ground (triangle symbol)');
 	    	alert(i18n.ckt_alert3);
-	    	return false;
+
+		/*	var content = document.createElement('div');
+			var strAlert = document.createTextNode(i18n.ckt_alert3);
+			content.appendChild(strAlert);
+		    this.dialog(i18n.Alert,content);
+
+	    	return false;	*/
 	    }
 	    return true;
 	}
@@ -699,7 +705,7 @@ var cktsim = (function() {
 	    		this.device_map[name] = d;
 	    	else {
 	    		//alert('Warning: two circuit elements share the same name ' + name);
-	    		alert(ckt_warning1 + name);
+	    		alert(i18n.ckt_warning1 + name);
 	    		this.device_map[name] = d;
 	    	}
 	    }
@@ -2130,11 +2136,12 @@ schematic = (function() {
 	    this.tools = [];
 	    this.toolbar = [];
 
+	    /* Take out Help icon until we have a way to display it in our own window.
 	    if (!this.diagram_only) {
 	    	this.tools['help'] = this.add_tool(help_icon,i18n.Help,this.help);
 	    	this.enable_tool('help',true);
-		this.toolbar.push(null);  // spacer
-		}
+			this.toolbar.push(null);  // spacer
+		} */
 
 		if (this.edits_allowed) {
 			this.tools['grid'] = this.add_tool(grid_icon,i18n.Grid,this.toggle_grid);
@@ -2592,8 +2599,8 @@ schematic = (function() {
 			\t\t   \t\tf\t10^-15";
 	*/
 		var strHelp = strSHelp + strAddC + strAddW + strSel + strMove + strDel + strRot + strProp + strNum;
-		//window.confirm(strHelp);
-
+		window.confirm(strHelp);
+		/*
 		var content = document.createElement('div');
 		var lineBreak = document.createElement('br');
 
@@ -2604,6 +2611,7 @@ schematic = (function() {
 		content.appendChild(nstrAddW);
 
 	    this.dialog(i18n.Circuit_Sandbox_Help,content);	
+	    */
 	}
 
 	// zoom diagram around given coords
@@ -2908,55 +2916,56 @@ schematic = (function() {
 		this.unselect_all(-1);
 		this.redraw_background();
 
-		var file_lbl = i18n.Select_netlist;
+		if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+	        // Any mobile platform: load stored ctk from browser's localStorage
+	        var imported_netlist = localStorage.getItem("ckt");
 
-		var fields = [];
-		fields[file_lbl] = build_input('file',10,'');
+			this.components = [];
+			this.connection_points = [];
+			this.load_schematic(imported_netlist);
+			this.zoomall();
 
-		var content = build_table(fields);
-		content.fields = fields;
-		content.sch = this;
+			console.log( "ckt from localStorage = " + imported_netlist);
+		} else {
+			// Desktop: load ckt from client's file system
+			var file_lbl = i18n.Select_netlist;		//QQQ example of using a translated string as an array key
 
-		if (false) {
-		this.dialog(i18n.Import_netlist,content,function(content) {
-			var sch = content.sch;
+			var fields = [];
+			fields[file_lbl] = build_input('file',10,'');
 
-		    // retrieve parameters, remember for next time
-		    var files = content.fields[file_lbl].files;
-		    console.log(files);
+			var content = build_table(fields);
+			content.fields = fields;
+			content.sch = this;
 
-		    // files is a FileList of File objects. List some properties.
-		    if (files.length > 0) {
-		    	var file = files[0];
-		    	var reader = new FileReader();
+			this.dialog(i18n.Import_netlist,content,function(content) {
+				var sch = content.sch;
 
-		    	// print out the result when the file is finished loading
-		    	reader.onload = function(e) {
-		    		var imported_netlist = e.target.result;
+			    // retrieve parameters, remember for next time
+			    var files = content.fields[file_lbl].files;
+			    console.log(files);
 
-		    		content.sch.components = [];
-		    		content.sch.connection_points = [];
-		    		content.sch.load_schematic(imported_netlist);
-		    		content.sch.zoomall();
+			    // files is a FileList of File objects. List some properties.
+			    if (files.length > 0) {
+			    	var file = files[0];
+			    	var reader = new FileReader();
 
-		    		console.log(e.target.result);
-		    	};
+			    	// print out the result when the file is finished loading
+			    	reader.onload = function(e) {
+			    		var imported_netlist = e.target.result;
 
-            	// start reading the file
-            	reader.readAsText(file);
-            }
-        });
+			    		content.sch.components = [];
+			    		content.sch.connection_points = [];
+			    		content.sch.load_schematic(imported_netlist);
+			    		content.sch.zoomall();
+
+			    		console.log(e.target.result);
+			    	};
+
+	            	// start reading the file
+	            	reader.readAsText(file);
+	            }
+	        });
 		}
-
-        // Access stored ctk data from browser's localStorage
-        var imported_netlist = localStorage.getItem("ckt");
-
-		content.sch.components = [];
-		content.sch.connection_points = [];
-		content.sch.load_schematic(imported_netlist);
-		content.sch.zoomall();
-
-		console.log( "ckt from localStorage = " + imported_netlist);
 	}
 
 	Schematic.prototype.extract_circuit = function() {
@@ -4126,7 +4135,9 @@ schematic = (function() {
 		return select;
 	}
 
-	Schematic.prototype.window = function(title,content,offset) {
+	Schematic.prototype.window = build_window;
+
+	function build_window(title,content,offset) {
 	    // create the div for the top level of the window
 	    var win = document.createElement('div');
 	    win.sch = this;
@@ -4371,26 +4382,16 @@ schematic = (function() {
 	}
 
 	var help_icon = 'fa fa-fw fa-question-circle-o fa-lg';
-
 	var cut_icon = 'fa fa-fw fa-scissors fa-lg';
-
 	var copy_icon = 'fa fa-fw fa-files-o fa-lg';
-
 	var paste_icon = 'fa fa-fw fa-clipboard fa-lg';
-
 	var close_icon = 'fa fa-fw fa-times fa-lg';
-
 	var grid_icon = 'fa fa-fw fa-table fa-lg';
-
-	var delete_icon = 'fa fa-fw fa-times fa-lg';
-		
+	var delete_icon = 'fa fa-fw fa-times fa-lg';		
 	var rotate_icon = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIxOC45cHgiIGhlaWdodD0iMTkuMnB4IiB2aWV3Qm94PSIwIDAgMTguOSAxOS4yIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAxOC45IDE5LjI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+DQoJLnN0MHtmb250LWZhbWlseTonUHJveGltYU5vdmEtQm9sZCc7fQ0KCS5zdDF7Zm9udC1zaXplOjE2cHg7fQ0KCS5zdDJ7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO30NCgkuc3Qze2ZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MztzdHJva2UtbWl0ZXJsaW1pdDoxMDt9DQo8L3N0eWxlPg0KPHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgMSAtMC4yNjIxIDE4LjEzNjkpIiBjbGFzcz0ic3QwIHN0MSI+UjwvdGV4dD4NCjxwb2x5Z29uIGNsYXNzPSJzdDIiIHBvaW50cz0iMTQuOSwxNS44IDExLjgsMTAuOSAxNy42LDExICIvPg0KPHBhdGggY2xhc3M9InN0MyIgZD0iTTE0LjcsMTAuN2MwLTQuOC00LjctOC43LTEwLjYtOC43Ii8+DQo8L3N2Zz4NCg=='
-
 	// spacer icon: available, but not used
 	var spacer_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAASCAYAAAB4i6/FAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAADklEQVQYGWNgGAVDOwQAAcIAAVPQQlcAAAAASUVORK5CYII='
-
 	var download_icon = 'fa fa-fw fa-download fa-lg';
-
 	var import_icon = 'fa fa-fw fa-upload fa-lg';
 
 	///////////////////////////////////////////////////////////////////////////////

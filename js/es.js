@@ -40,6 +40,7 @@ Near_zero_ac_response: 'Cerca de respuesta de ac a cero, sacar ',
 probe: ' sonda',
 
 // Alerts and warnings from the circuit simulator
+Alert: '¡Alerta!',
 ckt_alert1: '¡¡¡Advertencia!!! Circuito tiene un circuito de fuente de tensión o una fuente o sonda de corriente en cortocircuito por un cable, por favor, elimine la fuente o el cable que causa el corto.',
 ckt_alert2: '¡¡¡Advertencia!!! Simulador podría producir resultados sin sentido o sin resultado con circuitos ilegales.',
 ckt_warning1: 'Advertencia: dos elementos de circuito comparten el mismo nombre ',
