@@ -173,9 +173,9 @@ var cktsim = (function() {
 		else if (type == 'o') 	// op amp
 			this.opamp(connections[0],connections[1],connections[2],connections[3],properties['A'],name);
 		else if (type == 'n') 	// n fet
-			this.n(connections[0],connections[1],connections[2],properties['W/L'],name);
+			this.n(connections[0],connections[1],connections[2],properties['WL'],name);
 		else if (type == 'p') 	// p fet
-			this.p(connections[0],connections[1],connections[2],properties['W/L'],name);
+			this.p(connections[0],connections[1],connections[2],properties['WL'],name);
 		else if (type == 'a') 	// current probe == 0-volt voltage source
 			this.v(connections[0],connections[1],'0',name);
 	}
@@ -2138,16 +2138,23 @@ schematic = (function() {
 	    this.tools = [];
 	    this.toolbar = [];
 
-	    /* Disable Help icon until we have a way to display help in our own window.
 	    if (!this.diagram_only) {
 	    	this.tools['help'] = this.add_tool(help_icon,i18n.Help,this.help);
 	    	this.enable_tool('help',true);
 			this.toolbar.push(null);  // spacer
-		} */
+		} 
 
 		if (this.edits_allowed) {
+		    this.tools['load'] = this.add_tool(open_icon,i18n.Open_netlist,this.open_netlist);
+		    this.enable_tool('load',true);
+		    this.toolbar.push(null);  // spacer	
+
 			this.tools['grid'] = this.add_tool(grid_icon,i18n.Grid,this.toggle_grid);
 			this.enable_tool('grid',true);
+
+		    this.tools['net'] = this.add_tool(save_icon,i18n.save_netlist,this.save_netlist);
+		    this.enable_tool('net',true);   
+
 			this.tools['cut'] = this.add_tool(cut_icon,i18n.Cut,this.cut);
 			this.tools['copy'] = this.add_tool(copy_icon,i18n.Copy,this.copy);
 			this.tools['paste'] = this.add_tool(paste_icon,i18n.Paste,this.paste);
@@ -2155,13 +2162,7 @@ schematic = (function() {
 
 			this.tools['delete'] = this.add_tool(delete_icon,i18n.Delete,this.delete_selected);
 			this.tools['rotate'] = this.add_tool(rotate_icon,i18n.Rotate,this.rotate_selected);
-		    this.toolbar.push(null);  // spacer	
-
-		    this.tools['net'] = this.add_tool(download_icon,i18n.Download_netlist,this.download_netlist);
-		    this.enable_tool('net',true);   
-		    
-		    this.tools['load'] = this.add_tool(import_icon,i18n.Import_netlist,this.import_netlist);
-		    this.enable_tool('load',true);
+			this.tools['spacer'] = this.add_tool(spacer_icon,'',this.rotate_selected);
 		    this.toolbar.push(null);  // spacer	
 		}
 
@@ -2900,13 +2901,13 @@ schematic = (function() {
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
-	Schematic.prototype.download_netlist = function() {
+	Schematic.prototype.save_netlist = function() {
 	    // give all the circuit nodes a name, download netlist to client 
 	    this.label_connection_points();
 	    var netlist = this.json();
 	    this.input.value = JSON.stringify(netlist);
 
-	    //download(this.input.value, "ckt.txt", "text/plain");	//QQQ
+	    download(this.input.value, "ckt.txt", "text/plain");
 
 	    // Also save data to the browser's local store
 		localStorage.setItem("ckt", this.input.value);
@@ -2914,23 +2915,25 @@ schematic = (function() {
 
 	}
 
-	Schematic.prototype.import_netlist = function() {
+	Schematic.prototype.open_netlist = function() {
 		this.unselect_all(-1);
 		this.redraw_background();
 
 		if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
 	        // Any mobile platform: load stored ctk from browser's localStorage
-	        var imported_netlist = localStorage.getItem("ckt");
+	        if (window.confirm('Open a netlist?')){
+		        var imported_netlist = localStorage.getItem("ckt");
 
-			this.components = [];
-			this.connection_points = [];
-			this.load_schematic(imported_netlist);
-			this.zoomall();
+				this.components = [];
+				this.connection_points = [];
+				this.load_schematic(imported_netlist);
+				this.zoomall();
 
-			console.log( "ckt from localStorage = " + imported_netlist);
+				console.log( "ckt from localStorage = " + imported_netlist);
+			}
 		} else {
 			// Desktop: load ckt from client's file system
-			var file_lbl = i18n.Select_netlist;		//QQQ example of using a translated string as an array key
+			var file_lbl = 'Select_netlist';
 
 			var fields = [];
 			fields[file_lbl] = build_input('file',10,'');
@@ -2939,7 +2942,7 @@ schematic = (function() {
 			content.fields = fields;
 			content.sch = this;
 
-			this.dialog(i18n.Import_netlist,content,function(content) {
+			this.dialog(i18n.Open_netlist,content,function(content) {
 				var sch = content.sch;
 
 			    // retrieve parameters, remember for next time
@@ -3026,10 +3029,10 @@ schematic = (function() {
 		this.unselect_all(-1);
 		this.redraw_background();
 
-		var npts_lbl = i18n.Number_of_points_per_decade;	//not used
-		var fstart_lbl = i18n.Starting_frequency;
-		var fstop_lbl = i18n.Ending_frequency;
-		var source_name_lbl = i18n.Name_of_V_or_I_source_for_ac;
+		var npts_lbl = 'points_per_decade';	//'Number of points per decade';	//not used
+		var fstart_lbl = 'Starting_frequency';
+		var fstop_lbl = 'Ending_frequency';
+		var source_name_lbl = 'source_for_ac';		//'Name of V or I source for ac';
 
 		if (this.find_probes().length == 0) {
 			//alert("AC Analysis: add a voltage probe to the diagram!");
@@ -3160,8 +3163,8 @@ schematic = (function() {
 		this.unselect_all(-1);
 		this.redraw_background();
 
-		var npts_lbl = i18n.Minimum_number_of_timepoints;
-		var tstop_lbl = i18n.Stop_time_seconds;
+		var npts_lbl = 'Minimum_number_of_timepoints';	//not used
+		var tstop_lbl = 'Stop_time_seconds';
 		var probes = this.find_probes();
 		if (probes.length == 0) {
 			alert(i18n.Transient_Analysis_add_a_probe);
@@ -4100,7 +4103,7 @@ schematic = (function() {
 
 	    // build a row for each element in associative array
 	    for (var i in a) {
-	    	var label = document.createTextNode(i + ' ');	//WMc (i + ': ')
+	    	var label = document.createTextNode(i18n[i] + ': ');
 	    	var col1 = document.createElement('td');
 	    	col1.appendChild(label);
 	    	var col2 = document.createElement('td');
@@ -4130,7 +4133,7 @@ schematic = (function() {
 		var select = document.createElement('select');
 		for (var i = 0; i < options.length; i++) {
 			var option = document.createElement('option');
-			option.text = options[i];
+			option.text = i18n[options[i]];
 			select.add(option);
 			if (options[i] == selected) select.selectedIndex = i;
 		}
@@ -4313,7 +4316,7 @@ schematic = (function() {
 	    tool.style.borderWidth = '1px';
 	    tool.style.borderStyle = 'solid';
 	    tool.style.borderColor = background_style;
-	    tool.style.padding = '8px 2px 8px 2px';
+	    tool.style.padding = '8px 3px 8px 3px';
 	    tool.style.verticalAlign = 'middle';
 	    tool.style.cursor = 'default';
 
@@ -4383,18 +4386,17 @@ schematic = (function() {
 		}
 	}
 
-	var help_icon = 'fa fa-fw fa-question-circle-o fa-lg';
-	var cut_icon = 'fa fa-fw fa-scissors fa-lg';
-	var copy_icon = 'fa fa-fw fa-files-o fa-lg';
-	var paste_icon = 'fa fa-fw fa-clipboard fa-lg';
-	var close_icon = 'fa fa-fw fa-times fa-lg';
-	var grid_icon = 'fa fa-fw fa-table fa-lg';
+	var help_icon   = 'fa fa-fw fa-question-circle-o fa-lg';
+	var cut_icon    = 'fa fa-fw fa-scissors fa-lg';
+	var copy_icon   = 'fa fa-fw fa-files-o fa-lg';
+	var paste_icon  = 'fa fa-fw fa-clipboard fa-lg';
+	var close_icon  = 'fa fa-fw fa-times fa-lg';
+	var grid_icon   = 'fa fa-fw fa-table fa-lg';
 	var delete_icon = 'fa fa-fw fa-times fa-lg';		
 	var rotate_icon = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIxOC45cHgiIGhlaWdodD0iMTkuMnB4IiB2aWV3Qm94PSIwIDAgMTguOSAxOS4yIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAxOC45IDE5LjI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+DQoJLnN0MHtmb250LWZhbWlseTonUHJveGltYU5vdmEtQm9sZCc7fQ0KCS5zdDF7Zm9udC1zaXplOjE2cHg7fQ0KCS5zdDJ7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO30NCgkuc3Qze2ZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MztzdHJva2UtbWl0ZXJsaW1pdDoxMDt9DQo8L3N0eWxlPg0KPHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgMSAtMC4yNjIxIDE4LjEzNjkpIiBjbGFzcz0ic3QwIHN0MSI+UjwvdGV4dD4NCjxwb2x5Z29uIGNsYXNzPSJzdDIiIHBvaW50cz0iMTQuOSwxNS44IDExLjgsMTAuOSAxNy42LDExICIvPg0KPHBhdGggY2xhc3M9InN0MyIgZD0iTTE0LjcsMTAuN2MwLTQuOC00LjctOC43LTEwLjYtOC43Ii8+DQo8L3N2Zz4NCg=='
-	// spacer icon: available, but not used
 	var spacer_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAASCAYAAAB4i6/FAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAADklEQVQYGWNgGAVDOwQAAcIAAVPQQlcAAAAASUVORK5CYII='
-	var download_icon = 'fa fa-fw fa-download fa-lg';
-	var import_icon = 'fa fa-fw fa-upload fa-lg';
+	var save_icon   = 'fa fa-fw fa-save fa-lg';
+	var open_icon   =   'fa fa-fw fa-folder-open-o fa-lg';
 
 	///////////////////////////////////////////////////////////////////////////////
 	//
@@ -5824,8 +5826,8 @@ schematic = (function() {
 		if (inside(this.bbox,x,y)) {
 			var fields = [];
 			var n = probe_colors.indexOf(this.properties['color']);
-			fields['Plot color'] = build_select(probe_cnames,probe_cnames[n]);
-			fields['Plot offset'] = build_input('text',10,this.properties['offset']);
+			fields['Plot_color'] = build_select(probe_cnames,probe_cnames[n]);
+			fields['Plot_offset'] = build_input('text',10,this.properties['offset']);
 
 			var content = build_table(fields);
 			content.fields = fields;
@@ -5834,7 +5836,7 @@ schematic = (function() {
 			this.sch.dialog(i18n.Edit_Properties,content,function(content) {
 				var color_choice = content.fields['Plot color'];
 				content.component.properties['color'] = probe_colors[color_choice.selectedIndex];
-				content.component.properties['offset'] = content.fields['Plot offset'].value;
+				content.component.properties['offset'] = content.fields['Plot_offset'].value;
 				content.component.sch.redraw_background();
 			});
 			return true;
@@ -6146,7 +6148,7 @@ schematic = (function() {
 	function NFet(x,y,rotation,name,w_over_l) {
 		Component.call(this,'n',x,y,rotation);
 		this.properties['name'] = name;
-		this.properties['W/L'] = w_over_l ? w_over_l : '2';
+		this.properties['WL'] = w_over_l ? w_over_l : '2';
 	    this.add_connection(0,0);   // drain
 	    this.add_connection(-24,24);  // gate
 	    this.add_connection(0,48);  // source
@@ -6157,7 +6159,7 @@ schematic = (function() {
 	NFet.prototype.constructor = NFet;
 
 	NFet.prototype.toString = function() {
-		return '<NFet '+this.properties['W/L']+' ('+this.x+','+this.y+')>';
+		return '<NFet '+this.properties['WL']+' ('+this.x+','+this.y+')>';
 	}
 
 	NFet.prototype.draw = function(c) {
@@ -6170,7 +6172,7 @@ schematic = (function() {
 	    this.draw_line(c,-24,24,-12,24);
 	    this.draw_line(c,-12,16,-12,32);
 
-	    var dim = this.properties['W/L'];
+	    var dim = this.properties['WL'];
 	    if (this.properties['name']) {
 	    	this.draw_text(c,this.properties['name'],2,22,6,property_size);
 	    	this.draw_text(c,dim,2,26,0,property_size);
@@ -6179,7 +6181,7 @@ schematic = (function() {
 	}
 
 	NFet.prototype.clone = function(x,y) {
-		return new NFet(x,y,this.rotation,this.properties['name'],this.properties['W/L']);
+		return new NFet(x,y,this.rotation,this.properties['name'],this.properties['WL']);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -6191,7 +6193,7 @@ schematic = (function() {
 	function PFet(x,y,rotation,name,w_over_l) {
 		Component.call(this,'p',x,y,rotation);
 		this.properties['name'] = name;
-		this.properties['W/L'] = w_over_l ? w_over_l : '2';
+		this.properties['WL'] = w_over_l ? w_over_l : '2';
 	    this.add_connection(0,0);   // drain
 	    this.add_connection(-24,24);  // gate
 	    this.add_connection(0,48);  // source
@@ -6202,7 +6204,7 @@ schematic = (function() {
 	PFet.prototype.constructor = PFet;
 
 	PFet.prototype.toString = function() {
-		return '<PFet '+this.properties['W/L']+' ('+this.x+','+this.y+')>';
+		return '<PFet '+this.properties['WL']+' ('+this.x+','+this.y+')>';
 	}
 
 	PFet.prototype.draw = function(c) {
@@ -6216,7 +6218,7 @@ schematic = (function() {
 	    this.draw_circle(c,-14,24,2,false);
 	    this.draw_line(c,-12,16,-12,32);
 
-	    var dim = this.properties['W/L'];
+	    var dim = this.properties['WL'];
 	    if (this.properties['name']) {
 	    	this.draw_text(c,this.properties['name'],2,22,6,property_size);
 	    	this.draw_text(c,dim,2,26,0,property_size);
@@ -6225,7 +6227,7 @@ schematic = (function() {
 	}
 
 	PFet.prototype.clone = function(x,y) {
-		return new PFet(x,y,this.rotation,this.properties['name'],this.properties['W/L']);
+		return new PFet(x,y,this.rotation,this.properties['name'],this.properties['WL']);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -6377,7 +6379,7 @@ schematic = (function() {
 		// fancy version: add select tag for source type
 		var src_types = [];
 		for (var t in source_functions) src_types.push(t);
-			var type_select = build_select(src_types,src.fun);
+		var type_select = build_select(src_types,src.fun);
 		type_select.component = this;
 		type_select.addEventListener('change',source_type_changed,false)
 		fields['type'] = type_select;
