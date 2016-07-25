@@ -2145,15 +2145,15 @@ schematic = (function() {
 		} 
 
 		if (this.edits_allowed) {
-		    this.tools['load'] = this.add_tool(open_icon,i18n.Open_netlist,this.open_netlist);
-		    this.enable_tool('load',true);
+		    this.tools['open'] = this.add_tool(open_icon,i18n.Open_netlist,this.open_netlist);
+		    this.enable_tool('open',true);
 		    this.toolbar.push(null);  // spacer	
 
 			this.tools['grid'] = this.add_tool(grid_icon,i18n.Grid,this.toggle_grid);
 			this.enable_tool('grid',true);
 
-		    this.tools['net'] = this.add_tool(save_icon,i18n.save_netlist,this.save_netlist);
-		    this.enable_tool('net',true);   
+		    this.tools['save'] = this.add_tool(save_icon,i18n.Save_netlist,this.save_netlist);
+		    this.enable_tool('save',true);   
 
 			this.tools['cut'] = this.add_tool(cut_icon,i18n.Cut,this.cut);
 			this.tools['copy'] = this.add_tool(copy_icon,i18n.Copy,this.copy);
@@ -2328,8 +2328,9 @@ schematic = (function() {
 	    	this.status_div = document.createElement('div');
 	    	this.status = document.createTextNode('');
 	    	this.status_div.appendChild(this.status);
-	    	this.status_div.style.height = '20px';
-	    	this.status_div.style.marginLeft = '12px';
+	    	this.status_div.style.height = '18px';
+	    	this.status_div.style.marginRight = '94px';
+	    	this.status_div.style.textAlign = "right";
 	    	this.status_div.style.font = '10pt sans-serif';
 	    } else this.status_div = undefined;
 
