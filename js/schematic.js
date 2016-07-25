@@ -2169,13 +2169,13 @@ schematic = (function() {
 	    // simulation interface if cktsim.js is loaded
 	    if (typeof cktsim != 'undefined') {
 	    	if (analyses.indexOf('dc') != -1) {
-	    		this.tools['dc'] = this.add_tool('DC',i18n.DC_Analysis,this.dc_analysis);
+	    		this.tools['dc'] = this.add_tool('DC',i18n.Perform_DC_Analysis,this.dc_analysis);
 	    		this.enable_tool('dc',true);
 		    this.dc_max_iters = '1000';  // default values dc solution
 			}
 
 			if (analyses.indexOf('ac') != -1) {
-				this.tools['ac'] = this.add_tool('AC',i18n.AC_Small_Signal_Analysis,this.setup_ac_analysis);
+				this.tools['ac'] = this.add_tool('AC',i18n.Perform_AC_Analysis,this.setup_ac_analysis);
 				this.enable_tool('ac',true);
 			    this.ac_npts = '50'; // default values for AC Analysis
 			    this.ac_fstart = '10';
@@ -2184,7 +2184,7 @@ schematic = (function() {
 			}
 
 			if (analyses.indexOf('tran') != -1) {
-				this.tools['tran'] = this.add_tool('TRAN',i18n.Transient_Analysis,this.transient_analysis);
+				this.tools['tran'] = this.add_tool('TRAN',i18n.Perform_Transient_Analysis,this.transient_analysis);
 				this.enable_tool('tran',true);
 			    this.tran_npts = '100';  // default values for transient analysis
 			    this.tran_tstop = '1';
