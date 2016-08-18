@@ -3525,7 +3525,7 @@ schematic = (function() {
 			c.fill();
 			c.stroke();
 			//c.font = "13pt sans-serif";
-			//c.fillText("R",x - 8, y + 8);	//QQQ Why does this R jump around during rotate?
+			//c.fillText("R",x - 8, y + 8);	// Why does this R jump around during rotate?
 
 			c.lineWidth = 2;	// drawn R character
 			c.beginPath();		// 1/2 circle
