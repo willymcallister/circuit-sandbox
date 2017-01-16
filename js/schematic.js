@@ -2140,17 +2140,17 @@ schematic = (function() {
 
 	    if (!this.diagram_only) {
 	    	this.tools['help'] = this.add_tool(help_icon,i18n.Help,this.help);
-	    	this.enable_tool('help',true);
-			this.toolbar.push(null);  // spacer
-		} 
+	    	this.enable_tool('help',true);		} 
 
 		if (this.edits_allowed) {
-		    this.tools['open'] = this.add_tool(open_icon,i18n.Open_netlist,this.open_netlist);
-		    this.enable_tool('open',true);
-		    this.toolbar.push(null);  // spacer	
-
 			this.tools['grid'] = this.add_tool(grid_icon,i18n.Grid,this.toggle_grid);
 			this.enable_tool('grid',true);
+
+		    this.tools['open'] = this.add_tool(open_icon,i18n.Open_netlist,this.open_netlist);
+		    this.enable_tool('open',true);
+
+			this.tools['link'] = this.add_tool(link_icon,i18n.Link_tip,this.share_link);
+			this.enable_tool('link',true);
 
 		    this.tools['save'] = this.add_tool(save_icon,i18n.Save_netlist,this.save_netlist);
 		    this.enable_tool('save',true);   
@@ -2158,12 +2158,10 @@ schematic = (function() {
 			this.tools['cut'] = this.add_tool(cut_icon,i18n.Cut,this.cut);
 			this.tools['copy'] = this.add_tool(copy_icon,i18n.Copy,this.copy);
 			this.tools['paste'] = this.add_tool(paste_icon,i18n.Paste,this.paste);
-			this.toolbar.push(null);  // spacer
 
 			this.tools['delete'] = this.add_tool(delete_icon,i18n.Delete,this.delete_selected);
 			this.tools['rotate'] = this.add_tool(rotate_icon,i18n.Rotate,this.rotate_selected);
 			this.tools['spacer'] = this.add_tool(spacer_icon,'',this.rotate_selected);
-		    this.toolbar.push(null);  // spacer	
 		}
 
 	    // simulation interface if cktsim.js is loaded
@@ -2916,6 +2914,36 @@ schematic = (function() {
 
 	}
 
+	Schematic.prototype.share_link = function() {
+	    // give all the circuit nodes a name, download netlist to client 
+	    this.label_connection_points();
+	    var netlist = this.json();
+	    this.input.value = JSON.stringify(netlist);
+
+	    //strSimulator = 'https://willymcallister.github.io/Circuit-sandbox';
+	    strSimulator = 'file:///Users/willymcallister/KA/circuit%20sandbox%20simulator/Circuit%20sandbox/index.html';
+	    strSimAndCircuit = strSimulator + '?value=' + this.input.value;
+	    
+	    //console.log(strSimAndCircuit);
+
+	    //prompt(i18n.Sharable_Link,strSimAndCircuit);
+
+	    // dialog box with sharable link:
+	    var link_lbl = 'Link';
+
+		var fields = [];
+		fields[link_lbl] = build_input('text',60,strSimAndCircuit);
+
+		var content = build_table(fields);
+		content.fields = fields;
+		content.sch = this;
+
+		this.dialog(i18n.Sharable_Link,content,function(content) {
+			return null;
+		});
+		//
+	}
+
 	Schematic.prototype.open_netlist = function() {
 		this.unselect_all(-1);
 		this.redraw_background();
@@ -3184,51 +3212,51 @@ schematic = (function() {
 			var ckt = sch.extract_circuit();
 			if (ckt === null) return;
 
-			    // retrieve parameters, remember for next time
-			    sch.tran_tstop = content.fields[tstop_lbl].value;
+		    // retrieve parameters, remember for next time
+		    sch.tran_tstop = content.fields[tstop_lbl].value;
 
-			    // gather a list of nodes that are being probed.  These
-			    // will be added to the list of nodes checked during the
-			    // LTE calculations in transient analysis
-			    var probe_list = sch.find_probes();
-			    var probe_names = new Array(probe_list.length);
-			    for (var i = probe_list.length - 1; i >= 0; --i)
-			    	probe_names[i] = probe_list[i][1];
+		    // gather a list of nodes that are being probed.  These
+		    // will be added to the list of nodes checked during the
+		    // LTE calculations in transient analysis
+		    var probe_list = sch.find_probes();
+		    var probe_names = new Array(probe_list.length);
+		    for (var i = probe_list.length - 1; i >= 0; --i)
+		    	probe_names[i] = probe_list[i][1];
 
-			    // run the analysis
-			    var results = ckt.tran(ckt.parse_number(sch.tran_npts), 0,
-			    	ckt.parse_number(sch.tran_tstop), probe_names, false);
+		    // run the analysis
+		    var results = ckt.tran(ckt.parse_number(sch.tran_npts), 0,
+		    	ckt.parse_number(sch.tran_tstop), probe_names, false);
 
-			    if (typeof results == 'string') 
-			    	sch.message(results);
-			    else {
-			    	if (sch.submit_analyses != undefined) {
-			    		var submit = sch.submit_analyses['tran'];
-			    		if (submit != undefined) {
-					// save a copy of the results for submission
-					sch.transient_results = {};
-					var times = results['_time_'];
+		    if (typeof results == 'string') 
+		    	sch.message(results);
+		    else {
+		    	if (sch.submit_analyses != undefined) {
+		    		var submit = sch.submit_analyses['tran'];
+		    		if (submit != undefined) {
+						// save a copy of the results for submission
+						sch.transient_results = {};
+						var times = results['_time_'];
 
-					// save requested values for each requested node
-					for (var j = 0; j < submit.length; j++) {
-					    var tlist = submit[j];    // [node_name,t1,t2,...]
-					    var node = tlist[0];
-					    var values = results[node];
-					    var tvlist = [];
-					    // for each requested time, interpolate waveform value
-					    for (var k = 1; k < tlist.length; k++) {
-					    	var t = tlist[k];
-					    	var v = interpolate(t,times,values);
-					    	tvlist.push([t,v == undefined ? 'undefined' : v]);
-					    }
-					    // save results as list of [t,value] pairs
-					    sch.transient_results[node] = tvlist;
+						// save requested values for each requested node
+						for (var j = 0; j < submit.length; j++) {
+						    var tlist = submit[j];    // [node_name,t1,t2,...]
+						    var node = tlist[0];
+						    var values = results[node];
+						    var tvlist = [];
+						    // for each requested time, interpolate waveform value
+						    for (var k = 1; k < tlist.length; k++) {
+						    	var t = tlist[k];
+						    	var v = interpolate(t,times,values);
+						    	tvlist.push([t,v == undefined ? 'undefined' : v]);
+						    }
+						    // save results as list of [t,value] pairs
+						    sch.transient_results[node] = tvlist;
+						}
 					}
 				}
-			}
 
-			var x_values = results['_time_'];
-			var x_legend = i18n.Time;
+				var x_values = results['_time_'];
+				var x_legend = i18n.Time;
 
 				// set up plot values for each node with a probe
 				var v_values = [];  // voltage values: list of [color, result_array]
@@ -4065,7 +4093,7 @@ schematic = (function() {
 	    dialog.appendChild(buttons);
 
 	    // put into an overlay window
-	    this.window(title,dialog);
+	    this.window(title,dialog,20);
 	}
 
 	function dialog_cancel(event) {
@@ -4397,7 +4425,8 @@ schematic = (function() {
 	var rotate_icon = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIxOC45cHgiIGhlaWdodD0iMTkuMnB4IiB2aWV3Qm94PSIwIDAgMTguOSAxOS4yIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAxOC45IDE5LjI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+DQoJLnN0MHtmb250LWZhbWlseTonUHJveGltYU5vdmEtQm9sZCc7fQ0KCS5zdDF7Zm9udC1zaXplOjE2cHg7fQ0KCS5zdDJ7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO30NCgkuc3Qze2ZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MztzdHJva2UtbWl0ZXJsaW1pdDoxMDt9DQo8L3N0eWxlPg0KPHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgMSAtMC4yNjIxIDE4LjEzNjkpIiBjbGFzcz0ic3QwIHN0MSI+UjwvdGV4dD4NCjxwb2x5Z29uIGNsYXNzPSJzdDIiIHBvaW50cz0iMTQuOSwxNS44IDExLjgsMTAuOSAxNy42LDExICIvPg0KPHBhdGggY2xhc3M9InN0MyIgZD0iTTE0LjcsMTAuN2MwLTQuOC00LjctOC43LTEwLjYtOC43Ii8+DQo8L3N2Zz4NCg=='
 	var spacer_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAASCAYAAAB4i6/FAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAADklEQVQYGWNgGAVDOwQAAcIAAVPQQlcAAAAASUVORK5CYII='
 	var save_icon   = 'fa fa-fw fa-save fa-lg';
-	var open_icon   =   'fa fa-fw fa-folder-open-o fa-lg';
+	var open_icon   = 'fa fa-fw fa-folder-open-o fa-lg';
+	var link_icon   = 'fa fa-fw fa-link fa-lg';
 
 	///////////////////////////////////////////////////////////////////////////////
 	//
