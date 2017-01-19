@@ -2002,7 +2002,8 @@ function update_schematics() {
     		schematics[i].setAttribute("loaded","true");
     	}
     }
-    window.update_schematics = update_schematics;
+
+window.update_schematics = update_schematics;
 
 // add ourselves to the tasks that get performed when window is loaded
 function add_schematic_handler(other_onload) {
@@ -2024,34 +2025,43 @@ function add_schematic_handler(other_onload) {
 + *      to contribute to a bug in Firefox that does not render the schematic
 + *      properly depending on timing.
 */
-window.onload = add_schematic_handler(window.onload);	// restored from EdX version
+window.onload = add_schematic_handler(window.onload);	// restored from earlier EdX version
 
 // ask each schematic input widget to update its value field for submission
-function prepare_schematics() {
+/*function prepare_schematics() {						// not used
 	var schematics = $('.schematic');
 	for (var i = schematics.length - 1; i >= 0; i--)
 		schematics[i].schematic.update_value();
+} */
+
+// from: // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+function getURLParameterByName(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 schematic = (function() {
 	var element_style = 'rgb(255,255,255)';
 	var background_style = 'rgb(246,247,247)';	// KA gray97 #F6F7F7
 	var grid_style = 'rgb(246,247,247)';		// KA gray97 #F6F7F7
-    //var grid_style = "rgb(240,241,242)";		// KA gray95 #F0F1F2
 	var border_style = 'rgb(214,216,218)';		// KA gray85 #D6D8DA
 	var stroke_style = 'rgb(186,190,194)';		// KA gray76 #BABEC2 on-schematic icons
     var normal_style = 'rgb(0,0,0)';  			// black wire drawing color
     var component_style = 'rgb(60,145,229)';  	// KA default5 #3C91E5 unselected components
     var selected_style = 'rgb(116,207,112)';	// KA CS2 #74CF70 highlight selected components
     var icon_style = 'rgb(33,36,44)';			// KA gray17 #21242C main menu icons 
-    //var annotation_style = 'rgb(255,64,64)';  	// #FF4040 i and v annotations
     var annotation_style = 'rgb(249,104,93)';	// KA humanities5 #F9685D v and i annotations 
-    //var cancel_style = 'rgb(232,77,57)';		// KA humanities1 #E84D39 cancel X icon 
     var cancel_style = 'rgb(186,190,194)';		// KA gray76 #BABEC2 cancel X icon 
-    //var ok_style = 'rgb(31,171,84)';			// KA CS1 #1FAB54 ok checkmark icon 
     var ok_style = 'rgb(113,179,7)';			// KA Exerxise #71B307 ok checkmark icon 
-    var property_size = 7;  	// point size for Component property text
-    var annotation_size = 7;  	// point size for diagram annotations
+    var property_size = 7;  					// point size for Component property text
+    var annotation_size = 7;  					// point size for diagram annotations
 
     var parts_map = {
     	'g': [Ground, i18n.Ground_connection],
@@ -2185,7 +2195,7 @@ schematic = (function() {
 				this.tools['tran'] = this.add_tool('TRAN',i18n.Perform_Transient_Analysis,this.transient_analysis);
 				this.enable_tool('tran',true);
 			    this.tran_npts = '100';  // default values for transient analysis
-			    this.tran_tstop = '1';
+			    this.tran_tstop = '0.01';
 			}
 		}
 
@@ -2429,9 +2439,17 @@ schematic = (function() {
 	    toplevel.appendChild(table);
 	    this.input.parentNode.insertBefore(toplevel,this.input.nextSibling);
 
-	    // process initial contents of diagram
-	    this.load_schematic(this.input.getAttribute('value'),
-	    	this.input.getAttribute('initial_value'));
+	    // process initial contents of diagram   QQQ 
+	    // precedence of starting contents of diagram: value from URL, initial_value from html, and finally value from html
+	    var value = getURLParameterByName('value'); // value = circuit string from URL
+	    if (value === null) {
+		    this.load_schematic(
+		    	this.input.getAttribute('value'),	// value = circuit string from HTML
+		    	this.input.getAttribute('initial_value'));
+	    }
+		else {
+			this.load_schematic(value);
+		}
 
 	    // start by centering diagram on the screen
 	    this.zoomall();
@@ -2779,7 +2797,7 @@ schematic = (function() {
 	// load diagram from JSON representation
 	Schematic.prototype.load_schematic = function(value,initial_value) {
 	    // use default value if no schematic info in value
-	    if (value == undefined || value.indexOf('[') == -1)	//WMc question: What is the role of 'value' and 'initial_value'? Why both?
+	    if (value == undefined || value.indexOf('[') == -1)
 	    	value = initial_value;
 	    if (value && value.indexOf('[') != -1) {
 			// convert string value into data structure
