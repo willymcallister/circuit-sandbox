@@ -1995,7 +1995,7 @@ function update_schematics() {
     			msgdiv.style.border = 'thick solid #FF0000';
     			msgdiv.style.margins = '20px';
     			msgdiv.style.padding = '20px';
-    			var msg = document.createTextNode('Sorry, there a browser error in starting the schematic tool.  We reccomend using the latest versions of Firefox and Chrome.');
+    			var msg = document.createTextNode('Sorry, there a browser error in starting the schematic tool.');
     			msgdiv.appendChild(msg);
     			schematics[i].parentNode.insertBefore(msgdiv,schematics[i]);
     		}
@@ -2033,6 +2033,10 @@ window.onload = add_schematic_handler(window.onload);	// restored from earlier E
 	for (var i = schematics.length - 1; i >= 0; i--)
 		schematics[i].schematic.update_value();
 } */
+
+// URL of ciruit sandbox simluator, used to create shareable link.
+var strSimulator = 'https://willymcallister.github.io/Circuit-sandbox';
+//var strSimulator = 'file:///Users/willymcallister/KA/circuit%20sandbox%20simulator/Circuit%20sandbox/index.html';
 
 // from: // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 function getURLParameterByName(name, url) {
@@ -2324,9 +2328,9 @@ schematic = (function() {
 			schematic_double_click(event);
 		});
 
-		//this.canvas.addEventListener('wheel',schematic_mouse_wheel,false);		//removed for mobile, see comment in schematic_mouse_wheel
+		//this.canvas.addEventListener('wheel',schematic_mouse_wheel,false);		   //removed for mobile, see comment in schematic_mouse_wheel
 		//this.canvas.addEventListener('DOMMouseScroll',schematic_mouse_wheel,false);  // for FF
-		//this.canvas.addEventListener('dblclick',schematic_double_click,false);	// replaced by Hammer.js
+		//this.canvas.addEventListener('dblclick',schematic_double_click,false);	   // replaced by Hammer.js
 		this.canvas.addEventListener('keydown',schematic_key_down,false);
 		this.canvas.addEventListener('keyup',schematic_key_up,false);
 		}
@@ -2369,7 +2373,7 @@ schematic = (function() {
 	    if (!this.diagram_only) {
 			//table.frame = 'box';
 			table.style.borderStyle = 'solid';	
-			table.style.borderWidth = '1px';			//outside border
+			table.style.borderWidth = '1px';
 			table.style.borderColor = border_style;
 			table.style.backgroundColor = background_style;
 			table.style.borderRadius = '4px';
@@ -2439,8 +2443,8 @@ schematic = (function() {
 	    toplevel.appendChild(table);
 	    this.input.parentNode.insertBefore(toplevel,this.input.nextSibling);
 
-	    // process initial contents of diagram   QQQ 
-	    // precedence of starting contents of diagram: value from URL, initial_value from html, and finally value from html
+	    // process initial contents of diagram 
+	    // precedence for starting contents of diagram: value from URL, initial_value from html <input>, and finally value from html <input>
 	    var value = getURLParameterByName('value'); // value = circuit string from URL
 	    if (value === null) {
 		    this.load_schematic(
@@ -2602,36 +2606,9 @@ schematic = (function() {
 	}
 
 	Schematic.prototype.help = function() {
-	/* Embedded help strings are now in i18n strings files: en-US.js, es.js, and the like
-			var strSHelp = "CIRCUIT SANDBOX HELP\n\n";		//embedded Help 
-			var strAddC = "Add component: Click on a part in the bin, then click on schematic to add.\n\n";
-			var strAddW = "Add wire: Wires start at connection points (open circles). Click on a connection to start a wire, drag, and release.\n\n";
-			var strSel  = "Select: Drag a rectangle to select components. \nShift-click to include another component.\n\n";
-			var strMove = "Move: Click to select, then drag to a new location.\n\n";
-			var strDel  = "Delete: Select, then click the X icon or hit BACKSPACE.\n\n";
-			var strRot  = "Rotate/Reflect: Click to select, then click on the rotation icon or type the letter \"r\" to rotate 90. Repeat for more rotations and reflections.\n\n";
-			var strProp = "Properties: Double click on a component to change values.\n\n";
-			var strNum  = "Numeric suffixes may be entered in engineering notation:\n\
-			T\t10^12\t\tm\t10^-3 \n\
-			G\t10^9 \t\tu\t10^-6  \n\
-			M\t10^6 \t\tn\t10^-9  \n\
-			k\t10^3 \t\tp\t10^-12 \n\
-			\t\t   \t\tf\t10^-15";
-	*/
+	/* Embedded help strings can be found in i18n strings files: en-US.js, es.js, and the like.	*/
 		var strHelp = strSHelp + strAddC + strAddW + strSel + strMove + strDel + strRot + strProp + strNum;
 		window.confirm(strHelp);
-		/*
-		var content = document.createElement('div');
-		var lineBreak = document.createElement('br');
-
-		var nstrAddC = document.createTextNode(strAddC);
-		content.appendChild(nstrAddC);
-		content.appendChild(lineBreak);
-		var nstrAddW = document.createTextNode(strAddW);
-		content.appendChild(nstrAddW);
-
-	    this.dialog(i18n.Circuit_Sandbox_Help,content);	
-	    */
 	}
 
 	// zoom diagram around given coords
@@ -2919,7 +2896,7 @@ schematic = (function() {
 	////////////////////////////////////////////////////////////////////////////////
 
 	Schematic.prototype.save_netlist = function() {
-	    // give all the circuit nodes a name, download netlist to client 
+	    // give circuit nodes a name, download netlist to client 
 	    this.label_connection_points();
 	    var netlist = this.json();
 	    this.input.value = JSON.stringify(netlist);
@@ -2933,20 +2910,14 @@ schematic = (function() {
 	}
 
 	Schematic.prototype.share_link = function() {
-	    // give all the circuit nodes a name, download netlist to client 
+		// give circuit nodes a name, create and display sharable link
 	    this.label_connection_points();
 	    var netlist = this.json();
 	    this.input.value = JSON.stringify(netlist);
 
-	    //strSimulator = 'https://willymcallister.github.io/Circuit-sandbox';
-	    strSimulator = 'file:///Users/willymcallister/KA/circuit%20sandbox%20simulator/Circuit%20sandbox/index.html';
 	    strSimAndCircuit = strSimulator + '?value=' + this.input.value;
 	    
-	    //console.log(strSimAndCircuit);
-
-	    //prompt(i18n.Sharable_Link,strSimAndCircuit);
-
-	    // dialog box with sharable link:
+	    // dialog box with sharable link
 	    var link_lbl = 'Link';
 
 		var fields = [];
@@ -2959,7 +2930,8 @@ schematic = (function() {
 		this.dialog(i18n.Sharable_Link,content,function(content) {
 			return null;
 		});
-		//
+
+		console.log("sharable link: " + strSimAndCircuit);
 	}
 
 	Schematic.prototype.open_netlist = function() {
