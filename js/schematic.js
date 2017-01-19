@@ -1995,14 +1995,15 @@ function update_schematics() {
     			msgdiv.style.border = 'thick solid #FF0000';
     			msgdiv.style.margins = '20px';
     			msgdiv.style.padding = '20px';
-    			var msg = document.createTextNode('Sorry, there a browser error in starting the schematic tool.  We reccomend using the latest versions of Firefox and Chrome.');
+    			var msg = document.createTextNode('Sorry, there a browser error in starting the schematic tool.');
     			msgdiv.appendChild(msg);
     			schematics[i].parentNode.insertBefore(msgdiv,schematics[i]);
     		}
     		schematics[i].setAttribute("loaded","true");
     	}
     }
-    window.update_schematics = update_schematics;
+
+window.update_schematics = update_schematics;
 
 // add ourselves to the tasks that get performed when window is loaded
 function add_schematic_handler(other_onload) {
@@ -2024,34 +2025,47 @@ function add_schematic_handler(other_onload) {
 + *      to contribute to a bug in Firefox that does not render the schematic
 + *      properly depending on timing.
 */
-window.onload = add_schematic_handler(window.onload);	// restored from EdX version
+window.onload = add_schematic_handler(window.onload);	// restored from earlier EdX version
 
 // ask each schematic input widget to update its value field for submission
-function prepare_schematics() {
+/*function prepare_schematics() {						// not used
 	var schematics = $('.schematic');
 	for (var i = schematics.length - 1; i >= 0; i--)
 		schematics[i].schematic.update_value();
+} */
+
+// URL of ciruit sandbox simluator, used to create shareable link.
+var strSimulator = 'https://willymcallister.github.io/Circuit-sandbox';
+//var strSimulator = 'file:///Users/willymcallister/KA/circuit%20sandbox%20simulator/Circuit%20sandbox/index.html';
+
+// from: // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+function getURLParameterByName(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 schematic = (function() {
 	var element_style = 'rgb(255,255,255)';
 	var background_style = 'rgb(246,247,247)';	// KA gray97 #F6F7F7
 	var grid_style = 'rgb(246,247,247)';		// KA gray97 #F6F7F7
-    //var grid_style = "rgb(240,241,242)";		// KA gray95 #F0F1F2
 	var border_style = 'rgb(214,216,218)';		// KA gray85 #D6D8DA
 	var stroke_style = 'rgb(186,190,194)';		// KA gray76 #BABEC2 on-schematic icons
     var normal_style = 'rgb(0,0,0)';  			// black wire drawing color
     var component_style = 'rgb(60,145,229)';  	// KA default5 #3C91E5 unselected components
     var selected_style = 'rgb(116,207,112)';	// KA CS2 #74CF70 highlight selected components
     var icon_style = 'rgb(33,36,44)';			// KA gray17 #21242C main menu icons 
-    //var annotation_style = 'rgb(255,64,64)';  	// #FF4040 i and v annotations
     var annotation_style = 'rgb(249,104,93)';	// KA humanities5 #F9685D v and i annotations 
-    //var cancel_style = 'rgb(232,77,57)';		// KA humanities1 #E84D39 cancel X icon 
     var cancel_style = 'rgb(186,190,194)';		// KA gray76 #BABEC2 cancel X icon 
-    //var ok_style = 'rgb(31,171,84)';			// KA CS1 #1FAB54 ok checkmark icon 
     var ok_style = 'rgb(113,179,7)';			// KA Exerxise #71B307 ok checkmark icon 
-    var property_size = 7;  	// point size for Component property text
-    var annotation_size = 7;  	// point size for diagram annotations
+    var property_size = 7;  					// point size for Component property text
+    var annotation_size = 7;  					// point size for diagram annotations
 
     var parts_map = {
     	'g': [Ground, i18n.Ground_connection],
@@ -2140,17 +2154,17 @@ schematic = (function() {
 
 	    if (!this.diagram_only) {
 	    	this.tools['help'] = this.add_tool(help_icon,i18n.Help,this.help);
-	    	this.enable_tool('help',true);
-			this.toolbar.push(null);  // spacer
-		} 
+	    	this.enable_tool('help',true);		} 
 
 		if (this.edits_allowed) {
-		    this.tools['open'] = this.add_tool(open_icon,i18n.Open_netlist,this.open_netlist);
-		    this.enable_tool('open',true);
-		    this.toolbar.push(null);  // spacer	
-
 			this.tools['grid'] = this.add_tool(grid_icon,i18n.Grid,this.toggle_grid);
 			this.enable_tool('grid',true);
+
+		    this.tools['open'] = this.add_tool(open_icon,i18n.Open_netlist,this.open_netlist);
+		    this.enable_tool('open',true);
+
+			this.tools['link'] = this.add_tool(link_icon,i18n.Link_tip,this.share_link);
+			this.enable_tool('link',true);
 
 		    this.tools['save'] = this.add_tool(save_icon,i18n.Save_netlist,this.save_netlist);
 		    this.enable_tool('save',true);   
@@ -2158,12 +2172,10 @@ schematic = (function() {
 			this.tools['cut'] = this.add_tool(cut_icon,i18n.Cut,this.cut);
 			this.tools['copy'] = this.add_tool(copy_icon,i18n.Copy,this.copy);
 			this.tools['paste'] = this.add_tool(paste_icon,i18n.Paste,this.paste);
-			this.toolbar.push(null);  // spacer
 
 			this.tools['delete'] = this.add_tool(delete_icon,i18n.Delete,this.delete_selected);
 			this.tools['rotate'] = this.add_tool(rotate_icon,i18n.Rotate,this.rotate_selected);
 			this.tools['spacer'] = this.add_tool(spacer_icon,'',this.rotate_selected);
-		    this.toolbar.push(null);  // spacer	
 		}
 
 	    // simulation interface if cktsim.js is loaded
@@ -2187,7 +2199,7 @@ schematic = (function() {
 				this.tools['tran'] = this.add_tool('TRAN',i18n.Perform_Transient_Analysis,this.transient_analysis);
 				this.enable_tool('tran',true);
 			    this.tran_npts = '100';  // default values for transient analysis
-			    this.tran_tstop = '1';
+			    this.tran_tstop = '0.01';
 			}
 		}
 
@@ -2316,9 +2328,9 @@ schematic = (function() {
 			schematic_double_click(event);
 		});
 
-		//this.canvas.addEventListener('wheel',schematic_mouse_wheel,false);		//removed for mobile, see comment in schematic_mouse_wheel
+		//this.canvas.addEventListener('wheel',schematic_mouse_wheel,false);		   //removed for mobile, see comment in schematic_mouse_wheel
 		//this.canvas.addEventListener('DOMMouseScroll',schematic_mouse_wheel,false);  // for FF
-		//this.canvas.addEventListener('dblclick',schematic_double_click,false);	// replaced by Hammer.js
+		//this.canvas.addEventListener('dblclick',schematic_double_click,false);	   // replaced by Hammer.js
 		this.canvas.addEventListener('keydown',schematic_key_down,false);
 		this.canvas.addEventListener('keyup',schematic_key_up,false);
 		}
@@ -2361,7 +2373,7 @@ schematic = (function() {
 	    if (!this.diagram_only) {
 			//table.frame = 'box';
 			table.style.borderStyle = 'solid';	
-			table.style.borderWidth = '1px';			//outside border
+			table.style.borderWidth = '1px';
 			table.style.borderColor = border_style;
 			table.style.backgroundColor = background_style;
 			table.style.borderRadius = '4px';
@@ -2431,9 +2443,17 @@ schematic = (function() {
 	    toplevel.appendChild(table);
 	    this.input.parentNode.insertBefore(toplevel,this.input.nextSibling);
 
-	    // process initial contents of diagram
-	    this.load_schematic(this.input.getAttribute('value'),
-	    	this.input.getAttribute('initial_value'));
+	    // process initial contents of diagram 
+	    // precedence for starting contents of diagram: value from URL, initial_value from html <input>, and finally value from html <input>
+	    var value = getURLParameterByName('value'); // value = circuit string from URL
+	    if (value === null) {
+		    this.load_schematic(
+		    	this.input.getAttribute('value'),	// value = circuit string from HTML
+		    	this.input.getAttribute('initial_value'));
+	    }
+		else {
+			this.load_schematic(value);
+		}
 
 	    // start by centering diagram on the screen
 	    this.zoomall();
@@ -2586,36 +2606,9 @@ schematic = (function() {
 	}
 
 	Schematic.prototype.help = function() {
-	/* Embedded help strings are now in i18n strings files: en-US.js, es.js, and the like
-			var strSHelp = "CIRCUIT SANDBOX HELP\n\n";		//embedded Help 
-			var strAddC = "Add component: Click on a part in the bin, then click on schematic to add.\n\n";
-			var strAddW = "Add wire: Wires start at connection points (open circles). Click on a connection to start a wire, drag, and release.\n\n";
-			var strSel  = "Select: Drag a rectangle to select components. \nShift-click to include another component.\n\n";
-			var strMove = "Move: Click to select, then drag to a new location.\n\n";
-			var strDel  = "Delete: Select, then click the X icon or hit BACKSPACE.\n\n";
-			var strRot  = "Rotate/Reflect: Click to select, then click on the rotation icon or type the letter \"r\" to rotate 90. Repeat for more rotations and reflections.\n\n";
-			var strProp = "Properties: Double click on a component to change values.\n\n";
-			var strNum  = "Numeric suffixes may be entered in engineering notation:\n\
-			T\t10^12\t\tm\t10^-3 \n\
-			G\t10^9 \t\tu\t10^-6  \n\
-			M\t10^6 \t\tn\t10^-9  \n\
-			k\t10^3 \t\tp\t10^-12 \n\
-			\t\t   \t\tf\t10^-15";
-	*/
+	/* Embedded help strings can be found in i18n strings files: en-US.js, es.js, and the like.	*/
 		var strHelp = strSHelp + strAddC + strAddW + strSel + strMove + strDel + strRot + strProp + strNum;
 		window.confirm(strHelp);
-		/*
-		var content = document.createElement('div');
-		var lineBreak = document.createElement('br');
-
-		var nstrAddC = document.createTextNode(strAddC);
-		content.appendChild(nstrAddC);
-		content.appendChild(lineBreak);
-		var nstrAddW = document.createTextNode(strAddW);
-		content.appendChild(nstrAddW);
-
-	    this.dialog(i18n.Circuit_Sandbox_Help,content);	
-	    */
 	}
 
 	// zoom diagram around given coords
@@ -2781,7 +2774,7 @@ schematic = (function() {
 	// load diagram from JSON representation
 	Schematic.prototype.load_schematic = function(value,initial_value) {
 	    // use default value if no schematic info in value
-	    if (value == undefined || value.indexOf('[') == -1)	//WMc question: What is the role of 'value' and 'initial_value'? Why both?
+	    if (value == undefined || value.indexOf('[') == -1)
 	    	value = initial_value;
 	    if (value && value.indexOf('[') != -1) {
 			// convert string value into data structure
@@ -2903,7 +2896,7 @@ schematic = (function() {
 	////////////////////////////////////////////////////////////////////////////////
 
 	Schematic.prototype.save_netlist = function() {
-	    // give all the circuit nodes a name, download netlist to client 
+	    // give circuit nodes a name, download netlist to client 
 	    this.label_connection_points();
 	    var netlist = this.json();
 	    this.input.value = JSON.stringify(netlist);
@@ -2914,6 +2907,31 @@ schematic = (function() {
 		localStorage.setItem("ckt", this.input.value);
 		console.log( "wrote ckt to localStorage = " + localStorage.getItem("ckt"));
 
+	}
+
+	Schematic.prototype.share_link = function() {
+		// give circuit nodes a name, create and display sharable link
+	    this.label_connection_points();
+	    var netlist = this.json();
+	    this.input.value = JSON.stringify(netlist);
+
+	    strSimAndCircuit = strSimulator + '?value=' + this.input.value;
+	    
+	    // dialog box with sharable link
+	    var link_lbl = 'Link';
+
+		var fields = [];
+		fields[link_lbl] = build_input('text',60,strSimAndCircuit);
+
+		var content = build_table(fields);
+		content.fields = fields;
+		content.sch = this;
+
+		this.dialog(i18n.Sharable_Link,content,function(content) {
+			return null;
+		});
+
+		console.log("sharable link: " + strSimAndCircuit);
 	}
 
 	Schematic.prototype.open_netlist = function() {
@@ -3184,51 +3202,51 @@ schematic = (function() {
 			var ckt = sch.extract_circuit();
 			if (ckt === null) return;
 
-			    // retrieve parameters, remember for next time
-			    sch.tran_tstop = content.fields[tstop_lbl].value;
+		    // retrieve parameters, remember for next time
+		    sch.tran_tstop = content.fields[tstop_lbl].value;
 
-			    // gather a list of nodes that are being probed.  These
-			    // will be added to the list of nodes checked during the
-			    // LTE calculations in transient analysis
-			    var probe_list = sch.find_probes();
-			    var probe_names = new Array(probe_list.length);
-			    for (var i = probe_list.length - 1; i >= 0; --i)
-			    	probe_names[i] = probe_list[i][1];
+		    // gather a list of nodes that are being probed.  These
+		    // will be added to the list of nodes checked during the
+		    // LTE calculations in transient analysis
+		    var probe_list = sch.find_probes();
+		    var probe_names = new Array(probe_list.length);
+		    for (var i = probe_list.length - 1; i >= 0; --i)
+		    	probe_names[i] = probe_list[i][1];
 
-			    // run the analysis
-			    var results = ckt.tran(ckt.parse_number(sch.tran_npts), 0,
-			    	ckt.parse_number(sch.tran_tstop), probe_names, false);
+		    // run the analysis
+		    var results = ckt.tran(ckt.parse_number(sch.tran_npts), 0,
+		    	ckt.parse_number(sch.tran_tstop), probe_names, false);
 
-			    if (typeof results == 'string') 
-			    	sch.message(results);
-			    else {
-			    	if (sch.submit_analyses != undefined) {
-			    		var submit = sch.submit_analyses['tran'];
-			    		if (submit != undefined) {
-					// save a copy of the results for submission
-					sch.transient_results = {};
-					var times = results['_time_'];
+		    if (typeof results == 'string') 
+		    	sch.message(results);
+		    else {
+		    	if (sch.submit_analyses != undefined) {
+		    		var submit = sch.submit_analyses['tran'];
+		    		if (submit != undefined) {
+						// save a copy of the results for submission
+						sch.transient_results = {};
+						var times = results['_time_'];
 
-					// save requested values for each requested node
-					for (var j = 0; j < submit.length; j++) {
-					    var tlist = submit[j];    // [node_name,t1,t2,...]
-					    var node = tlist[0];
-					    var values = results[node];
-					    var tvlist = [];
-					    // for each requested time, interpolate waveform value
-					    for (var k = 1; k < tlist.length; k++) {
-					    	var t = tlist[k];
-					    	var v = interpolate(t,times,values);
-					    	tvlist.push([t,v == undefined ? 'undefined' : v]);
-					    }
-					    // save results as list of [t,value] pairs
-					    sch.transient_results[node] = tvlist;
+						// save requested values for each requested node
+						for (var j = 0; j < submit.length; j++) {
+						    var tlist = submit[j];    // [node_name,t1,t2,...]
+						    var node = tlist[0];
+						    var values = results[node];
+						    var tvlist = [];
+						    // for each requested time, interpolate waveform value
+						    for (var k = 1; k < tlist.length; k++) {
+						    	var t = tlist[k];
+						    	var v = interpolate(t,times,values);
+						    	tvlist.push([t,v == undefined ? 'undefined' : v]);
+						    }
+						    // save results as list of [t,value] pairs
+						    sch.transient_results[node] = tvlist;
+						}
 					}
 				}
-			}
 
-			var x_values = results['_time_'];
-			var x_legend = i18n.Time;
+				var x_values = results['_time_'];
+				var x_legend = i18n.Time;
 
 				// set up plot values for each node with a probe
 				var v_values = [];  // voltage values: list of [color, result_array]
@@ -4065,7 +4083,7 @@ schematic = (function() {
 	    dialog.appendChild(buttons);
 
 	    // put into an overlay window
-	    this.window(title,dialog);
+	    this.window(title,dialog,20);
 	}
 
 	function dialog_cancel(event) {
@@ -4397,7 +4415,8 @@ schematic = (function() {
 	var rotate_icon = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIxOC45cHgiIGhlaWdodD0iMTkuMnB4IiB2aWV3Qm94PSIwIDAgMTguOSAxOS4yIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAxOC45IDE5LjI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+DQoJLnN0MHtmb250LWZhbWlseTonUHJveGltYU5vdmEtQm9sZCc7fQ0KCS5zdDF7Zm9udC1zaXplOjE2cHg7fQ0KCS5zdDJ7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO30NCgkuc3Qze2ZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MztzdHJva2UtbWl0ZXJsaW1pdDoxMDt9DQo8L3N0eWxlPg0KPHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgMSAtMC4yNjIxIDE4LjEzNjkpIiBjbGFzcz0ic3QwIHN0MSI+UjwvdGV4dD4NCjxwb2x5Z29uIGNsYXNzPSJzdDIiIHBvaW50cz0iMTQuOSwxNS44IDExLjgsMTAuOSAxNy42LDExICIvPg0KPHBhdGggY2xhc3M9InN0MyIgZD0iTTE0LjcsMTAuN2MwLTQuOC00LjctOC43LTEwLjYtOC43Ii8+DQo8L3N2Zz4NCg=='
 	var spacer_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAASCAYAAAB4i6/FAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAADklEQVQYGWNgGAVDOwQAAcIAAVPQQlcAAAAASUVORK5CYII='
 	var save_icon   = 'fa fa-fw fa-save fa-lg';
-	var open_icon   =   'fa fa-fw fa-folder-open-o fa-lg';
+	var open_icon   = 'fa fa-fw fa-folder-open-o fa-lg';
+	var link_icon   = 'fa fa-fw fa-link fa-lg';
 
 	///////////////////////////////////////////////////////////////////////////////
 	//
