@@ -2035,10 +2035,10 @@ window.onload = add_schematic_handler(window.onload);	// restored from earlier E
 } */
 
 // URL of ciruit sandbox simluator, used to create shareable link.
-var strSimulator = 'https://willymcallister.github.io/Circuit-sandbox';
+var strSimulator = 'https://willymcallister.github.io/Circuit-sandbox/';
 //var strSimulator = 'file:///Users/willymcallister/KA/circuit%20sandbox%20simulator/Circuit%20sandbox/index.html';
 
-// from: // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+// from: http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 function getURLParameterByName(name, url) {
     if (!url) {
       url = window.location.href;
@@ -3527,8 +3527,7 @@ schematic = (function() {
 			c.arc(x,y,r,0,2*Math.PI);
 			c.stroke();
 
-			// rotate control
-			c.lineWidth = 2;
+			c.lineWidth = 2;				//curved arrow
 			r = this.sctl_r - 6;
 			c.fillStyle = stroke_style;
 			c.beginPath();
@@ -3558,8 +3557,8 @@ schematic = (function() {
 			c.moveTo(x-6+o, y+4);
 			c.lineTo(x, y+4);
 			c.stroke();
-			c.moveTo(x-2,y+4);
-			c.lineTo(x+4,y+10);
+			c.moveTo(x,y+4);
+			c.lineTo(x+4,y+10+o);
 			c.stroke(); 
 		
 		    // delete control
