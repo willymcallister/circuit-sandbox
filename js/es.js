@@ -103,7 +103,7 @@ Duty_cycle: 'Ciclo de trabajo (%)',
 triangle: 'triángulo',
 
 pwl: 'pwl',
-pwl_repeating: 'pwl_repeating',
+pwl_repeating: 'pwl (repitiendo)',
 Comma_separated_list: 'Lista separada por comas de los tiempos y valores alternos',
 
 pulse: 'pulso',

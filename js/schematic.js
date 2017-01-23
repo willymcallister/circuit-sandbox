@@ -2008,7 +2008,7 @@ window.update_schematics = update_schematics;
 // add ourselves to the tasks that get performed when window is loaded
 function add_schematic_handler(other_onload) {
 	return function() {
-	// execute othe onload functions first
+	// execute other onload functions first
 	if (other_onload) other_onload();
 
 	update_schematics();
@@ -2914,14 +2914,12 @@ schematic = (function() {
 	    this.label_connection_points();
 	    var netlist = this.json();
 	    this.input.value = JSON.stringify(netlist);
-
-	    strSimAndCircuit = strSimulator + '?value=' + this.input.value;
 	    
 	    // dialog box with sharable link
 	    var link_lbl = 'Link';
 
 		var fields = [];
-		fields[link_lbl] = build_input('text',60,strSimAndCircuit);
+		fields[link_lbl] = build_input('text',60,strSimulator + '?value=' + this.input.value);
 
 		var content = build_table(fields);
 		content.fields = fields;
@@ -2931,7 +2929,7 @@ schematic = (function() {
 			return null;
 		});
 
-		console.log("sharable link: " + strSimAndCircuit);
+		console.log("sharable link: " + strSimulator + '?value=' + this.input.value);
 	}
 
 	Schematic.prototype.open_netlist = function() {
