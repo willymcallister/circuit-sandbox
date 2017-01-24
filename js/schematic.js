@@ -2035,8 +2035,7 @@ window.onload = add_schematic_handler(window.onload);	// restored from earlier E
 } */
 
 // URL of ciruit sandbox simluator, used to create shareable link.
-var strSimulator = 'https://willymcallister.github.io/Circuit-sandbox/';
-//var strSimulator = 'file:///Users/willymcallister/KA/circuit%20sandbox%20simulator/Circuit%20sandbox/index.html';
+var strSimulator = 'https://willymcallister.github.io/Circuit-sandbox/index.html';
 
 // from: http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 function getURLParameterByName(name, url) {
@@ -6346,84 +6345,44 @@ schematic = (function() {
 			this.draw_text(c,this.properties['value'],16,24,3,property_size);
 	}
 
-	// map source function name to labels for each source parameter
-	/*var source_functions = {
-		'dc': ['DC_value'],
-
-		'impulse': [i18n.Height,
-		i18n.Width],
-
-		'step': [i18n.Initial_value,
-		i18n.Plateau_value,
-		i18n.Delay_until_step,
-		i18n.Rise_time],
-
-		'square': [i18n.Initial_value,
-		i18n.Plateau_value,
-		i18n.Frequency,
-		i18n.Duty_cycle],
-
-		'triangle': [i18n.Initial_value,
-		i18n.Plateau_value,
-		i18n.Frequency],
-
-		'pwl': [i18n.Comma_separated_list],
-
-		'pwl_repeating': [i18n.Comma_separated_list],
-
-		'pulse': [i18n.Initial_value,
-		i18n.Plateau_value,
-		i18n.Delay_until_pulse,
-		i18n.Time_for_first_transition,
-		i18n.Time_for_second_transition,
-		i18n.Pulse_width,
-		i18n.Period],
-
-		'sin': [i18n.Offset_value,
-		i18n.Amplitude,
-		i18n.Frequency,
-		i18n.Delay_until_sin_starts,
-		i18n.Phase_offset_degrees]
-	} */
-
 // map source function name to labels for each source parameter
 	var source_functions = {
 		'dc': ['DC_value'],
 
 		'impulse': ['Height',
-		'Width'],
+			'Width'],
 
 		'step': ['Initial_value',
-		'Plateau_value',
-		'Delay_until_step',
-		'Rise_time'],
+			'Plateau_value',
+			'Delay_until_step',
+			'Rise_time'],
 
 		'square': ['Initial_value',
-		'Plateau_value',
-		'Frequency',
-		'Duty_cycle'],
+			'Plateau_value',
+			'Frequency',
+			'Duty_cycle'],
 
 		'triangle': ['Initial_value',
-		'Plateau_value',
-		'Frequency'],
+			'Plateau_value',
+			'Frequency'],
 
 		'pwl': ['Comma_separated_list'],
 
 		'pwl_repeating': ['Comma_separated_list'],
 
 		'pulse': ['Initial_value',
-		'Plateau_value',
-		'Delay_until_pulse',
-		'Time_for_first_transition',
-		'Time_for_second_transition',
-		'Pulse_width',
-		'Period'],
+			'Plateau_value',
+			'Delay_until_pulse',
+			'Time_for_first_transition',
+			'Time_for_second_transition',
+			'Pulse_width',
+			'Period'],
 
 		'sin': ['Offset_value',
-		'Amplitude',
-		'Frequency',
-		'Delay_until_sin_starts',
-		'Phase_offset_degrees']
+			'Amplitude',
+			'Frequency',
+			'Delay_until_sin_starts',
+			'Phase_offset_degrees']
 	}
 
 	// build property editor div

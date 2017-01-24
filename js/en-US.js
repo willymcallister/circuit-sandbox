@@ -156,16 +156,16 @@ last_line: 'last line, no comma'
 };
 
 var strSHelp = "CIRCUIT SANDBOX HELP\n\n";		//embedded Help 
-var strAddC = "Add component: Click on a part in the bin, then click on schematic to add.\n\n";
-var strAddW = "Add wire: Wires start at connection points (open circles). Click on a connection to start a wire, drag, and release.\n\n";
-var strSel  = "Select: Drag a rectangle to select components. \nShift-click to include another component.\n\n";
-var strMove = "Move: Click to select, then drag to a new location.\n\n";
-var strDel  = "Delete: Select, then click the X icon or hit BACKSPACE.\n\n";
-var strRot  = "Rotate/Reflect: Click to select, then click on the rotation icon or type the letter \"r\" to rotate 90. Repeat for more rotations and reflections.\n\n";
-var strProp = "Properties: Double click on a component to change values.\n\n";
-var strNum  = "Numeric suffixes may be entered in engineering notation:\n\
-T\t10^12\t\tm\t10^-3 \n\
-G\t10^9 \t\tu\t10^-6  \n\
-M\t10^6 \t\tn\t10^-9  \n\
-k\t10^3 \t\tp\t10^-12 \n\
-\t\t   \t\tf\t10^-15";
+var strAddC = "Add component: Tap on a part in the parts bin, then tap on the schematic to add.\n\n";
+var strAddW = "Add wire: Wires start at connection points (open circles). Touch on a connection to start a wire, drag, and release.\n\n";
+var strSel  = "Select: Drag a rectangle to select components. \n(desktop:) Shift-click to include another component.\n\n";
+var strMove = "Move: Touch and drag to a new location.\n\n";
+var strDel  = "Delete: Tap to select, then tap the X icon or hit BACKSPACE.\n\n";
+var strRot  = "Rotate/Reflect: Click to select, then click on the rotation icon or type the letter \"r\" to rotate 90. Repeat for more rotations and reflections (8 total).\n\n";
+var strProp = "Properties: Double tap on a component to change properties like resistance or voltage.\n\n";
+var strNum  = "Numbers may be entered using engineering notation:\n\
+T\t10^12     m\t10^-3    \n\
+G\t10^9       u\t10^-6   \n\
+M\t10^6       n\t10^-9   \n\
+k \t10^3       p\t10^-12 \n\
+                    f\t10^-15";
