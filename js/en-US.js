@@ -49,7 +49,6 @@ Alert: 'Alert',
 ckt_alert1: 'Warning!!! Circuit has a voltage source loop or a source or current probe shorted by a wire, please remove the source or the wire causing the short.',
 ckt_alert2: 'Warning!!! Simulator might produce meaningless results or no result with illegal circuits.',
 ckt_warning1: 'Warning: two circuit elements share the same name ',
-
 ckt_alert3: 'Please make at least one connection to ground (triangle symbol)',
 ckt_alert4: 'Newton Method failed, do your current sources have a conductive path to ground?',
 ckt_alert5: 'Newton Method failed, it may be your circuit or it may be our simulator.',
@@ -104,9 +103,8 @@ Duty_cycle: 'Duty cycle (%)',
 triangle: 'triangle',
 
 pwl: 'pwl',
+pwl_repeating: 'pwl (repeating)',
 Comma_separated_list: 'Comma-separated list of alternating times and values',
-
-pwl_repeating: 'pwl_repeating',
 
 pulse: 'pulse',
 Delay_until_pulse: 'Delay until pulse (secs)',
@@ -122,16 +120,18 @@ Delay_until_sin_starts: 'Delay until sin starts (secs)',
 Phase_offset_degrees: 'Phase offset (degrees)',
 
 Circuit_Sandbox_Help: 'CIRCUIT SANDBOX HELP',
-name: 'name',
-value: 'value',
-label: 'label',		//??
-r: 'r',
-c: 'c',
-l: 'l',
-color: 'color',
-offset: 'offset',
-area: 'area',
-type: 'type',
+name: 'Name',
+value: 'Value',
+label: 'Label',
+r: 'R',
+c: 'C',
+l: 'L',
+color: 'Color',
+offset: 'Offset',
+area: 'Area',
+type: 'Type',
+normal: 'normal',
+ideal: 'ideal',
 WL: 'W/L',
 A: 'A',
 Plot_color: 'Plot color',
@@ -141,29 +141,31 @@ impulse: 'impulse',
 step: 'step',
 square: 'square',
 triangle: 'triangle',
-pwl: 'pwl',
-pwl_repeating: 'pwl repeating',
 pulse: 'pulse',
-sin: 'sine',
-tstop_lbl: 'stop time',
+
+red: 'red',
+green: 'green',
+blue: 'blue',
+cyan: 'cyan',
+magenta: 'magenta',
+yellow: 'yellow',
+black: 'black',
+xaxis: 'x axis',
 
 last_line: 'last line, no comma'
 };
 
-// translated color names, not to be confused with variables: probe_names or probe_colors or probe_colors_rgb
-var i18n_probe_cnames = ['red','green','blue','cyan','magenta','yellow','black','x-axis'];
-
 var strSHelp = "CIRCUIT SANDBOX HELP\n\n";		//embedded Help 
-var strAddC = "Add component: Click on a part in the bin, then click on schematic to add.\n\n";
-var strAddW = "Add wire: Wires start at connection points (open circles). Click on a connection to start a wire, drag, and release.\n\n";
-var strSel  = "Select: Drag a rectangle to select components. \nShift-click to include another component.\n\n";
-var strMove = "Move: Click to select, then drag to a new location.\n\n";
-var strDel  = "Delete: Select, then click the X icon or hit BACKSPACE.\n\n";
-var strRot  = "Rotate/Reflect: Click to select, then click on the rotation icon or type the letter \"r\" to rotate 90. Repeat for more rotations and reflections.\n\n";
-var strProp = "Properties: Double click on a component to change values.\n\n";
-var strNum  = "Numeric suffixes may be entered in engineering notation:\n\
-T\t10^12\t\tm\t10^-3 \n\
-G\t10^9 \t\tu\t10^-6  \n\
-M\t10^6 \t\tn\t10^-9  \n\
-k\t10^3 \t\tp\t10^-12 \n\
-\t\t   \t\tf\t10^-15";
+var strAddC = "Add component: Tap on a part in the parts bin, then tap on the schematic to add.\n\n";
+var strAddW = "Add wire: Wires start at connection points (open circles). Touch on a connection to start a wire, drag, and release.\n\n";
+var strSel  = "Select: Drag a rectangle to select components. \n(desktop:) Shift-click to include another component.\n\n";
+var strMove = "Move: Touch and drag to a new location.\n\n";
+var strDel  = "Delete: Tap to select, then tap the X icon or hit BACKSPACE.\n\n";
+var strRot  = "Rotate/Reflect: Click to select, then click on the rotation icon or type the letter \"r\" to rotate 90. Repeat for more rotations and reflections (8 total).\n\n";
+var strProp = "Properties: Double tap on a component to change properties like resistance or voltage.\n\n";
+var strNum  = "Numbers may be entered using engineering notation:\n\
+T\t10^12     m\t10^-3    \n\
+G\t10^9       u\t10^-6   \n\
+M\t10^6       n\t10^-9   \n\
+k \t10^3       p\t10^-12 \n\
+                    f\t10^-15";

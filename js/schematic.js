@@ -1384,9 +1384,9 @@ var cktsim = (function() {
 	    src.inflection_point = function(t) { return undefined; };  // may be overridden below
 
 	    // see if there's a "(" in the description
-	    	var index = v.indexOf('(');
-	    		var ch;
-	    		if (index >= 0) {
+    	var index = v.indexOf('(');
+    		var ch;
+    		if (index >= 0) {
 		src.fun = v.slice(0,index);   // function name is before the "("
 		src.args = [];	// we'll push argument values onto this list
 		var end = v.indexOf(')',index);
@@ -2008,7 +2008,7 @@ window.update_schematics = update_schematics;
 // add ourselves to the tasks that get performed when window is loaded
 function add_schematic_handler(other_onload) {
 	return function() {
-	// execute othe onload functions first
+	// execute other onload functions first
 	if (other_onload) other_onload();
 
 	update_schematics();
@@ -2035,10 +2035,9 @@ window.onload = add_schematic_handler(window.onload);	// restored from earlier E
 } */
 
 // URL of ciruit sandbox simluator, used to create shareable link.
-var strSimulator = 'https://willymcallister.github.io/Circuit-sandbox';
-//var strSimulator = 'file:///Users/willymcallister/KA/circuit%20sandbox%20simulator/Circuit%20sandbox/index.html';
+var strSimulator = 'https://willymcallister.github.io/Circuit-sandbox/index.html';
 
-// from: // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+// from: http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 function getURLParameterByName(name, url) {
     if (!url) {
       url = window.location.href;
@@ -2914,14 +2913,12 @@ schematic = (function() {
 	    this.label_connection_points();
 	    var netlist = this.json();
 	    this.input.value = JSON.stringify(netlist);
-
-	    strSimAndCircuit = strSimulator + '?value=' + this.input.value;
 	    
 	    // dialog box with sharable link
 	    var link_lbl = 'Link';
 
 		var fields = [];
-		fields[link_lbl] = build_input('text',60,strSimAndCircuit);
+		fields[link_lbl] = build_input('text',60,strSimulator + '?value=' + this.input.value);
 
 		var content = build_table(fields);
 		content.fields = fields;
@@ -2931,7 +2928,7 @@ schematic = (function() {
 			return null;
 		});
 
-		console.log("sharable link: " + strSimAndCircuit);
+		console.log("sharable link: " + strSimulator + '?value=' + this.input.value);
 	}
 
 	Schematic.prototype.open_netlist = function() {
@@ -3261,12 +3258,12 @@ schematic = (function() {
 					if (v == undefined) {
 						alert(i18n.The + color + i18n.probe_is_connected_to_node + '"' + label + '"' + i18n.which_is_not_an_actual_circuit_node);
 					} else if (probes[i][3] == 'voltage') {
-						if (color == 'x-axis') {
+						if (color == 'xaxis') {
 							x_values = v;
 							x_legend = i18n.Voltage;
 						} else v_values.push([color,offset,v]);
 					} else {
-						if (color == 'x-axis') {
+						if (color == 'xaxis') {
 							x_values = v;
 							x_legend = i18n.Current;
 						} else i_values.push([color,offset,v]);
@@ -3527,8 +3524,7 @@ schematic = (function() {
 			c.arc(x,y,r,0,2*Math.PI);
 			c.stroke();
 
-			// rotate control
-			c.lineWidth = 2;
+			c.lineWidth = 2;				//curved arrow
 			r = this.sctl_r - 6;
 			c.fillStyle = stroke_style;
 			c.beginPath();
@@ -3558,8 +3554,8 @@ schematic = (function() {
 			c.moveTo(x-6+o, y+4);
 			c.lineTo(x, y+4);
 			c.stroke();
-			c.moveTo(x-2,y+4);
-			c.lineTo(x+4,y+10);
+			c.moveTo(x,y+4);
+			c.lineTo(x+4,y+10+o);
 			c.stroke(); 
 		
 		    // delete control
@@ -4122,7 +4118,7 @@ schematic = (function() {
 
 	    // build a row for each element in associative array
 	    for (var i in a) {
-	    	var label = document.createTextNode(i18n[i] + ': ');
+	    	var label = document.createTextNode(i18n[i] + ': ');	//row labels are translated here
 	    	var col1 = document.createElement('td');
 	    	col1.appendChild(label);
 	    	var col2 = document.createElement('td');
@@ -4152,7 +4148,8 @@ schematic = (function() {
 		var select = document.createElement('select');
 		for (var i = 0; i < options.length; i++) {
 			var option = document.createElement('option');
-			option.text = i18n[options[i]];
+			option.value = options[i];		//QQQ value is the English field name in a dropdown list (if omitted, defaults to option.text)
+			option.text = i18n[options[i]];						//text in a dropdown list are translated here
 			select.add(option);
 			if (options[i] == selected) select.selectedIndex = i;
 		}
@@ -4669,7 +4666,7 @@ schematic = (function() {
 			c.lineCap = 'round';
 			for (plot = y_values.length - 1; plot >= 0; --plot) {
 				var color = probe_colors_rgb[y_values[plot][0]];
-			    if (color == undefined) continue;  // no plot color (== x-axis)
+			    if (color == undefined) continue;  // no plot color (== xaxis)
 			    c.strokeStyle = color;
 			    var values = y_values[plot][2];
 			    if (values == undefined) continue;  // no data points
@@ -4741,7 +4738,7 @@ schematic = (function() {
 			c.lineWidth = 3;
 			for (plot = z_values.length - 1; plot >= 0; --plot) {
 				var color = probe_colors_rgb[z_values[plot][0]];
-			    if (color == undefined) continue;  // no plot color (== x-axis)
+			    if (color == undefined) continue;  // no plot color (== xaxis)
 			    c.strokeStyle = color;
 			    var values = z_values[plot][2];
 			    if (values == undefined) continue;  // no data points
@@ -4876,7 +4873,7 @@ schematic = (function() {
 				for (var plot = 0; plot < graph.y_values.length; plot++) {
 					var values = graph.y_values[plot][2];
 					var color = probe_colors_rgb[graph.y_values[plot][0]];
-					if (values == undefined || color == undefined) continue;  // no data points or x-axis
+					if (values == undefined || color == undefined) continue;  // no data points or xaxis
 
 					// interpolate signal value at graph_x using values[index-1] and values[index]
 					var y1 = (index == 0) ? values[0] : values[index-1];
@@ -4902,7 +4899,7 @@ schematic = (function() {
 				for (var plot = 0; plot < graph.z_values.length; plot++) {
 					var values = graph.z_values[plot][2];
 					var color = probe_colors_rgb[graph.z_values[plot][0]];
-					if (values == undefined || color == undefined) continue;  // no data points or x-axis
+					if (values == undefined || color == undefined) continue;  // no data points or xaxis
 
 					// interpolate signal value at graph_x using values[index-1] and values[index]
 					var z1 = (index == 0) ? values[0]: values[index-1];
@@ -5784,8 +5781,8 @@ schematic = (function() {
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
-	var probe_colors = ['red','green','blue','cyan','magenta','yellow','black','x-axis'];
-	var probe_cnames = i18n_probe_cnames;	// color names, see i18n string file, en-US.js, etc.
+	var probe_colors = ['red','green','blue','cyan','magenta','yellow','black','xaxis'];
+	// QQQ var probe_cnames = i18n_probe_cnames;	// color names, see i18n string file, en-US.js, etc.
 
 	var probe_colors_rgb = {
 		'red': 'rgb(232,77,57)',
@@ -5795,7 +5792,7 @@ schematic = (function() {
 		'magenta': 'rgb(237,95,166)',
 		'yellow': 'rgb(244,211,69)',
 		'black': 'rgb(0,0,0)',
-		'x-axis': undefined
+		'xaxis': undefined
 	};
 
 	function Probe(x,y,rotation,color,offset) {
@@ -5846,7 +5843,8 @@ schematic = (function() {
 		if (inside(this.bbox,x,y)) {
 			var fields = [];
 			var n = probe_colors.indexOf(this.properties['color']);
-			fields['Plot_color'] = build_select(probe_cnames,probe_cnames[n]);
+			//QQQ fields['Plot_color'] = build_select(probe_cnames,probe_cnames[n]);
+			fields['Plot_color'] = build_select(probe_colors,probe_colors[n]);
 			fields['Plot_offset'] = build_input('text',10,this.properties['offset']);
 
 			var content = build_table(fields);
@@ -5854,7 +5852,7 @@ schematic = (function() {
 			content.component = this;
 
 			this.sch.dialog(i18n.Edit_Properties,content,function(content) {
-				var color_choice = content.fields['Plot color'];
+				var color_choice = content.fields['Plot_color'];
 				content.component.properties['color'] = probe_colors[color_choice.selectedIndex];
 				content.component.properties['offset'] = content.fields['Plot_offset'].value;
 				content.component.sch.redraw_background();
@@ -6347,44 +6345,44 @@ schematic = (function() {
 			this.draw_text(c,this.properties['value'],16,24,3,property_size);
 	}
 
-	// map source function name to labels for each source parameter
+// map source function name to labels for each source parameter
 	var source_functions = {
-		'dc': ['DC value'],
+		'dc': ['DC_value'],
 
-		'impulse': [i18n.Height,
-		i18n.Width],
+		'impulse': ['Height',
+			'Width'],
 
-		'step': [i18n.Initial_value,
-		i18n.Plateau_value,
-		i18n.Delay_until_step,
-		i18n.Rise_time],
+		'step': ['Initial_value',
+			'Plateau_value',
+			'Delay_until_step',
+			'Rise_time'],
 
-		'square': [i18n.Initial_value,
-		i18n.Plateau_value,
-		i18n.Frequency,
-		i18n.Duty_cycle],
+		'square': ['Initial_value',
+			'Plateau_value',
+			'Frequency',
+			'Duty_cycle'],
 
-		'triangle': [i18n.Initial_value,
-		i18n.Plateau_value,
-		i18n.Frequency],
+		'triangle': ['Initial_value',
+			'Plateau_value',
+			'Frequency'],
 
-		'pwl': [i18n.Comma_separated_list],
+		'pwl': ['Comma_separated_list'],
 
-		'pwl_repeating': [i18n.Comma_separated_list],
+		'pwl_repeating': ['Comma_separated_list'],
 
-		'pulse': [i18n.Initial_value,
-		i18n.Plateau_value,
-		i18n.Delay_until_pulse,
-		i18n.Time_for_first_transition,
-		i18n.Time_for_second_transition,
-		i18n.Pulse_width,
-		i18n.Period],
+		'pulse': ['Initial_value',
+			'Plateau_value',
+			'Delay_until_pulse',
+			'Time_for_first_transition',
+			'Time_for_second_transition',
+			'Pulse_width',
+			'Period'],
 
-		'sin': [i18n.Offset_value,
-		i18n.Amplitude,
-		i18n.Frequency,
-		i18n.Delay_until_sin_starts,
-		i18n.Phase_offset_degrees]
+		'sin': ['Offset_value',
+			'Amplitude',
+			'Frequency',
+			'Delay_until_sin_starts',
+			'Phase_offset_degrees']
 	}
 
 	// build property editor div
@@ -6396,41 +6394,41 @@ schematic = (function() {
 	    if (src == undefined) {
 	    	fields['value'] = this.properties['value'];
 	    } else {
-		// fancy version: add select tag for source type
-		var src_types = [];
-		for (var t in source_functions) src_types.push(t);
-		var type_select = build_select(src_types,src.fun);
-		type_select.component = this;
-		type_select.addEventListener('change',source_type_changed,false)
-		fields['type'] = type_select;
+			// fancy version: add select tag for source type
+			var src_types = [];
+			for (var t in source_functions) src_types.push(t);
+			var type_select = build_select(src_types,src.fun);
+			type_select.component = this;
+			type_select.addEventListener('change',source_type_changed,false)
+			fields['type'] = type_select;
 
-		if (src.fun == 'pwl' || src.run == 'pwl_repeating') {
-			var v = '';
-			var first = true;
-			for (var i = 0; i < src.args.length; i++) {
-				if (first) first = false;
-				else v += ',';
-				v += engineering_notation(src.args[i],3);
-				if (i % 2 == 0) v += 's';
+			if (src.fun == 'pwl' || src.fun == 'pwl_repeating') {		//WMc fixed bug in original MIT code src.run
+				var v = '';
+				var first = true;
+				for (var i = 0; i < src.args.length; i++) {
+					if (first) first = false;
+					else v += ',';
+					v += engineering_notation(src.args[i],3);
+					if (i % 2 == 0) v += 's';
+				}
+				fields[source_functions[src.fun][0]] = build_input('text',30,v);
+			} else {
+			    // followed separate input tag for each parameter
+			    var labels = source_functions[src.fun];
+			    for (var i = 0; i < labels.length; i++) {
+			    	var v = engineering_notation(src.args[i],3);
+			    	fields[labels[i]] = build_input('text',10,v);
+			    }
 			}
-			fields[source_functions[src.fun][0]] = build_input('text',30,v);
-		} else {
-		    // followed separate input tag for each parameter
-		    var labels = source_functions[src.fun];
-		    for (var i = 0; i < labels.length; i++) {
-		    	var v = engineering_notation(src.args[i],3);
-		    	fields[labels[i]] = build_input('text',10,v);
-		    }
 		}
-	}
 
-	var div = this.content;
-	if (div.hasChildNodes())
-		div.removeChild(div.firstChild);  // remove table of input fields
-		div.appendChild(build_table(fields));
-		div.fields = fields;
-		div.component = this;
-		return div;
+		var div = this.content;
+		if (div.hasChildNodes())
+			div.removeChild(div.firstChild);  // remove table of input fields
+			div.appendChild(build_table(fields));
+			div.fields = fields;
+			div.component = this;
+			return div;
 	}
 
 	function source_type_changed(event) {
