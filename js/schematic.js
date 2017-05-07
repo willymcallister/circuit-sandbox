@@ -2035,7 +2035,8 @@ window.onload = add_schematic_handler(window.onload);	// restored from earlier E
 } */
 
 // URL of ciruit sandbox simluator, used to create shareable link.
-var strSimulator = 'https://spinningnumbers/circuit-sandbox/index.html';
+
+var strSimulator = 'http://spinningnumbers.org/circuit-sandbox/index.html';
 
 // from: http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 function getURLParameterByName(name, url) {
