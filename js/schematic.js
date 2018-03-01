@@ -5781,7 +5781,7 @@ schematic = (function() {
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
-	var probe_colors = ['red','green','blue','cyan','magenta','yellow','black','xaxis'];
+	var probe_colors = ['red','green','blue','cyan','magenta','orange','black','xaxis'];
 	// QQQ var probe_cnames = i18n_probe_cnames;	// color names, see i18n string file, en-US.js, etc.
 
 	var probe_colors_rgb = {
@@ -5790,7 +5790,8 @@ schematic = (function() {
 		'blue': 'rgb(35,110,201)',
 		'cyan': 'rgb(99,217,234)',
 		'magenta': 'rgb(237,95,166)',
-		'yellow': 'rgb(244,211,69)',
+	//	'yellow': 'rgb(244,211,69)',
+		'orange': 'rgb(255,156,57)',
 		'black': 'rgb(0,0,0)',
 		'xaxis': undefined
 	};
@@ -6035,9 +6036,9 @@ schematic = (function() {
 	    this.draw_line(c,-8,26,8,26);
 	    this.draw_line(c,0,26,0,48);
 	    if (this.properties['c'])
-	    	this.draw_text(c,this.properties['c']+'F',9,24,3,property_size);
+	    	this.draw_text(c,this.properties['c']+'F',12,24,3,property_size);
 	    if (this.properties['name'])
-	    	this.draw_text(c,this.properties['name'],-9,24,5,property_size);
+	    	this.draw_text(c,this.properties['name'],-12,24,5,property_size);
 	}
 
 	Capacitor.prototype.clone = function(x,y) {
@@ -6077,7 +6078,7 @@ schematic = (function() {
 	    if (this.properties['l'])
 	    	this.draw_text(c,this.properties['l']+'H',8,24,3,property_size);
 	    if (this.properties['name'])
-	    	this.draw_text(c,this.properties['name'],-6,24,5,property_size);
+	    	this.draw_text(c,this.properties['name'],-8,24,5,property_size);
 	}
 
 	Inductor.prototype.clone = function(x,y) {

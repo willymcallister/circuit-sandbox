@@ -149,6 +149,7 @@ blue: 'blue',
 cyan: 'cyan',
 magenta: 'magenta',
 yellow: 'yellow',
+orange: 'orange',
 black: 'black',
 xaxis: 'x axis',
 
