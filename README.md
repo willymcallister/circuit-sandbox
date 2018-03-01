@@ -6,10 +6,11 @@ A simulator for experimenting with circuits. Click and draw. There's no installa
 
 [circuit sandbox](https://willymcallister.github.io/circuit-sandbox/index-es.html) (Español)
 
+Can you help translate Circuit Sandbox into other languages? It's easy. Contact me at willy@spinningnumbers.org.
 
 ## Playing in the circuit sandbox
 
-To create a circuit, drag components from the parts bin on the right, onto the schematic diagram.
+To create a circuit, drag components onto the schematic diagram from the parts bin on the right.
 
 <img src="images/42image_1.png">
 
@@ -171,16 +172,15 @@ Many people have written front-end interfaces to SPICE that allow designers to c
 
 An excellent version of SPICE is available from [Linear Technology](http://www.linear.com/), a semiconductor manufacturing company in Milpitas, California. The program is called [LTspice](http://www.linear.com/designtools/software/#LTspice). LTspice runs on Windows, Macintosh, and Linux machines with Windows emulation. It is free to download and use."
 
-## Acknowledgements
+## Acknowledgments
 
-schematic.js   &copy; *2012 EdX*,  &copy; *2011 MIT EECS*
+schematic.js &copy; 2017-18 Willy McAllister, &copy; 2016 Khan Academy, Inc., &copy; 2012 EdX, &copy; 2011 MIT EECS
 
 Khan Academy software is made available under the [MIT License](https://opensource.org/licenses/MIT).  
 
 This circuit simulator is part of the EdX Platform, licensed under the 
 [GNU AFFERO GENERAL PUBLIC LICENSE](https://github.com/edx/edx-platform/blob/master/LICENSE)
 Version 3, 19 November 2007. More information at [EdX licensing](https://open.edx.org/open-edx-licensing).
-
 
 #### Libraries
 
