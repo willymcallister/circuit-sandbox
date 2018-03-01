@@ -1,10 +1,10 @@
-# Circuit-sandbox
+# Circuit Sandbox
 
-A simulator for experimenting with circuits.
+A simulator for experimenting with circuits. Click and draw. There's no installation.
 
-[Circuit sandbox](https://willymcallister.github.io/Circuit-sandbox/index.html) (English)
+[circuit sandbox](https://willymcallister.github.io/circuit-sandbox/index.html) (English)
 
-[Circuit sandbox](https://willymcallister.github.io/Circuit-sandbox/index-es.html) (Español)
+[circuit sandbox](https://willymcallister.github.io/circuit-sandbox/index-es.html) (Español)
 
 
 ## Playing in the circuit sandbox
@@ -57,7 +57,7 @@ To create the RC circuit shown above, follow these steps starting from a blank s
 
 Here is a complete RC circuit schematic. Copy and paste this entire URL into a browswer. 
 
-    https://willymcallister.github.io/Circuit-sandbox/?value=[["v",[152,80,0],{"name":"vin","value":"step(0,1,0,1n)","_json_":0},["2","0"]],["r",[232,64,1],{"name":"R1","r":"1k","_json_":1},["1","2"]],["c",[264,80,0],{"name":"C1","c":"1u","_json_":2},["1","0"]],["w",[152,80,152,64]],["w",[152,64,184,64]],["w",[232,64,264,64]],["w",[264,64,264,80]],["g",[208,128,0],{"_json_":7},["0"]],["w",[152,128,208,128]],["w",[264,128,208,128]],["s",[264,64,0],{"color":"cyan","offset":"0","_json_":10},["1"]],["view",110.6424,32.20688,3.814697265625,"50","10","1G",null,"100","10m","1000"]]
+    https://willymcallister.github.io/circuit-sandbox/?value=[["v",[152,80,0],{"name":"vin","value":"step(0,1,0,1n)","_json_":0},["2","0"]],["r",[232,64,1],{"name":"R1","r":"1k","_json_":1},["1","2"]],["c",[264,80,0],{"name":"C1","c":"1u","_json_":2},["1","0"]],["w",[152,80,152,64]],["w",[152,64,184,64]],["w",[232,64,264,64]],["w",[264,64,264,80]],["g",[208,128,0],{"_json_":7},["0"]],["w",[152,128,208,128]],["w",[264,128,208,128]],["s",[264,64,0],{"color":"cyan","offset":"0","_json_":10},["1"]],["view",110.6424,32.20688,3.814697265625,"50","10","1G",null,"100","10m","1000"]]
 
 </details>
 
