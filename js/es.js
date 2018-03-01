@@ -30,7 +30,7 @@ DC_Analysis: 'Análisis DC',
 AC_Small_Signal_Analysis: 'Realizar análisis AC de pequeña-señal',
 Perform_Transient_Analysis: 'Realizar Análisis transitorio',
 Transient_Analysis: 'Análisis transitorio',
-Edit_Properties: 'Editar propiedades',
+Edit_Properties: 'Editar Propiedades',
 Link: 'Enlace',
 Sharable_Link: 'Compartir enlace',
 
@@ -42,7 +42,7 @@ AC_Analysis_add_a_voltage_probe: "Análisis AC: ¡añadir un sensor de voltaje a
 AC_Analysis: 'Análisis AC',
 Zero_ac_response: 'Respuesta cero de ac, -infinito en la escala DB.',
 Near_zero_ac_response: 'Cerca de respuesta cero de ac, expulsar ',
-sensor: ' sensor',
+probe: ' sensor',
 
 // Alerts and warnings from the circuit simulator
 Alert: '¡Alerta!',
@@ -70,6 +70,7 @@ AC_Magnitude: 'Magnitud de AC',
 
 Minimum_number_of_timepoints: 'Número mínimo de puntos de tiempo',
 Stop_time_seconds: 'Detener en el tiempo (segundos)',
+tstop_lbl: 'tiempo final',
 Transient_Analysis_add_a_probe: 'Análisis transitorio: ¡añadir un sensor al diagrama!',
 
 //Use creating phrasing to get this right: 
@@ -102,9 +103,8 @@ Duty_cycle: 'Ciclo de trabajo (%)',
 triangle: 'triángulo',
 
 pwl: 'pwl',
+pwl_repeating: 'pwl (repitiendo)',
 Comma_separated_list: 'Lista separada por comas de los tiempos y valores alternos',
-
-pwl_repeating: 'pwl_repeating',
 
 pulse: 'pulso',
 Delay_until_pulse: 'Retardo hasta el pulso (seg)',
@@ -120,16 +120,18 @@ Delay_until_sin_starts: 'Retardo hasta el inicio del seno (seg)',
 Phase_offset_degrees: 'Desplazamiento de fase (grados)',
 
 Circuit_Sandbox_Help: 'AYUDA PARA PRUEBAS',
-name: 'nombre',
-value: 'valor',
-label: 'etiqueta',
-r: 'r',
-c: 'c',
-l: 'l',
-color: 'color',
-offset: 'compensar',
-area: 'área',
-type: 'tipo',
+name: 'Nombre',
+value: 'Valor',
+label: 'Etiqueta',
+r: 'R',
+c: 'C',
+l: 'L',
+color: 'Color',
+offset: 'Compensar',
+area: 'Área',
+type: 'Tipo',
+normal: 'normal',
+ideal: 'ideal',
 WL: 'W/L',
 A: 'A',
 Plot_color: 'Color del gráfico',
@@ -139,16 +141,20 @@ impulse: 'impulso',
 step: 'paso',
 square: 'cuadrado',
 triangle: 'triángulo',
-pwl: 'pwl',
-pwl_repeating: 'pwl de repetición',
 pulse: 'pulso',
-sin: 'seno',
 
-last_line: 'última líena sin coma'
+red: 'rojo',
+green: 'verde',
+blue: 'azul',
+cyan: 'cian',
+magenta: 'magenta',
+yellow: 'amarillo',
+orange: 'naranja',
+black: 'negro',
+xaxis: 'eje x',
+
+last_line: 'última líena, sin coma'
 };
-
-// translated color names, not to be confused with variables: probe_names or probe_colors or probe_colors_rgb
-var i18n_probe_cnames = ["rojo", "verde", "azul", "cian", "magenta", "amarillo", "negro",'eje-x'];
 
 var strSHelp = "AYUDA DEL CIRCUITO DE PRUEBAS \n\n"; // Ayuda incrustado
 var strAddC = "Añadir componente: Haga clic en una parte en la papelera y a continuación haga clic en el esquema para añadir. \n\n";
@@ -162,4 +168,5 @@ var strNum = "Sufijos numéricos se pueden introducir con notación de ingenier�
 T\t10^12\t\tm\t10^-3 \n\
 G\t10^9 \t\tu\t10^-6  \n\
 M\t10^6 \t\tn\t10^-9  \n\
-k\t10^3 \t\tp\t10^-12 \t\tf\t10^-15";
+k\t10^3 \t\tp\t10^-12 \n\
+\t\t   \t\tf\t10^-15";
