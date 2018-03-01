@@ -149,6 +149,7 @@ blue: 'azul',
 cyan: 'cian',
 magenta: 'magenta',
 yellow: 'amarillo',
+orange: 'naranja',
 black: 'negro',
 xaxis: 'eje x',
 
