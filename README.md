@@ -6,10 +6,13 @@ A simulator for experimenting with circuits. Click and draw. There's no installa
 
 [circuit sandbox](https://willymcallister.github.io/circuit-sandbox/index-es.html) (Español)
 
+[circuit sandbox](https://willymcallister.github.io/circuit-sandbox/index-zh.html) (简体中文)
+
+Can you help translate Circuit Sandbox into other languages? It's easy. Contact me at willy@spinningnumbers.org.
 
 ## Playing in the circuit sandbox
 
-To create a circuit, drag components from the parts bin on the right, onto the schematic diagram.
+To create a circuit, drag components onto the schematic diagram from the parts bin on the right.
 
 <img src="images/42image_1.png">
 
@@ -37,7 +40,7 @@ Select DC, AC, or TRAN from the menu to simulate the circuit.
 
 If you have a touch device (tablet or smartphone):
 
-* One finger selects components or drags a selection rectangle 
+* One finger selects components or drags a selection rectangle
 * Two fingers pan the schematic window
 
 <details>
@@ -55,19 +58,19 @@ To create the RC circuit shown above, follow these steps starting from a blank s
 * Select an analysis to perform. For this example, let's do a transient analysis. Click TRAN in the menu. Set the stop time to 10m. The m stands for 10^-3 so we will simulate for 10 milliseconds.
 * Click OK. The simulation is performed and a plot should appear.
 
-Here is a complete RC circuit schematic. Copy and paste this entire URL into a browswer. 
+Here is a complete RC circuit schematic. Copy and paste this entire URL into a browswer.
 
     http://spinningnumbers.org/circuit-sandbox/index.html?value=[["s",[264,64,0],{"color":"cyan","offset":"0","_json_":0},["2"]],["w",[264,128,208,128]],["w",[152,128,208,128]],["g",[208,128,0],{"_json_":3},["0"]],["w",[264,64,264,80]],["w",[232,64,264,64]],["w",[152,64,184,64]],["w",[152,80,152,64]],["c",[264,80,0],{"name":"C1","c":"1u","_json_":8},["2","0"]],["r",[232,64,1],{"name":"R1","r":"1k","_json_":9},["2","1"]],["v",[152,80,0],{"name":"vin","value":"step(0,1,0,1n)","_json_":10},["1","0"]],["view",110.6424,32.20688,3.814697265625,"50","10","1G",null,"100","10m","1000"]]
 
 </details>
 
-## Actions 
+## Actions
 
 **Add a component**: Tap on a part in the parts bin, then tap on the schematic to add.
 
 **Add a wire**: Wires start at connection points (open circles). Touch on a connection to start a wire, drag, and release.
 
-**Select**: Drag a rectangle to select components. 
+**Select**: Drag a rectangle to select components.
 Shift-click to include another component (desktop only).
 
 **Move**: Touch and drag to a new location.
@@ -80,7 +83,7 @@ Shift-click to include another component (desktop only).
 
 **Numeric suffixes**: Numbers can be entered using engineering notation:
 
-    T    10^12          m   10^-3 
+    T    10^12          m   10^-3
     G    10^9           u   10^-6  
     M    10^6           n   10^-9  
     k    10^3           p   10^-12
@@ -88,18 +91,18 @@ Shift-click to include another component (desktop only).
 
 example: 1000 can be entered as 1k
 
-## On-screen controls 
+## On-screen controls
 Scroll/Pan:  <img height="40" src="https://ka-perseus-images.s3.amazonaws.com/2446260ae44e7a7d850d815fedeb12506058d322.png">
 
 Zoom in/out/all: <img height="60" src="https://ka-perseus-images.s3.amazonaws.com/78979c8aedb8cec1614cb50ecbbf9e6ebbac6645.png">
 
-Rotate: <img height="40" src="https://ka-perseus-images.s3.amazonaws.com/deae5d6d1fb3a041dcb848fea746abd1915d1a97.png"> 
+Rotate: <img height="40" src="https://ka-perseus-images.s3.amazonaws.com/deae5d6d1fb3a041dcb848fea746abd1915d1a97.png">
 
 Delete: <img height="40" src="https://ka-perseus-images.s3.amazonaws.com/1392955f4594094500a3c3a2b09dcd52a0e31727.png">
 
 ## Menu
 
-**Help**: Display the Actions information shown above. 
+**Help**: Display the Actions information shown above.
 
 **Grid**: Toggle the background grid on and off.
 
@@ -124,13 +127,13 @@ Delete: <img height="40" src="https://ka-perseus-images.s3.amazonaws.com/1392955
 
 ## Device models
 
-The simulator has simple models for semiconductor devices and an operational amplifier, with just a few adjustable parameters. For more sophisticated simulations, check out the other circuit simulator resources mentioned below. 
+The simulator has simple models for semiconductor devices and an operational amplifier, with just a few adjustable parameters. For more sophisticated simulations, check out the other circuit simulator resources mentioned below.
 
-The default diode saturation current is 1.0 * 10^-14 A. The *area* parameter scales saturation current: is = a * is. 
+The default diode saturation current is 1.0 * 10^-14 A. The *area* parameter scales saturation current: is = a * is.
 
 ## System information
 
-The circuit sandbox works best in a desktop or laptop computer environment where you have plenty of viewing area. You can also use it on a tablet. (It works on smartphone, too, but the experience is a bit awkward because the screen is so small.) 
+The circuit sandbox works best in a desktop or laptop computer environment where you have plenty of viewing area. You can also use it on a tablet. (It works on smartphone, too, but the experience is a bit awkward because the screen is so small.)
 
 ### Desktop/laptop
 
@@ -138,7 +141,7 @@ The `SAVE` function saves a circuit text file (JSON format) to the Download fold
 
 The downloaded netlist file is named *ckt.txt*. (text file, JSON, JavaScript Object Notation).
 
-### Tablet 
+### Tablet
 
 The simulator has a touch interface. On a tablet you can save *one* circuit file. When you `SAVE` a circuit, it is tucked into a memory area inside your browser. When you `OPEN` the saved circuit, the circuit file is retrieved from browser memory. If you want to keep your work, be sure to `SAVE` before leaving the web page.
 
@@ -152,6 +155,7 @@ If you would like to translate the Circuit Sandbox into other languages, it's fa
 
 * English, en-US.js
 * Spanish, es.js
+* Simplified Chinese, zh-cn.js
 
 ## The circuit sandbox was created at MIT
 
@@ -159,28 +163,27 @@ The Circuit Sandbox simulator was created at MIT by Professor Chris Terman in 20
 
 The Circuit Sandbox is *not* a version of SPICE. It is its own version of a circuit simulator. It includes schematic capture and a circuit simulation engine. The simulator is 100% Javascript and does not require installation. All you have to do is click on the link to the simulator.
 
-The Circuit Sandbox is licensed under the MIT License and is also part of the EdX-platform. The simulator works in most modern browsers on Windows, Mac, and Linux machines. 
+The Circuit Sandbox is licensed under the MIT License and is also part of the EdX-platform. The simulator works in most modern browsers on Windows, Mac, and Linux machines.
 
 ## Other circuit simulators
 
-The granddaddy of all circuit simulation programs is SPICE (Simulation Program with Integrated Circuit Emphasis). This program was created at the University of California, Berkeley in the 1970's. It was originally written in FORTRAN and has always been in the public domain. 
+The granddaddy of all circuit simulation programs is SPICE (Simulation Program with Integrated Circuit Emphasis). This program was created at the University of California, Berkeley in the 1970's. It was originally written in FORTRAN and has always been in the public domain.
 
-The input to SPICE is a plain-text circuit description (the SPICE netlist). SPICE is the workhorse of the electronics industry because it supports sophisticated models for semiconductor devices (diodes and many types of transistors). 
+The input to SPICE is a plain-text circuit description (the SPICE netlist). SPICE is the workhorse of the electronics industry because it supports sophisticated models for semiconductor devices (diodes and many types of transistors).
 
-Many people have written front-end interfaces to SPICE that allow designers to create SPICE netlists by drawing schematics. The SPICE netlist is submitted to SPICE for simulation. The results are retrieved from SPICE and plotted.  Many of these packages can be found by searching the web for "circuit simulator." 
+Many people have written front-end interfaces to SPICE that allow designers to create SPICE netlists by drawing schematics. The SPICE netlist is submitted to SPICE for simulation. The results are retrieved from SPICE and plotted.  Many of these packages can be found by searching the web for "circuit simulator."
 
 An excellent version of SPICE is available from [Linear Technology](http://www.linear.com/), a semiconductor manufacturing company in Milpitas, California. The program is called [LTspice](http://www.linear.com/designtools/software/#LTspice). LTspice runs on Windows, Macintosh, and Linux machines with Windows emulation. It is free to download and use."
 
-## Acknowledgements
+## Acknowledgments
 
-schematic.js   &copy; *2012 EdX*,  &copy; *2011 MIT EECS*
+schematic.js &copy; 2017-18 Willy McAllister, &copy; 2016 Khan Academy, Inc., &copy; 2012 EdX, &copy; 2011 MIT EECS
 
 Khan Academy software is made available under the [MIT License](https://opensource.org/licenses/MIT).  
 
-This circuit simulator is part of the EdX Platform, licensed under the 
+This circuit simulator is part of the EdX Platform, licensed under the
 [GNU AFFERO GENERAL PUBLIC LICENSE](https://github.com/edx/edx-platform/blob/master/LICENSE)
 Version 3, 19 November 2007. More information at [EdX licensing](https://open.edx.org/open-edx-licensing).
-
 
 #### Libraries
 
