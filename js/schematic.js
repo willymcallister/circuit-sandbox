@@ -2174,7 +2174,7 @@ schematic = (function() {
 
 			this.tools['delete'] = this.add_tool(delete_icon,i18n.Delete,this.delete_selected);
 			this.tools['rotate'] = this.add_tool(rotate_icon,i18n.Rotate,this.rotate_selected);
-			this.tools['spacer'] = this.add_tool(spacer_icon,'',this.rotate_selected);
+			//this.tools['spacer'] = this.add_tool(spacer_icon,'',this.rotate_selected);
 		}
 
 	    // simulation interface if cktsim.js is loaded
@@ -3524,39 +3524,18 @@ schematic = (function() {
 			c.arc(x,y,r,0,2*Math.PI);
 			c.stroke();
 
-			c.lineWidth = 2;				//curved arrow
-			r = this.sctl_r - 6;
+			c.lineWidth = 3;				//curved rotation arrow
+			r = this.sctl_r - 8;
 			c.fillStyle = stroke_style;
 			c.beginPath();
-			c.arc(x,y,r,-0.6*Math.PI,0);	// 1/4 circle
+			c.arc(x,y,r,Math.PI/4,15*Math.PI/8);	// 3/4 circle, angles are clockwise from 3:00
 			c.stroke();
-			c.lineWidth = 1;		
+			c.lineWidth = 3;		
 			c.beginPath();   				// arrowhead
-			c.moveTo(x + 6,y);
-			c.lineTo(x + 10,y + 4);
-			c.lineTo(x + 14,y);
-			c.lineTo(x + 6,y);
-			c.fill();
+			c.moveTo(x + 2,y-3);			// start
+			c.lineTo(x + 8,y-3);			// straight right to tip
+			c.lineTo(x + 8,y-9);			// straight up
 			c.stroke();
-			//c.font = "13pt sans-serif";
-			//c.fillText("R",x - 8, y + 8);	// Why does this R jump around during rotate?
-
-			c.lineWidth = 2;	// drawn R character
-			c.beginPath();		// 1/2 circle
-			c.arc(x-1,y,4,-0.5*Math.PI,+0.5*Math.PI);
-			c.stroke();
-			c.moveTo(x-6+o, y+10);
-			c.lineTo(x-6+o, y-4);
-			c.stroke();
-			c.moveTo(x-6+o, y-4);
-			c.lineTo(x, y-4);
-			c.stroke();
-			c.moveTo(x-6+o, y+4);
-			c.lineTo(x, y+4);
-			c.stroke();
-			c.moveTo(x,y+4);
-			c.lineTo(x+4,y+10+o);
-			c.stroke(); 
 		
 		    // delete control
 		    r = this.dctl_r;
@@ -4402,18 +4381,17 @@ schematic = (function() {
 		}
 	}
 
-	var help_icon   = 'fa fa-fw fa-question-circle-o fa-lg';
-	var cut_icon    = 'fa fa-fw fa-scissors fa-lg';
-	var copy_icon   = 'fa fa-fw fa-files-o fa-lg';
-	var paste_icon  = 'fa fa-fw fa-clipboard fa-lg';
-	var close_icon  = 'fa fa-fw fa-times fa-lg';
-	var grid_icon   = 'fa fa-fw fa-table fa-lg';
-	var delete_icon = 'fa fa-fw fa-times fa-lg';		
-	var rotate_icon = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIxOC45cHgiIGhlaWdodD0iMTkuMnB4IiB2aWV3Qm94PSIwIDAgMTguOSAxOS4yIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAxOC45IDE5LjI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+DQoJLnN0MHtmb250LWZhbWlseTonUHJveGltYU5vdmEtQm9sZCc7fQ0KCS5zdDF7Zm9udC1zaXplOjE2cHg7fQ0KCS5zdDJ7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO30NCgkuc3Qze2ZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MztzdHJva2UtbWl0ZXJsaW1pdDoxMDt9DQo8L3N0eWxlPg0KPHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgMSAtMC4yNjIxIDE4LjEzNjkpIiBjbGFzcz0ic3QwIHN0MSI+UjwvdGV4dD4NCjxwb2x5Z29uIGNsYXNzPSJzdDIiIHBvaW50cz0iMTQuOSwxNS44IDExLjgsMTAuOSAxNy42LDExICIvPg0KPHBhdGggY2xhc3M9InN0MyIgZD0iTTE0LjcsMTAuN2MwLTQuOC00LjctOC43LTEwLjYtOC43Ii8+DQo8L3N2Zz4NCg=='
-	var spacer_icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAASCAYAAAB4i6/FAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAADklEQVQYGWNgGAVDOwQAAcIAAVPQQlcAAAAASUVORK5CYII='
-	var save_icon   = 'fa fa-fw fa-save fa-lg';
-	var open_icon   = 'fa fa-fw fa-folder-open-o fa-lg';
-	var link_icon   = 'fa fa-fw fa-link fa-lg';
+	var help_icon   = 'fa fa-fw fa-question';
+	var cut_icon    = 'fa fa-fw fa-cut';
+	var copy_icon   = 'fa fa-fw fa-copy';
+	var paste_icon  = 'fa fa-fw fa-paste';
+	var close_icon  = 'fa fa-fw fa-times';
+	var grid_icon   = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAABtUlEQVQ4EZXUXU8TURSF4aGCxKAiIGBiDDXhSrngyv//H7yWeqEkbcEPQCKQVtczM2dyQqIJO3ln9qyz1/lum6aLzbzmYRIed9LwPEmGOtSo5eEd4n2yZbgMB+FRWAu74WePnKZNjdpF4G1WwsewH7aDmAWdCu3axDT8abOmGeW91+ff8p6u5vEsbASNQl53VOt1R3Tf6vXRxnGet+FHOAxPg8bXwYiQ07SpUcvD25iROAuWYQSmqyDuQpnFefLfxIQaOg/vsJyyFJoNLFHr/83NyCm8CUawbrnTMdrzUPaIfhHUvep1OX2q+DQ4Wh2Km6BAaF9vs3/ri7TPzIipGHnuf9NEvbRO6Z6D19Q/BCfg8r0L7tROeBu+98hfBm1q1PLwjszISF+CZcgt1dEKt7fM5GtyRkEDD++ybGTZn2jDXj0oLx1txWWtRvAjfBLc2BeBBjlNmxoaD2/78Tlvp6ZA1MtR7AqIcvRyE3DLdeSSzu3Rr2CkcszXycu+6MhPQtDLCemIR9D10cZRnu6D2YyDAfzn7AWnAzlN2zio5eEdwvTnYRLc6jo+5eOkFpLrUC1Pu/S/4t9w0AFTPOoAAAAASUVORK5CYII=';
+	var delete_icon = 'fa fa-fw fa-times';		
+	var rotate_icon = 'fa fa-fw fa-redo';
+	var save_icon   = 'fa fa-fw fa-save';
+	var open_icon   = 'fa fa-fw fa-folder-open';
+	var link_icon   = 'fa fa-fw fa-link';
 
 	///////////////////////////////////////////////////////////////////////////////
 	//
@@ -5761,10 +5739,9 @@ schematic = (function() {
 
 	Label.prototype.draw = function(c) {
 	    Component.prototype.draw.call(this,c);   // give superclass a shot
-	    this.draw_line(c,0,0,0,8);
-	    this.draw_text(c,this.properties['label'],0,9,1,property_size);
+	    this.draw_line(c,0,0,8,0);
+	    this.draw_text(c,this.properties['label'],9,0,3,property_size);
 	}
-
 	Label.prototype.clone = function(x,y) {
 		return new Label(x,y,this.rotation,this.properties['label']);
 	}
