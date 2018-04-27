@@ -4020,7 +4020,7 @@ schematic = (function() {
 
 	    var ok_button = document.createElement('span');
 	    var ok_icon = document.createElement("span");
-		ok_icon.setAttribute('class', 'fa fa-fw fa-check fa-2x');
+		ok_icon.setAttribute('class', 'fas fa-fw fa-check fa-2x');
 		ok_icon.style.color = ok_style;
 	    ok_icon.dialog = dialog; 
 	    ok_button.appendChild(ok_icon);
@@ -4035,7 +4035,7 @@ schematic = (function() {
 
 	    var cancel_button = document.createElement('span');
 	    var cancel_icon = document.createElement("span");
-		cancel_icon.setAttribute('class', 'fa fa-fw fa-times fa-2x');
+		cancel_icon.setAttribute('class', 'fas fa-fw fa-times fa-2x');
 		cancel_icon.style.color = cancel_style;
 	    cancel_icon.dialog = dialog;
 	    cancel_button.appendChild(cancel_icon);
@@ -4161,7 +4161,7 @@ schematic = (function() {
 	    win.head = head;
 
 		var close_button = document.createElement("span");
-		close_button.setAttribute('class', 'fa fa-fw fa-times fa-lg');
+		close_button.setAttribute('class', 'fas fa-fw fa-times fa-lg');
 		close_button.style.color = cancel_style;
 	    //var close_button = new Image();
 	    //close_button.src = close_icon;
@@ -4294,14 +4294,14 @@ schematic = (function() {
 		if (icon.search('data:image') != -1) {
 			tool = document.createElement('img');
 			tool.src = icon;
-		} else if (icon.search('fa fa-fw') != -1) {
+		} else if (icon.search('fas fa-fw') != -1) {
 			tool = document.createElement('span');
 			tool.setAttribute('class', icon);
 			tool.style.color = icon_style;
 		}
 		else {
 			tool = document.createElement('span');
-			tool.style.font = 'small-caps small sans-serif';
+			tool.style.font = 'small-caps sans-serif';
 			tool.style.color = icon_style;
 			var label = document.createTextNode(icon);
 			tool.appendChild(label);
@@ -4381,17 +4381,17 @@ schematic = (function() {
 		}
 	}
 
-	var help_icon   = 'fa fa-fw fa-question';
-	var cut_icon    = 'fa fa-fw fa-cut';
-	var copy_icon   = 'fa fa-fw fa-copy';
-	var paste_icon  = 'fa fa-fw fa-paste';
-	var close_icon  = 'fa fa-fw fa-times';
+	var help_icon   = 'fas fa-fw fa-question';
+	var cut_icon    = 'fas fa-fw fa-cut';
+	var copy_icon   = 'fas fa-fw fa-copy';
+	var paste_icon  = 'fas fa-fw fa-paste';
+	var close_icon  = 'fas fa-fw fa-times';
 	var grid_icon   = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAABtUlEQVQ4EZXUXU8TURSF4aGCxKAiIGBiDDXhSrngyv//H7yWeqEkbcEPQCKQVtczM2dyQqIJO3ln9qyz1/lum6aLzbzmYRIed9LwPEmGOtSo5eEd4n2yZbgMB+FRWAu74WePnKZNjdpF4G1WwsewH7aDmAWdCu3axDT8abOmGeW91+ff8p6u5vEsbASNQl53VOt1R3Tf6vXRxnGet+FHOAxPg8bXwYiQ07SpUcvD25iROAuWYQSmqyDuQpnFefLfxIQaOg/vsJyyFJoNLFHr/83NyCm8CUawbrnTMdrzUPaIfhHUvep1OX2q+DQ4Wh2Km6BAaF9vs3/ri7TPzIipGHnuf9NEvbRO6Z6D19Q/BCfg8r0L7tROeBu+98hfBm1q1PLwjszISF+CZcgt1dEKt7fM5GtyRkEDD++ybGTZn2jDXj0oLx1txWWtRvAjfBLc2BeBBjlNmxoaD2/78Tlvp6ZA1MtR7AqIcvRyE3DLdeSSzu3Rr2CkcszXycu+6MhPQtDLCemIR9D10cZRnu6D2YyDAfzn7AWnAzlN2zio5eEdwvTnYRLc6jo+5eOkFpLrUC1Pu/S/4t9w0AFTPOoAAAAASUVORK5CYII=';
-	var delete_icon = 'fa fa-fw fa-times';		
-	var rotate_icon = 'fa fa-fw fa-redo';
-	var save_icon   = 'fa fa-fw fa-save';
-	var open_icon   = 'fa fa-fw fa-folder-open';
-	var link_icon   = 'fa fa-fw fa-link';
+	var delete_icon = 'fas fa-fw fa-times';		
+	var rotate_icon = 'fas fa-fw fa-redo';
+	var save_icon   = 'fas fa-fw fa-save';
+	var open_icon   = 'fas fa-fw fa-folder-open';
+	var link_icon   = 'fas fa-fw fa-link';
 
 	///////////////////////////////////////////////////////////////////////////////
 	//
@@ -5975,7 +5975,7 @@ schematic = (function() {
 	    this.draw_line(c,-4,34,0,36);
 	    this.draw_line(c,0,36,0,48);
 	    if (this.properties['r'])
-	    	this.draw_text(c,this.properties['r']+'\u03A9',8,24,3,property_size);
+	    	this.draw_text(c,this.properties['r']+' \u03A9',8,24,3,property_size);
 	    if (this.properties['name'])
 	    	this.draw_text(c,this.properties['name'],-8,24,5,property_size);
 	}

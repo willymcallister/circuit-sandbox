@@ -159,7 +159,7 @@ var strMove = "Move: Touch and drag to a new location.\n\n";
 var strDel  = "Delete: Tap to select, then tap the X icon or hit BACKSPACE.\n\n";
 var strRot  = "Rotate/Reflect: Click to select, then click on the rotation icon or type the letter \"r\" to rotate 90. Repeat for more rotations and reflections (8 total).\n\n";
 var strProp = "Properties: Double tap on a component to change its properties.\n\n";
-var strNum  = "Numbers may be entered using engineering notation:\n\
+var strNum  = "Numbers may be entered using engineering notation,\n\
 T\t10^12     m\t10^-3    \n\
 G\t10^9       u\t10^-6   \n\
 M\t10^6       n\t10^-9   \n\
