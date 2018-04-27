@@ -5975,7 +5975,7 @@ schematic = (function() {
 	    this.draw_line(c,-4,34,0,36);
 	    this.draw_line(c,0,36,0,48);
 	    if (this.properties['r'])
-	    	this.draw_text(c,this.properties['r']+' \u03A9',8,24,3,property_size);
+	    	this.draw_text(c,this.properties['r']+'\u03A9',8,24,3,property_size);
 	    if (this.properties['name'])
 	    	this.draw_text(c,this.properties['name'],-8,24,5,property_size);
 	}
