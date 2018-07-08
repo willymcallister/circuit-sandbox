@@ -3256,7 +3256,7 @@ schematic = (function() {
 					var offset = cktsim.parse_number(probes[i][2]);
 					var v = results[label];
 					if (v == undefined) {
-						alert(i18n.The + color + i18n.probe_is_connected_to_node + '"' + label + '"' + i18n.which_is_not_an_actual_circuit_node);
+						alert(i18n.The + i18n.color + i18n.probe_is_connected_to_node + '"' + label + '"' + i18n.which_is_not_an_actual_circuit_node);
 					} else if (probes[i][3] == 'voltage') {
 						if (color == 'xaxis') {
 							x_values = v;
