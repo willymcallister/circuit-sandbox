@@ -160,8 +160,5 @@ var strDel = "Borrar: Seleccionar y a continuación haga clic en el icono X o pr
 var strRot = "Rotar/Reflejar: Haga clic para seleccionar, a continuación, haga clic en el icono de rotación o presione la letra \"r\" para girar 90. Repetir para más rotaciones y reflexiones. \n\n";
 var strProp = "Propiedades: Haga doble clic en un componente para cambiar los valores. \n\n";
 var strNum = "Sufijos numéricos se pueden introducir con notación de ingeniería: \n\
-T\t10^12\t\tm\t10^-3 \n\
-G\t10^9 \t\tu\t10^-6  \n\
-M\t10^6 \t\tn\t10^-9  \n\
-k\t10^3 \t\tp\t10^-12 \n\
-\t\t   \t\tf\t10^-15";
+T = 10^12, G = 10^9, M = 10^6, k = 10^3\n\
+m = 10^-3, u = 10^-6, n = 10^-9, p = 10^-12, f = 10^-15";
