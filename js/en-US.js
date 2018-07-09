@@ -153,19 +153,12 @@ last_line: 'last line, no comma'
 
 var strSHelp = "CIRCUIT SANDBOX HELP\n\n";		//embedded Help 
 var strAddC = "Add component: Tap on a part in the parts bin, then tap on the schematic.\n\n";
-var strAddW = "Add wire: Touch on a connection point (open circle) to start. Drag. Release.\n\n";
+var strAddW = "Add wire: Touch on a connection point (open circle). Drag. Release.\n\n";
 var strSel  = "Select: Drag a rectangle to select components. \n(desktop:) Shift-click to include another component.\n\n";
 var strMove = "Move: Touch and drag to a new location.\n\n";
 var strDel  = "Delete: Tap to select, then tap the X icon or hit BACKSPACE.\n\n";
 var strRot  = "Rotate/Reflect: Click to select, then click on the rotation icon or type the letter \"r\" to rotate 90. Repeat for more rotations and reflections (8 total).\n\n";
 var strProp = "Properties: Double tap on a component to change its properties.\n\n";
 var strNum  = "Numbers may be entered using engineering notation,\n\
-T\t10^12\n\
-G\t10^9\n\
-M\t10^6\n\
-k \t10^3\n\
-m\t10^-3\n\
-u\t10^-6\n\
-n\t10^-9\n\
-p\t10^-12\n\
-f\t10^-15";
+T = 10^12, G = 10^9, M = 10^6, k = 10^3\n\
+m = 10^-3, u = 10^-6, n = 10^-9, p = 10^-12, f = 10^-15";
