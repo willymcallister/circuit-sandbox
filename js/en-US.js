@@ -1,5 +1,5 @@
 var i18n = {
-error1: 'Sorry, there a browser error in starting the schematic tool.  We recommend using the latest versions of Firefox and Chrome.',
+error1: 'Sorry, there was a browser error in starting the schematic tool. We recommend using the latest versions of Firefox and Chrome.',
 Ground_connection: 'Ground connection',
 Node_label: 'Node label',
 Voltage_source: 'Voltage source',
@@ -53,7 +53,7 @@ ckt_alert3: 'Please make at least one connection to ground (triangle symbol)',
 ckt_alert4: 'Newton Method failed, do your current sources have a conductive path to ground?',
 ckt_alert5: 'Newton Method failed, it may be your circuit or it may be our simulator.',
 ckt_alert6: 'DC failed, trying transient analysis from zero.',
-ckt_alert7: 'AC analysis refers to unknown source ',
+ckt_alert7: 'AC analysis refers to an unknown source ',
 ckt_alert8: 'AC analysis failed, unknown source',	
 
 ckt_error1: 'Rows of M mismatched to b or cols mismatch to x.',
@@ -68,16 +68,16 @@ degrees: 'degrees',
 AC_Phase: 'AC Phase',
 AC_Magnitude: 'AC Magnitude',
 
-Minimum_number_of_timepoints: 'Minimum number of timepoints',
+Minimum_number_of_timepoints: 'Minimum number of time points',
 Stop_time_seconds: 'Stop time (seconds)',
 tstop_lbl: 'stop time',
 Transient_Analysis_add_a_probe: 'Transient Analysis: add a probe to the diagram!',
 
-//Use creating phrasing to get this right: 
-// alert('The ' + color + ' probe is connected to node ' + '"' + label + '"' + ' which is not an actual circuit node');
+//Use creative phrasing to get this sentence to come out right: 
+// alert('The ' + color + ' probe is connected to node ' + '"' + label + '"' + ', which is not an actual circuit node');
 The: 'The ',
 probe_is_connected_to_node: ' probe is connected to node ',
-which_is_not_an_actual_circuit_node: ' which is not an actual circuit node',
+which_is_not_an_actual_circuit_node: ', which is not an actual circuit node.',
 
 Voltage: 'Voltage',
 Current: 'Current',
