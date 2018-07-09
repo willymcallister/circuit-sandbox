@@ -53,8 +53,8 @@ ckt_alert3: 'Por favor, haga al menos una conexión a tierra (símbolo del triá
 ckt_alert4: 'El método de Newton falló. ¿Sus fuentes de corriente tienen una conexión a tierra?',
 ckt_alert5: 'El método de Newton falló, puede ser su circuito o puede ser nuestro simulador.',
 ckt_alert6: 'DC falló, tratando análisis transitorio de cero.',
-ckt_alert7: 'Análisis AC refiere a una fuente desconocida ',
-ckt_alert8: 'Análisis AC falló, fuente desconocida',
+ckt_alert7: 'Análisis AC refiere a una fuente desconocida, ',
+ckt_alert8: 'Análisis AC falló, fuente desconocida.',
 
 ckt_error1: 'Los renglones M no coinciden con b o hay un desajuste con las columnas x.',
 ckt_error2: 'Renglones o columnas de A demasiado grandes para B',

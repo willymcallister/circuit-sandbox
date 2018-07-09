@@ -53,8 +53,8 @@ ckt_alert3: '少なくとも1つはアース接続してください (三角記�
 ckt_alert4: 'ニュートン法に失敗しました。電流源には接地への導電性パスがありますか？',
 ckt_alert5: 'ニュートン法に失敗しました。あなたの回路またはこちらのシミュレータに問題があるかもしれません。',
 ckt_alert6: 'DC に失敗しました。過渡解析をゼロから始めてください。',
-ckt_alert7: 'AC 解析が未知のソースに言及しています ',
-ckt_alert8: 'AC 解析に失敗しました。未知のソース',	
+ckt_alert7: 'AC 解析が未知のソースに言及しています: ',
+ckt_alert8: 'AC 解析に失敗しました。未知のソース。',	
 
 ckt_error1: 'Rows of M mismatched to b or cols mismatch to x.',
 ckt_error2: 'Row or columns of A too large for B',
@@ -164,4 +164,4 @@ T\t10^12     m\t10^-3    \n\
 G\t10^9       u\t10^-6   \n\
 M\t10^6       n\t10^-9   \n\
 k \t10^3       p\t10^-12 \n\
-                       f\t10^-15";
+                         f\t10^-15";

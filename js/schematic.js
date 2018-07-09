@@ -1995,7 +1995,7 @@ function update_schematics() {
     			msgdiv.style.border = 'thick solid #FF0000';
     			msgdiv.style.margins = '20px';
     			msgdiv.style.padding = '20px';
-    			var msg = document.createTextNode('Sorry, there a browser error in starting the schematic tool.');
+    			var msg = document.createTextNode('Sorry, there was a browser error while starting the schematic tool.');
     			msgdiv.appendChild(msg);
     			schematics[i].parentNode.insertBefore(msgdiv,schematics[i]);
     		}
