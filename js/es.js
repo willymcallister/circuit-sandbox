@@ -46,9 +46,9 @@ probe: ' sensor',
 
 // Alerts and warnings from the circuit simulator
 Alert: '¡Alerta!',
-ckt_alert1: '¡¡¡Advertencia!!! El circuito tiene bucle en la fuente de voltaje o o una fuente o sensor de corriente haciendo cortocircuito en un cable, favor de quitar la fuente o el cable que causa el corto.',
-ckt_alert2: '¡¡¡Advertencia!!! El simulador podría producir resultados sin sentido o sin resultados con circuitos ilegales.',
-ckt_warning1: 'Advertencia: dos elementos del circuito comparten el mismo nombre ',
+ckt_alert1: '¡Advertencia! El circuito tiene bucle en la fuente de voltaje o o una fuente o sensor de corriente haciendo cortocircuito en un cable, favor de quitar la fuente o el cable que causa el corto.',
+ckt_alert2: '¡Advertencia! El simulador podría producir resultados sin sentido o sin resultados con circuitos ilegales.',
+ckt_warning1: '¡Advertencia! Dos elementos del circuito comparten el mismo nombre ',
 ckt_alert3: 'Por favor, haga al menos una conexión a tierra (símbolo del triángulo)',
 ckt_alert4: 'El método de Newton falló. ¿Sus fuentes de corriente tienen una conexión a tierra?',
 ckt_alert5: 'El método de Newton falló, puede ser su circuito o puede ser nuestro simulador.',
