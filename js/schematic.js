@@ -5727,7 +5727,7 @@ schematic = (function() {
 		Component.call(this,'L',x,y,rotation);
 		this.properties['label'] = label ? label : '???';
 		this.add_connection(0,0);
-		this.bounding_box = [-2,0,2,8];
+		this.bounding_box = [0,-4,16,4];	// Larger bounding box to ease selection. WMc
 		this.update_coords();
 	}
 	Label.prototype = new Component();
@@ -5740,6 +5740,7 @@ schematic = (function() {
 	Label.prototype.draw = function(c) {
 	    Component.prototype.draw.call(this,c);   // give superclass a shot
 	    this.draw_line(c,0,0,8,0);
+	    //this.draw_line(c,0,-4,16,4);			// debug, corners of bounding box WMc
 	    this.draw_text(c,this.properties['label'],9,0,3,property_size);
 	}
 	Label.prototype.clone = function(x,y) {
