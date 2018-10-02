@@ -4503,7 +4503,7 @@ schematic = (function() {
 	    	case -2:	return mstring+"u";
 	    	case -1:	return mstring+"m";
 	    	case 0:	return mstring;
-	    	case 1:	return mstring+"K";
+	    	case 1:	return mstring+"k";
 	    	case 2:	return mstring+"M";
 	    	case 3:	return mstring+"G";
 	    }
