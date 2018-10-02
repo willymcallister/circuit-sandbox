@@ -2251,7 +2251,7 @@ schematic = (function() {
 				var sch = event.target.schematic;
 
 				sch.canvas.relMouseCoords(event);
-				schematic_mouse_move(sch);
+				schematic_mouse_move(event, sch);
 			}, false);
 
 		this.canvas.addEventListener('mouseover',schematic_mouse_enter,false);
@@ -2264,14 +2264,14 @@ schematic = (function() {
 		    // determine where event happened in schematic coordinates
 		    sch.canvas.relMouseCoords(event);
 
-		    schematic_mouse_down(sch);
+		    schematic_mouse_down(event, sch);
 		}, false);
 		this.canvas.addEventListener('mouseup',function(event) {
 			if (!event) event = window.event;
 			else event.preventDefault();
 			var sch = event.target.schematic;
 
-			schematic_mouse_up(sch);
+			schematic_mouse_up(event, sch);
 		}, false);
 
 		this.canvas.addEventListener('touchstart', function(event) {
@@ -2286,7 +2286,7 @@ schematic = (function() {
 		    // determine where event happened in schematic coordinates
 		    sch.canvas.relMouseCoords(touch);
 
-		    schematic_mouse_down(sch);
+		    schematic_mouse_down(event, sch);
 		}, false);
 
 		this.canvas.addEventListener('touchmove', function(event) {
@@ -2296,7 +2296,7 @@ schematic = (function() {
 			var sch = event.target.schematic;
 
 			sch.canvas.relMouseCoords(touch);
-			schematic_mouse_move(sch);
+			schematic_mouse_move(event, sch);
 		}, false);
 
 		this.canvas.addEventListener('touchend', function(event) {
@@ -2304,7 +2304,7 @@ schematic = (function() {
 			else event.preventDefault();
 			var sch = event.target.schematic;
 
-			schematic_mouse_up(sch);
+			schematic_mouse_up(event, sch);
 		}, false);
 
 		this.canvas.addEventListener('touchcancel', function(event) {
@@ -2312,7 +2312,7 @@ schematic = (function() {
 			else event.preventDefault();
 			var sch = event.target.schematic;
 
-			schematic_mouse_up(sch);
+			schematic_mouse_up(event, sch);
 		}, false);
 
 		//Hammer.js provides the doubletap function for mobile, as well as double-click.
@@ -3762,7 +3762,7 @@ schematic = (function() {
 		return false;
 	}
 
-	function schematic_mouse_down(sch) {
+	function schematic_mouse_down(event, sch) {
 		var mx = sch.canvas.mouse_x;
 		var my = sch.canvas.mouse_y;
 		var sx = mx - sch.sctl_x;
@@ -3870,7 +3870,7 @@ schematic = (function() {
 		return false;
 		}
 
-	function schematic_mouse_move(sch) {
+	function schematic_mouse_move(event, sch) {
 		var x = sch.canvas.mouse_x/sch.scale + sch.origin_x;
 		var y = sch.canvas.mouse_y/sch.scale + sch.origin_y;
 		sch.cursor_x = Math.round(x/sch.grid) * sch.grid;
@@ -3907,7 +3907,7 @@ schematic = (function() {
 		return false;
 	}
 
-	function schematic_mouse_up(sch) {
+	function schematic_mouse_up(event, sch) {
 	    // drawing a new wire
 	    if (sch.wire) {
 	    	var r = sch.wire;
