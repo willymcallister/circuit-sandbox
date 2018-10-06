@@ -2108,8 +2108,15 @@ schematic = (function() {
 
 	    // use user-supplied list of parts if supplied
 	    // else just populate parts bin with all the parts
+	    // precedence for parts list: value from URL, then from html <input>
+
 	    this.edits_allowed = true;
-	    var parts = input.getAttribute('parts');
+
+//---------
+		var parts = getURLParameterByName('parts'); // parts = comma-separated list of parts from URL
+	    if (parts === null) {
+	    	parts = input.getAttribute('parts');	// parts = comma-separated list of parts from html
+	    }
 	    if (parts == undefined || parts == 'None') {
 	    	parts = [];
 	    	for (var p in parts_map) parts.push(p);
@@ -2117,7 +2124,17 @@ schematic = (function() {
 	    	this.edits_allowed = false;
 	    	parts = [];
 	    } else parts = parts.split(',');
+//----------
 
+/*	    var parts = input.getAttribute('parts');
+	    if (parts == undefined || parts == 'None') {
+	    	parts = [];
+	    	for (var p in parts_map) parts.push(p);
+	    } else if (parts == '') {
+	    	this.edits_allowed = false;
+	    	parts = [];
+	    } else parts = parts.split(',');
+*/
 	    // now add the parts to the parts bin
 	    this.parts_bin = [];
 	    for (var i = 0; i < parts.length; i++) {
@@ -2129,12 +2146,25 @@ schematic = (function() {
 
 	    // use user-supplied list of analyses, otherwise provide them all
 	    // analyses="" means no analyses
-	    var analyses = input.getAttribute('analyses');
+	    // precedence for analyses list: value from URL, then from html <input>
+
+//----------
+		var analyses = getURLParameterByName('analyses');	// analyses = comma-separated list of analyses from URL
+	    if (analyses === null) {
+	    	analyses = input.getAttribute('analyses');		// analysis = comma-separated list of analyses from html
+	    }
 	    if (analyses == undefined || analyses == 'None')
 	    	analyses = ['dc','ac','tran'];
 	    else if (analyses == '') analyses = [];
 	    else analyses = analyses.split(',');
+//----------
 
+/*	    var analyses = input.getAttribute('analyses');
+	    if (analyses == undefined || analyses == 'None')
+	    	analyses = ['dc','ac','tran'];
+	    else if (analyses == '') analyses = [];
+	    else analyses = analyses.split(',');
+*/
 	    if (parts.length == 0 && analyses.length == 0) this.diagram_only = true;
 	    else this.diagram_only = false;
 
@@ -2453,6 +2483,8 @@ schematic = (function() {
 		else {
 			this.load_schematic(value);
 		}
+		//var parts_list = getURLParameterByName('parts'); // parts_list = list of parts from URL
+		//var analyses_list = getURLParameterByName('analyses'); // analyses_list = list of analyses from URL
 
 	    // start by centering diagram on the screen
 	    this.zoomall();
