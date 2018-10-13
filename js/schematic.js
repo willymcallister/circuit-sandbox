@@ -5,7 +5,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 // Copyright (C) 2011 Massachusetts Institute of Technology
-// With modifications by Khan Academy.
+// With modifications by Khan Academy and Spinning Numbers.
 
 // create a circuit for simulation using "new cktsim.Circuit()"
 
@@ -2108,14 +2108,12 @@ schematic = (function() {
 
 	    // use user-supplied list of parts if supplied
 	    // else just populate parts bin with all the parts
-	    // precedence for parts list: value from URL, then from html <input>
+	    // precedence for parts list: parts= string from URL, then from html <input>
 
 	    this.edits_allowed = true;
-
-//---------
 		var parts = getURLParameterByName('parts'); // parts = comma-separated list of parts from URL
 	    if (parts === null) {
-	    	parts = input.getAttribute('parts');	// parts = comma-separated list of parts from html
+	    	parts = input.getAttribute('parts');	// parts = comma-separated list of parts from html <input>
 	    }
 	    if (parts == undefined || parts == 'None') {
 	    	parts = [];
@@ -2124,17 +2122,7 @@ schematic = (function() {
 	    	this.edits_allowed = false;
 	    	parts = [];
 	    } else parts = parts.split(',');
-//----------
 
-/*	    var parts = input.getAttribute('parts');
-	    if (parts == undefined || parts == 'None') {
-	    	parts = [];
-	    	for (var p in parts_map) parts.push(p);
-	    } else if (parts == '') {
-	    	this.edits_allowed = false;
-	    	parts = [];
-	    } else parts = parts.split(',');
-*/
 	    // now add the parts to the parts bin
 	    this.parts_bin = [];
 	    for (var i = 0; i < parts.length; i++) {
@@ -2146,9 +2134,7 @@ schematic = (function() {
 
 	    // use user-supplied list of analyses, otherwise provide them all
 	    // analyses="" means no analyses
-	    // precedence for analyses list: value from URL, then from html <input>
-
-//----------
+	    // precedence for analyses list: analyses= string from URL, then from html <input>
 		var analyses = getURLParameterByName('analyses');	// analyses = comma-separated list of analyses from URL
 	    if (analyses === null) {
 	    	analyses = input.getAttribute('analyses');		// analysis = comma-separated list of analyses from html
@@ -2157,14 +2143,7 @@ schematic = (function() {
 	    	analyses = ['dc','ac','tran'];
 	    else if (analyses == '') analyses = [];
 	    else analyses = analyses.split(',');
-//----------
 
-/*	    var analyses = input.getAttribute('analyses');
-	    if (analyses == undefined || analyses == 'None')
-	    	analyses = ['dc','ac','tran'];
-	    else if (analyses == '') analyses = [];
-	    else analyses = analyses.split(',');
-*/
 	    if (parts.length == 0 && analyses.length == 0) this.diagram_only = true;
 	    else this.diagram_only = false;
 
@@ -2483,9 +2462,7 @@ schematic = (function() {
 		else {
 			this.load_schematic(value);
 		}
-		//var parts_list = getURLParameterByName('parts'); // parts_list = list of parts from URL
-		//var analyses_list = getURLParameterByName('analyses'); // analyses_list = list of analyses from URL
-
+		
 	    // start by centering diagram on the screen
 	    this.zoomall();
 	}
@@ -3201,9 +3178,9 @@ schematic = (function() {
 
 		// graph the result and display in a window
 		var graph2 = this.graph(x_values,i18n.log_Frequency,z_values,i18n.degrees);
-		this.window(i18n.AC_Phase,graph2);
+		this.window(i18n.AC_Phase,graph2,0,true);
 		var graph1 = this.graph(x_values,i18n.log_Frequency,y_values,'dB');
-		this.window(i18n.AC_Magnitude,graph1,50);
+		this.window(i18n.AC_Magnitude,graph1,50,true);
 		}
 	}
 
@@ -3304,7 +3281,7 @@ schematic = (function() {
 
 				// graph the result and display in a window
 				var graph = sch.graph(x_values,x_legend,v_values,i18n.Voltage,i_values,i18n.Current);
-				sch.window(i18n.Transient_Analysis,graph);
+				sch.window(i18n.Transient_Analysis,graph,0, true);
 			}
 		})
 	}
@@ -4159,8 +4136,8 @@ schematic = (function() {
 		var select = document.createElement('select');
 		for (var i = 0; i < options.length; i++) {
 			var option = document.createElement('option');
-			option.value = options[i];		//QQQ value is the English field name in a dropdown list (if omitted, defaults to option.text)
-			option.text = i18n[options[i]];						//text in a dropdown list are translated here
+			option.value = options[i];			//value is the English field name in a dropdown list (if omitted, defaults to option.text)
+			option.text = i18n[options[i]];		//text in a dropdown list are translated here
 			select.add(option);
 			if (options[i] == selected) select.selectedIndex = i;
 		}
@@ -4169,7 +4146,7 @@ schematic = (function() {
 
 	Schematic.prototype.window = build_window;
 
-	function build_window(title,content,offset) {
+	function build_window(title,content,offset,showDownloadIcon) {
 	    // create the div for the top level of the window
 	    var win = document.createElement('div');
 	    win.sch = this;
@@ -4188,6 +4165,18 @@ schematic = (function() {
 	    head.style.borderBottom = '1px solid';
 	    head.style.borderColor = border_style;
 	    head.style.borderRadius = '4px 4px 0px 0px';
+	    
+	    // Add download icon to title bar of windows with graphs
+	    if (showDownloadIcon) {
+			var download_button = document.createElement("span");
+			download_button.setAttribute('class', 'fas fa-fw fa-download fa-lg');
+			//download_button.style.color = normal_style;
+		    download_button.style.cssFloat = 'left';
+		    download_button.addEventListener('click',window_download_button,false);
+		    download_button.win = win;
+		    head.appendChild(download_button);
+		};
+
 	    head.appendChild(document.createTextNode(title));
 	    head.win = win;
 	    win.head = head;
@@ -4195,14 +4184,10 @@ schematic = (function() {
 		var close_button = document.createElement("span");
 		close_button.setAttribute('class', 'fas fa-fw fa-times fa-lg');
 		close_button.style.color = cancel_style;
-	    //var close_button = new Image();
-	    //close_button.src = close_icon;
 	    close_button.style.cssFloat = 'right';
 	    close_button.addEventListener('click',window_close_button,false);
 	    close_button.win = win;
 	    head.appendChild(close_button);
-	    
-
 	    win.appendChild(head);
 
 	    // capture mouse events in title bar
@@ -4260,6 +4245,46 @@ schematic = (function() {
 		if (!event) event = window.event;
 		var src = event.target;
 		window_close(src.win);
+	}
+
+	// download csv file with plot data
+	function window_download_button(event) {
+		if (!event) event = window.event;
+		var src = event.target;
+		var c = src.win.childNodes[1];	// canvas element
+
+		// check if the horizontal scale is logarithmic
+		var x_legend = c.x_legend;
+		var logScale = (x_legend.substring(0, 3) == 'log');
+		if (logScale) x_legend = x_legend.substring(4, x_legend.length - 1);
+		
+		// legends
+		var csvStr = x_legend + ', ';		
+		for (var j = 0; j < c.y_values.length; j++) {
+			csvStr += c.y_legend + '_' + c.y_values[j][0] + ', ';
+		}
+		if (typeof c.z_values !== 'undefined') {
+			for (var k = 0; k < c.z_values.length; k++) {
+				csvStr += c.z_legend + '_' + c.z_values[k][0] +', ';
+			}
+		}
+		csvStr += '\n';
+
+		// data
+		for (var i = 0; i < c.x_values.length; i++) {
+			if (logScale) csvStr += Math.pow(10, c.x_values[i]) + ', '; // convert logHz to Hz
+			else csvStr += c.x_values[i] + ', ';
+			for (var j = 0; j < c.y_values.length; j++) {
+				csvStr += c.y_values[j][2][i] + ', ';
+			}
+			if (typeof c.z_values !== 'undefined') {
+				for (var k = 0; k < c.z_values.length; k++) {
+					csvStr += c.z_values[k][2][i] + ', ';
+				}
+			}
+			csvStr += '\n';
+		}
+		download(csvStr, "data.csv", "text/plain");
 	}
 
 	// capture mouse events in title bar of window
@@ -4431,8 +4456,7 @@ schematic = (function() {
 	//
 	///////////////////////////////////////////////////////////////////////////////
 
-	// add dashed lines!
-	// from http://davidowens.wordpress.com/2010/09/07/html-5-canvas-and-dashed-lines/
+	// dashed lines from http://davidowens.wordpress.com/2010/09/07/html-5-canvas-and-dashed-lines/
 	try {
 		if (CanvasRenderingContext2D)
 			CanvasRenderingContext2D.prototype.dashedLineTo = function(fromX, fromY, toX, toY, pattern) {
@@ -4805,7 +4829,7 @@ schematic = (function() {
 	    canvas.z_values = z_values;
 	    canvas.x_legend = x_legend;
 	    canvas.y_legend = y_legend;
-	    canvas.z_legend = y_legend;
+	    canvas.z_legend = z_legend;
 	    canvas.x_min = x_min;
 	    canvas.x_scale = x_scale;
 	    canvas.y_min = y_min;
@@ -4824,6 +4848,13 @@ schematic = (function() {
 
 	    // do something useful when user mouses over graph
 	    canvas.addEventListener('mousemove',graph_mouse_move,false);
+
+	    //console.log("x values" + x_values);		//x axis QQQ
+	    //console.log("y values" + y_values);		//primary y-axis variables
+	    //console.log("z values" + z_values);		//secondary y-axis variables
+
+	    //var csvData = [x_values,y_values];
+	    //console.log("all values" + csvData);		//all three axes
 
 	    // return our masterpiece
 	    redraw_plot(canvas);
@@ -5792,7 +5823,7 @@ schematic = (function() {
 	////////////////////////////////////////////////////////////////////////////////
 
 	var probe_colors = ['red','green','blue','cyan','magenta','orange','black','xaxis'];
-	// QQQ var probe_cnames = i18n_probe_cnames;	// color names, see i18n string file, en-US.js, etc.
+	// var probe_cnames = i18n_probe_cnames;	// color names, see i18n string file, en-US.js, etc.
 
 	var probe_colors_rgb = {
 		'red': 'rgb(232,77,57)',
@@ -5854,7 +5885,7 @@ schematic = (function() {
 		if (inside(this.bbox,x,y)) {
 			var fields = [];
 			var n = probe_colors.indexOf(this.properties['color']);
-			//QQQ fields['Plot_color'] = build_select(probe_cnames,probe_cnames[n]);
+			//fields['Plot_color'] = build_select(probe_cnames,probe_cnames[n]);
 			fields['Plot_color'] = build_select(probe_colors,probe_colors[n]);
 			fields['Plot_offset'] = build_input('text',10,this.properties['offset']);
 
