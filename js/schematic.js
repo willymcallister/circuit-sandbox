@@ -2041,7 +2041,7 @@ var strSimulator = 'https://spinningnumbers.org/circuit-sandbox/index.html';
 function getURLParameterByName(name, url) {
     if (!url) {
       url = window.location.href;
-    }
+    }   
     name = name.replace(/[\[\]]/g, "\\$&");
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
         results = regex.exec(url);
@@ -2913,22 +2913,22 @@ schematic = (function() {
 
 	    // Also save data to the browser's local store
 		localStorage.setItem("ckt", this.input.value);
-		console.log( "wrote ckt to localStorage = " + localStorage.getItem("ckt"));
-
+		console.log("Saved ckt.txt to Downloads and localStorage... ")
+		console.log(localStorage.getItem("ckt"));
 	}
 
 	Schematic.prototype.share_link = function() {
-		// give circuit nodes a name, create and display sharable link
-	    this.label_connection_points();
+	//create and display a sharable link	
+	    this.label_connection_points();	// give circuit nodes a name
 	    var netlist = this.json();
-	    this.input.value = JSON.stringify(netlist);
-	    
-	    // dialog box with sharable link
+	    var value = JSON.stringify(netlist);
+	    this.input.value = value;
+		var value_enc = encodeURIComponent(value);
+
+	    // prepare a dialog box with sharable link
 	    var link_lbl = 'Link';
-
 		var fields = [];
-		fields[link_lbl] = build_input('text',60,strSimulator + '?value=' + this.input.value);
-
+		fields[link_lbl] = build_input('text',60,strSimulator + '?value=' + value_enc);
 		var content = build_table(fields);
 		content.fields = fields;
 		content.sch = this;
@@ -2937,7 +2937,11 @@ schematic = (function() {
 			return null;
 		});
 
-		console.log("sharable link: " + strSimulator + '?value=' + this.input.value);
+		//echo encoded and decoded link to console
+		console.log('Encoded link...');
+		console.log(strSimulator + '?value=' + value_enc);
+		console.log('Decoded link...');
+		console.log(strSimulator + '?value=' + value);
 	}
 
 	Schematic.prototype.open_netlist = function() {
