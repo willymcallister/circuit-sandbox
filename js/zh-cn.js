@@ -148,6 +148,10 @@ orange: '橙色',
 black: '黑色',
 xaxis: 'x 轴',
 
+Ics: 'Ics',
+Ies: 'Ies',
+alphaF: '\u03B1F',
+alphaR: '\u03B1R',
 last_line: '最后一行，没有逗号'
 };
 

@@ -172,6 +172,10 @@ var cktsim = (function() {
 			this.i(connections[0],connections[1],properties['value'],name);
 		else if (type == 'o') 	// op amp
 			this.opamp(connections[0],connections[1],connections[2],connections[3],properties['A'],name);
+		else if (type == 'npn')	// npn bipolar transistor
+		    this.nBJT(connections[0],connections[1],connections[2],properties['area'],properties['Ics'],properties['Ies'],properties['alphaF'],properties['alphaR'],name);
+		else if (type == 'pnp')	// pnp bipolar transistor
+		    this.pBJT(connections[0],connections[1],connections[2],properties['area'],properties['Ics'],properties['Ies'],properties['alphaF'],properties['alphaR'],name);
 		else if (type == 'n') 	// n fet
 			this.n(connections[0],connections[1],connections[2],properties['WL'],name);
 		else if (type == 'p') 	// p fet
@@ -784,6 +788,58 @@ var cktsim = (function() {
 	    return this.add_device(d, name);
 	}
 
+    Circuit.prototype.nBJT = function(c,b,e,area,Ics,Ies,alphaF,alphaR,name) {
+	    // try to convert string value into numeric value, barf if we can't
+	    if ((typeof area) == 'string') {
+			area = parse_number(area,undefined);
+		if (area === undefined) return undefined;
+	    }
+	    if ((typeof Ics) == 'string') {
+		Ics = parse_number(Ics,undefined);
+		if (Ics === undefined) return undefined;
+	    }
+	    if ((typeof Ies) == 'string') {
+		Ies = parse_number(Ies,undefined);
+		if (Ies === undefined) return undefined;
+	    }
+	    if ((typeof alphaF) == 'string') {
+		alphaF = parse_number(alphaF,undefined);
+		if (alphaF === undefined) return undefined;
+	    }
+	    if ((typeof alphaR) == 'string') {
+		alphaR = parse_number(alphaR,undefined);
+		if (alphaR === undefined) return undefined;
+	    }
+	    var d = new bjt(c,b,e,area,Ics,Ies,alphaF,alphaR,name,'n');
+	    return this.add_device(d, name);
+	}
+
+    Circuit.prototype.pBJT = function(c,b,e,area,Ics,Ies,alphaF,alphaR,name) {
+	    // try to convert string value into numeric value, barf if we can't
+	    if ((typeof area) == 'string') {
+		area = parse_number(area,undefined);
+		if (area === undefined) return undefined;
+	    }
+	    if ((typeof Ics) == 'string') {
+		Ics = parse_number(Ics,undefined);
+		if (Ics === undefined) return undefined;
+	    }
+	    if ((typeof Ies) == 'string') {
+		Ies = parse_number(Ies,undefined);
+		if (Ies === undefined) return undefined;
+	    }
+	    if ((typeof alphaF) == 'string') {
+		alphaF = parse_number(alphaF,undefined);
+		if (alphaF === undefined) return undefined;
+	    }
+	    if ((typeof alphaR) == 'string') {
+		alphaR = parse_number(alphaR,undefined);
+		if (alphaR === undefined) return undefined;
+	    }
+	    var d = new bjt(c,b,e,area,Ics,Ies,alphaF,alphaR,name,'p');
+	    return this.add_device(d, name);
+	}
+
 	Circuit.prototype.n = function(d,g,s, ratio, name) {
 	    // try to convert string value into numeric value, barf if we can't
 	    if ((typeof ratio) == 'string') {
@@ -807,14 +863,14 @@ var cktsim = (function() {
 	///////////////////////////////////////////////////////////////////////////////
 	//
 	//  Support for creating conductance and capacitance matrices associated with
-        //  modified nodal analysis (unknowns are node voltages and inductor and voltage
-        //  source currents). 
-        //  The linearized circuit is written as 
-        //          C d/dt x = G x + rhs
-        //  x - vector of node voltages and element currents
-        //  rhs - vector of source values
-        //  C - Matrix whose values are capacitances and inductances, has many zero rows.
-        //  G - Matrix whose values are conductances and +-1's.
+    //  modified nodal analysis (unknowns are node voltages and inductor and voltage
+    //  source currents). 
+    //  The linearized circuit is written as 
+    //          C d/dt x = G x + rhs
+    //  x - vector of node voltages and element currents
+    //  rhs - vector of source values
+    //  C - Matrix whose values are capacitances and inductances, has many zero rows.
+    //  G - Matrix whose values are conductances and +-1's.
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
@@ -1706,7 +1762,35 @@ var cktsim = (function() {
 	//
 	///////////////////////////////////////////////////////////////////////////////
 
-	function Diode(n1,n2,v,type) {
+    function diodeEval(vd, vt, Is) {
+	    var exp_arg = vd / vt;
+	    var temp1, temp2;
+	    var exp_arg_max = 50;
+	    var exp_max = 5.184705528587072e21;
+	    //var exp_arg_max = 100;  // less than single precision max.
+	    //var exp_max = 2.688117141816136e43;
+
+	    // Estimate exponential with a quadratic if arg too big.
+	    var abs_exp_arg = Math.abs(exp_arg);
+	    var d_arg = abs_exp_arg - exp_arg_max;
+	    if (d_arg > 0) {
+			var quad = 1 + d_arg + 0.5*d_arg*d_arg;
+			temp1 = exp_max * quad;
+			temp2 = exp_max * (1 + d_arg);
+	    } else {
+			temp1 = Math.exp(abs_exp_arg);
+			temp2 = temp1;
+	    }
+	    if (exp_arg < 0) {  // Use exp(-x) = 1.0/exp(x)
+			temp1 = 1.0/temp1;
+			temp2 = (temp1*temp2)*temp1;
+	    }
+	    var id = Is * (temp1 - 1.0);
+	    var gd = Is * (temp2 / vt);
+	    return [id,gd];
+	}
+    
+    function Diode(n1,n2,v,type) {
 		Device.call(this);
 		this.anode = n1;
 		this.cathode = n2;
@@ -1865,6 +1949,72 @@ var cktsim = (function() {
 	}
 
 	Opamp.prototype.load_tran = function(ckt) {
+	}
+
+	///////////////////////////////////////////////////////////////////////////////
+	//
+	//  Very basic Ebers-Moll BJT model
+	//
+	///////////////////////////////////////////////////////////////////////////////
+
+        function bjt(c,b,e,area,Ics,Ies,af,ar,name,type) {
+	    Device.call(this);
+	    this.e = e;
+	    this.b = b;
+	    this.c = c;
+	    this.name = name;
+	    this.af = af;
+	    this.ar = ar;
+	    this.area = area;
+	    this.aIcs = this.area*Ics;
+            this.aIes = this.area*Ies;
+	    if (type != 'n' && type != 'p')
+	    { throw 'BJT type is not npn or pnp';
+	    }
+	    this.type_sign = (type == 'n') ? 1 : -1;
+	    this.vt = 0.026
+	    this.leakCond = 1.0e-12;
+	}
+	bjt.prototype = new Device();
+        bjt.prototype.constructor = bjt;
+
+        bjt.prototype.load_linear = function(ckt) {
+	    // bjt's are nonlinear, just like javascript progammers
+	}
+
+        bjt.prototype.load_dc = function(ckt,soln,rhs) {
+	    e = this.e; b = this.b; c = this.c;
+	    var vbc = this.type_sign * ckt.get_two_terminal(b, c, soln);
+	    var vbe = this.type_sign * ckt.get_two_terminal(b, e, soln);
+        var IrGr = diodeEval(vbc, this.vt, this.aIcs);
+        var IfGf = diodeEval(vbe, this.vt, this.aIes);
+            // Sign convention is emitter and collector currents are leaving.
+            ie = this.type_sign * (IfGf[0] - this.ar*IrGr[0]);
+            ic = this.type_sign * (IrGr[0] - this.af*IfGf[0]);
+            ib = -(ie+ic);  		// Current flowing out of base
+	    ckt.add_to_rhs(b,ib,rhs);  	//current flowing out of base
+	    ckt.add_to_rhs(c,ic,rhs);  	//current flows out of the collector
+	    ckt.add_to_rhs(e,ie,rhs);   // and out the emitter
+	    ckt.add_conductance(b,e,IfGf[1]);
+	    ckt.add_conductance(b,c,IrGr[1]);
+	    ckt.add_conductance(c,e,this.leakCond);
+
+	    ckt.add_to_G(b, c, this.ar*IrGr[1]);
+	    ckt.add_to_G(b, e, this.af*IfGf[1]);	    
+	    ckt.add_to_G(b, b, -(this.af*IfGf[1] + this.ar*IrGr[1]));
+	    
+	    ckt.add_to_G(e, b, this.ar*IrGr[1]);
+	    ckt.add_to_G(e, c, -this.ar*IrGr[1]);
+	    
+	    ckt.add_to_G(c, b, this.af*IfGf[1]);
+	    ckt.add_to_G(c, e, -this.af*IfGf[1]);
+	}
+
+        bjt.prototype.load_tran = function(ckt,soln,crnt,chg,time) {
+	    this.load_dc(ckt,soln,crnt,crnt);
+	}
+
+	bjt.prototype.load_ac = function(ckt) {
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -2078,6 +2228,8 @@ schematic = (function() {
     	'd': [Diode, i18n.Diode],
     	'n': [NFet, i18n.NFet],
     	'p': [PFet, i18n.PFet],
+	    'npn': [NPN, 'NPN'],
+	    'pnp': [PNP, 'PNP'],
     	's': [Probe, i18n.Voltage_probe],
     	'a': [Ammeter, i18n.Current_probe]
     };
@@ -6158,11 +6310,19 @@ schematic = (function() {
 	Diode.prototype.draw = function(c) {
 	    Component.prototype.draw.call(this,c);   // give superclass a shot
 	    this.draw_line(c, 0,0,0,18);
-	    this.draw_line(c,-8,18,8,18);
-	    this.draw_line(c,-8,18,0,30);
-	    this.draw_line(c, 8,18,0,30);
+	    //this.draw_line(c,-8,18,8,18);
+	    //this.draw_line(c,-8,18,0,30);
+	    //this.draw_line(c, 8,18,0,30);
 	    this.draw_line(c,-8,30,8,30);
 	    this.draw_line(c, 0,30,0,48);
+
+    	c.fillStyle = this.selected ? selected_style : component_style;
+    	c.beginPath();
+    	this.moveTo(c,-8,18);			//arrow
+    	this.lineTo(c,8,18);
+    	this.lineTo(c,0,30);
+    	this.lineTo(c,-8,18);
+    	c.fill();
 
 	    if (this.properties['type'] == 'ideal') {
 		// put a box around an ideal diode
@@ -6202,6 +6362,125 @@ schematic = (function() {
 			return true;
 		} else return false;
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	//
+	//  NPN Transistor
+	//
+	////////////////////////////////////////////////////////////////////////////////
+
+	function NPN(x,y,rotation,name,area,Ics,Ies,alphaF,alphaR) {
+	    Component.call(this,'npn',x,y,rotation);
+	    this.properties['name'] = name;
+	    this.properties['area'] = area ? area : '1';
+	    this.properties['Ics'] = Ics ? Ics : '1.0e-14';
+	    this.properties['Ies'] = Ies ? Ies : '1.0e-14';
+	    this.properties['alphaF'] = alphaF ? alphaF : '0.98';
+	    this.properties['alphaR'] = alphaR ? alphaR : '0.1';
+	    this.add_connection(0,0);   	// collector
+	    this.add_connection(-16,24);  	// base
+	    this.add_connection(0,48);  	// emitter
+	    this.bounding_box = [-16,0,0,48];
+	    this.update_coords();
+	}
+	NPN.prototype = new Component();
+	NPN.prototype.constructor = NPN;
+
+	NPN.prototype.toString = function() {
+	    return '<NPN '+this.properties['area']+' '+this.properties['Ics']+' '+this.properties['Ies']+' '+this.properties['alphaF']+' '+ this.properties['alphaR']+' ('+this.x+','+this.y+')>';
+	}
+    
+	NPN.prototype.draw = function(c) {
+	    Component.prototype.draw.call(this,c);
+	    this.draw_line(c,0,0,0,16);		//collector vertical
+	    this.draw_line(c,-8,20,0,16);	//collector slant stroke
+	    this.draw_line(c,0,33,0,48);	//emitter vertical stroke
+	    this.draw_line(c,-16,24,-8,24);	//base stroke
+	    this.draw_line(c,-8,28,0,33);	//emitter slant stroke
+    	
+    	c.fillStyle = this.selected ? selected_style : component_style;
+    	c.beginPath();
+    	this.moveTo(c,-1,28);			//arrow
+    	this.lineTo(c,1,34);
+    	this.lineTo(c,-5,34);
+    	this.lineTo(c,-1,28);
+    	c.fill();
+
+    	c.beginPath();
+    	this.moveTo(c,-7,16);			//main vertical stroke
+    	this.lineTo(c,-9,16);
+    	this.lineTo(c,-9,32);
+    	this.lineTo(c,-7,32);
+    	this.lineTo(c,-7,16);
+    	c.fill();
+
+    	if (this.properties['name'])
+			this.draw_text(c,this.properties['name'],0,19,0,property_size);
+	}
+
+	NPN.prototype.clone = function(x,y) {
+	    return new NPN(x,y,this.rotation,this.properties['name'],this.properties['area'],this.properties['Ics'],this.properties['Ies'],this.properties['alphaF'],this.properties['alphaR']);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	//
+	//  PNP Transistor
+	//
+	////////////////////////////////////////////////////////////////////////////////
+
+	function PNP(x,y,rotation,name,area,Ics,Ies,alphaF,alphaR) {
+	    Component.call(this,'pnp',x,y,rotation);
+	    this.properties['name'] = name;
+	    this.properties['area'] = area ? area : '1';
+	    this.properties['Ics'] = Ics ? Ics : '1.0e-14';
+	    this.properties['Ies'] = Ies ? Ies : '1.0e-14';
+	    this.properties['alphaF'] = alphaF ? alphaF : '0.98';
+	    this.properties['alphaR'] = alphaR ? alphaR : '0.1';
+	    this.add_connection(0,0);   	// collector
+	    this.add_connection(-16,24);  	// base
+	    this.add_connection(0,48);  	// emitter
+	    this.bounding_box = [-16,0,0,48];
+	    this.update_coords();
+	}
+	PNP.prototype = new Component();
+	PNP.prototype.constructor = PNP;
+
+	PNP.prototype.toString = function() {
+	    return '<PNP '+this.properties['area']+' '+this.properties['Ics']+' '+this.properties['Ies']+' '+this.properties['alphaF']+' '+ this.properties['alphaR']+' ('+this.x+','+this.y+')>';
+	}
+    
+	PNP.prototype.draw = function(c) {
+	    Component.prototype.draw.call(this,c);   // give superclass a shot
+	    this.draw_line(c,0,0,0,16);		//collector vertical
+	    this.draw_line(c,-8,20,0,16);	//collector slant stroke
+	    this.draw_line(c,0,33,0,48);	//emitter vertical stroke
+	    this.draw_line(c,-16,24,-8,24);	//base stroke
+	    this.draw_line(c,-8,28,0,33);	//emitter slant stroke
+
+    	c.fillStyle = this.selected ? selected_style : component_style;
+    	c.beginPath();
+    	this.moveTo(c,-1,28);			//arrow
+    	this.lineTo(c,-7,28);
+    	this.lineTo(c,-5,34);
+    	this.lineTo(c,-1,28);
+    	c.fill();
+
+    	c.beginPath();
+    	this.moveTo(c,-7,16);			//main vertical stroke
+    	this.lineTo(c,-9,16);
+    	this.lineTo(c,-9,32);
+    	this.lineTo(c,-7,32);
+    	this.lineTo(c,-7,16);
+    	c.fill();
+
+    	if (this.properties['name'])
+			this.draw_text(c,this.properties['name'],0,19,0,property_size);
+    }
+
+	PNP.prototype.clone = function(x,y) {
+	    return new PNP(x,y,this.rotation,this.properties['name'],this.properties['area'],this.properties['Ics'],this.properties['Ies'],this.properties['alphaF'],this.properties['alphaR']);
+	}
+
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
