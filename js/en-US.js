@@ -148,6 +148,10 @@ orange: 'orange',
 black: 'black',
 xaxis: 'x axis',
 
+Ics: 'Ics',
+Ies: 'Ies',
+alphaF: '\u03B1F',
+alphaR: '\u03B1R',
 last_line: 'last line, no comma'
 };
 

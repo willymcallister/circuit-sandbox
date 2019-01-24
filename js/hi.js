@@ -148,6 +148,10 @@ orange: 'नारंगी',
 black: 'काली',
 xaxis: 'एक्स अक्ष',
 
+Ics: 'Ics',
+Ies: 'Ies',
+alphaF: '\u03B1F',
+alphaR: '\u03B1R',
 last_line: 'अंतिम पंक्ति, कोई अल्पविराम नहीं'
 };
 

@@ -159,9 +159,9 @@ If you would like to translate the Circuit Sandbox into other languages, it's fa
 
 ## The circuit sandbox was created at MIT
 
-The Circuit Sandbox simulator was created at MIT by Professor Chris Terman in 2011, and was used by the very first massively-open-online class (MOOC), MIT 6.002x. It was transferred to EdX in 2012. I made further improvements to the simulator interface while I was at Khan Academy in 2016, and since then.
+The Circuit Sandbox simulator was created at MIT by Professor Chris Terman in 2011, and was used by the very first massively-open-online class (MOOC), MIT 6.002x. It was transferred to EdX in 2012. The bjt model was written by Professor Jacob White. I made further improvements to the simulator interface while I was at Khan Academy in 2016, and since then.
 
-The Circuit Sandbox is *not* a version of SPICE. It is its own version of a circuit simulator. It includes schematic capture and a circuit simulation engine. The simulator is 100% Javascript and does not require installation. All you have to do is click on the link to the simulator.
+The Circuit Sandbox is *not* SPICE. It is its own version of a circuit simulator. It includes schematic capture and a circuit simulation engine. The simulator is 100% Javascript and does not require installation. All you have to do is click on the link to the simulator.
 
 The Circuit Sandbox is licensed under the MIT License and is also part of the EdX-platform. The simulator works in most modern browsers on Windows, Mac, and Linux machines.
 

@@ -5,7 +5,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 // Copyright (C) 2011 Massachusetts Institute of Technology
-// With modifications by Khan Academy.
+// With modifications by Khan Academy and Spinning Numbers.
 
 // create a circuit for simulation using "new cktsim.Circuit()"
 
@@ -172,6 +172,10 @@ var cktsim = (function() {
 			this.i(connections[0],connections[1],properties['value'],name);
 		else if (type == 'o') 	// op amp
 			this.opamp(connections[0],connections[1],connections[2],connections[3],properties['A'],name);
+		else if (type == 'npn')	// npn bipolar transistor
+		    this.nBJT(connections[0],connections[1],connections[2],properties['area'],properties['Ics'],properties['Ies'],properties['alphaF'],properties['alphaR'],name);
+		else if (type == 'pnp')	// pnp bipolar transistor
+		    this.pBJT(connections[0],connections[1],connections[2],properties['area'],properties['Ics'],properties['Ies'],properties['alphaF'],properties['alphaR'],name);
 		else if (type == 'n') 	// n fet
 			this.n(connections[0],connections[1],connections[2],properties['WL'],name);
 		else if (type == 'p') 	// p fet
@@ -784,6 +788,58 @@ var cktsim = (function() {
 	    return this.add_device(d, name);
 	}
 
+    Circuit.prototype.nBJT = function(c,b,e,area,Ics,Ies,alphaF,alphaR,name) {
+	    // try to convert string value into numeric value, barf if we can't
+	    if ((typeof area) == 'string') {
+			area = parse_number(area,undefined);
+		if (area === undefined) return undefined;
+	    }
+	    if ((typeof Ics) == 'string') {
+		Ics = parse_number(Ics,undefined);
+		if (Ics === undefined) return undefined;
+	    }
+	    if ((typeof Ies) == 'string') {
+		Ies = parse_number(Ies,undefined);
+		if (Ies === undefined) return undefined;
+	    }
+	    if ((typeof alphaF) == 'string') {
+		alphaF = parse_number(alphaF,undefined);
+		if (alphaF === undefined) return undefined;
+	    }
+	    if ((typeof alphaR) == 'string') {
+		alphaR = parse_number(alphaR,undefined);
+		if (alphaR === undefined) return undefined;
+	    }
+	    var d = new bjt(c,b,e,area,Ics,Ies,alphaF,alphaR,name,'n');
+	    return this.add_device(d, name);
+	}
+
+    Circuit.prototype.pBJT = function(c,b,e,area,Ics,Ies,alphaF,alphaR,name) {
+	    // try to convert string value into numeric value, barf if we can't
+	    if ((typeof area) == 'string') {
+		area = parse_number(area,undefined);
+		if (area === undefined) return undefined;
+	    }
+	    if ((typeof Ics) == 'string') {
+		Ics = parse_number(Ics,undefined);
+		if (Ics === undefined) return undefined;
+	    }
+	    if ((typeof Ies) == 'string') {
+		Ies = parse_number(Ies,undefined);
+		if (Ies === undefined) return undefined;
+	    }
+	    if ((typeof alphaF) == 'string') {
+		alphaF = parse_number(alphaF,undefined);
+		if (alphaF === undefined) return undefined;
+	    }
+	    if ((typeof alphaR) == 'string') {
+		alphaR = parse_number(alphaR,undefined);
+		if (alphaR === undefined) return undefined;
+	    }
+	    var d = new bjt(c,b,e,area,Ics,Ies,alphaF,alphaR,name,'p');
+	    return this.add_device(d, name);
+	}
+
 	Circuit.prototype.n = function(d,g,s, ratio, name) {
 	    // try to convert string value into numeric value, barf if we can't
 	    if ((typeof ratio) == 'string') {
@@ -807,14 +863,14 @@ var cktsim = (function() {
 	///////////////////////////////////////////////////////////////////////////////
 	//
 	//  Support for creating conductance and capacitance matrices associated with
-        //  modified nodal analysis (unknowns are node voltages and inductor and voltage
-        //  source currents). 
-        //  The linearized circuit is written as 
-        //          C d/dt x = G x + rhs
-        //  x - vector of node voltages and element currents
-        //  rhs - vector of source values
-        //  C - Matrix whose values are capacitances and inductances, has many zero rows.
-        //  G - Matrix whose values are conductances and +-1's.
+    //  modified nodal analysis (unknowns are node voltages and inductor and voltage
+    //  source currents). 
+    //  The linearized circuit is written as 
+    //          C d/dt x = G x + rhs
+    //  x - vector of node voltages and element currents
+    //  rhs - vector of source values
+    //  C - Matrix whose values are capacitances and inductances, has many zero rows.
+    //  G - Matrix whose values are conductances and +-1's.
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
@@ -1706,7 +1762,35 @@ var cktsim = (function() {
 	//
 	///////////////////////////////////////////////////////////////////////////////
 
-	function Diode(n1,n2,v,type) {
+    function diodeEval(vd, vt, Is) {
+	    var exp_arg = vd / vt;
+	    var temp1, temp2;
+	    var exp_arg_max = 50;
+	    var exp_max = 5.184705528587072e21;
+	    //var exp_arg_max = 100;  // less than single precision max.
+	    //var exp_max = 2.688117141816136e43;
+
+	    // Estimate exponential with a quadratic if arg too big.
+	    var abs_exp_arg = Math.abs(exp_arg);
+	    var d_arg = abs_exp_arg - exp_arg_max;
+	    if (d_arg > 0) {
+			var quad = 1 + d_arg + 0.5*d_arg*d_arg;
+			temp1 = exp_max * quad;
+			temp2 = exp_max * (1 + d_arg);
+	    } else {
+			temp1 = Math.exp(abs_exp_arg);
+			temp2 = temp1;
+	    }
+	    if (exp_arg < 0) {  // Use exp(-x) = 1.0/exp(x)
+			temp1 = 1.0/temp1;
+			temp2 = (temp1*temp2)*temp1;
+	    }
+	    var id = Is * (temp1 - 1.0);
+	    var gd = Is * (temp2 / vt);
+	    return [id,gd];
+	}
+    
+    function Diode(n1,n2,v,type) {
 		Device.call(this);
 		this.anode = n1;
 		this.cathode = n2;
@@ -1865,6 +1949,72 @@ var cktsim = (function() {
 	}
 
 	Opamp.prototype.load_tran = function(ckt) {
+	}
+
+	///////////////////////////////////////////////////////////////////////////////
+	//
+	//  Very basic Ebers-Moll BJT model
+	//
+	///////////////////////////////////////////////////////////////////////////////
+
+        function bjt(c,b,e,area,Ics,Ies,af,ar,name,type) {
+	    Device.call(this);
+	    this.e = e;
+	    this.b = b;
+	    this.c = c;
+	    this.name = name;
+	    this.af = af;
+	    this.ar = ar;
+	    this.area = area;
+	    this.aIcs = this.area*Ics;
+            this.aIes = this.area*Ies;
+	    if (type != 'n' && type != 'p')
+	    { throw 'BJT type is not npn or pnp';
+	    }
+	    this.type_sign = (type == 'n') ? 1 : -1;
+	    this.vt = 0.026
+	    this.leakCond = 1.0e-12;
+	}
+	bjt.prototype = new Device();
+        bjt.prototype.constructor = bjt;
+
+        bjt.prototype.load_linear = function(ckt) {
+	    // bjt's are nonlinear, just like javascript progammers
+	}
+
+        bjt.prototype.load_dc = function(ckt,soln,rhs) {
+	    e = this.e; b = this.b; c = this.c;
+	    var vbc = this.type_sign * ckt.get_two_terminal(b, c, soln);
+	    var vbe = this.type_sign * ckt.get_two_terminal(b, e, soln);
+        var IrGr = diodeEval(vbc, this.vt, this.aIcs);
+        var IfGf = diodeEval(vbe, this.vt, this.aIes);
+            // Sign convention is emitter and collector currents are leaving.
+            ie = this.type_sign * (IfGf[0] - this.ar*IrGr[0]);
+            ic = this.type_sign * (IrGr[0] - this.af*IfGf[0]);
+            ib = -(ie+ic);  		// Current flowing out of base
+	    ckt.add_to_rhs(b,ib,rhs);  	//current flowing out of base
+	    ckt.add_to_rhs(c,ic,rhs);  	//current flows out of the collector
+	    ckt.add_to_rhs(e,ie,rhs);   // and out the emitter
+	    ckt.add_conductance(b,e,IfGf[1]);
+	    ckt.add_conductance(b,c,IrGr[1]);
+	    ckt.add_conductance(c,e,this.leakCond);
+
+	    ckt.add_to_G(b, c, this.ar*IrGr[1]);
+	    ckt.add_to_G(b, e, this.af*IfGf[1]);	    
+	    ckt.add_to_G(b, b, -(this.af*IfGf[1] + this.ar*IrGr[1]));
+	    
+	    ckt.add_to_G(e, b, this.ar*IrGr[1]);
+	    ckt.add_to_G(e, c, -this.ar*IrGr[1]);
+	    
+	    ckt.add_to_G(c, b, this.af*IfGf[1]);
+	    ckt.add_to_G(c, e, -this.af*IfGf[1]);
+	}
+
+        bjt.prototype.load_tran = function(ckt,soln,crnt,chg,time) {
+	    this.load_dc(ckt,soln,crnt,crnt);
+	}
+
+	bjt.prototype.load_ac = function(ckt) {
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -2041,7 +2191,7 @@ var strSimulator = 'https://spinningnumbers.org/circuit-sandbox/index.html';
 function getURLParameterByName(name, url) {
     if (!url) {
       url = window.location.href;
-    }
+    }   
     name = name.replace(/[\[\]]/g, "\\$&");
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
         results = regex.exec(url);
@@ -2078,6 +2228,8 @@ schematic = (function() {
     	'd': [Diode, i18n.Diode],
     	'n': [NFet, i18n.NFet],
     	'p': [PFet, i18n.PFet],
+	    'npn': [NPN, 'NPN'],
+	    'pnp': [PNP, 'PNP'],
     	's': [Probe, i18n.Voltage_probe],
     	'a': [Ammeter, i18n.Current_probe]
     };
@@ -2108,8 +2260,13 @@ schematic = (function() {
 
 	    // use user-supplied list of parts if supplied
 	    // else just populate parts bin with all the parts
+	    // precedence for parts list: parts= string from URL, then from html <input>
+
 	    this.edits_allowed = true;
-	    var parts = input.getAttribute('parts');
+		var parts = getURLParameterByName('parts'); // parts = comma-separated list of parts from URL
+	    if (parts === null) {
+	    	parts = input.getAttribute('parts');	// parts = comma-separated list of parts from html <input>
+	    }
 	    if (parts == undefined || parts == 'None') {
 	    	parts = [];
 	    	for (var p in parts_map) parts.push(p);
@@ -2129,7 +2286,11 @@ schematic = (function() {
 
 	    // use user-supplied list of analyses, otherwise provide them all
 	    // analyses="" means no analyses
-	    var analyses = input.getAttribute('analyses');
+	    // precedence for analyses list: analyses= string from URL, then from html <input>
+		var analyses = getURLParameterByName('analyses');	// analyses = comma-separated list of analyses from URL
+	    if (analyses === null) {
+	    	analyses = input.getAttribute('analyses');		// analysis = comma-separated list of analyses from html
+	    }
 	    if (analyses == undefined || analyses == 'None')
 	    	analyses = ['dc','ac','tran'];
 	    else if (analyses == '') analyses = [];
@@ -2453,7 +2614,7 @@ schematic = (function() {
 		else {
 			this.load_schematic(value);
 		}
-
+		
 	    // start by centering diagram on the screen
 	    this.zoomall();
 	}
@@ -2904,22 +3065,22 @@ schematic = (function() {
 
 	    // Also save data to the browser's local store
 		localStorage.setItem("ckt", this.input.value);
-		console.log( "wrote ckt to localStorage = " + localStorage.getItem("ckt"));
-
+		console.log("Saved ckt.txt to Downloads and localStorage... ")
+		console.log(localStorage.getItem("ckt"));
 	}
 
 	Schematic.prototype.share_link = function() {
-		// give circuit nodes a name, create and display sharable link
-	    this.label_connection_points();
+	//create and display a sharable link	
+	    this.label_connection_points();	// give circuit nodes a name
 	    var netlist = this.json();
-	    this.input.value = JSON.stringify(netlist);
-	    
-	    // dialog box with sharable link
+	    var value = JSON.stringify(netlist);
+	    this.input.value = value;
+		var value_enc = encodeURIComponent(value);
+
+	    // prepare a dialog box with sharable link
 	    var link_lbl = 'Link';
-
 		var fields = [];
-		fields[link_lbl] = build_input('text',60,strSimulator + '?value=' + this.input.value);
-
+		fields[link_lbl] = build_input('text',60,strSimulator + '?value=' + value_enc);
 		var content = build_table(fields);
 		content.fields = fields;
 		content.sch = this;
@@ -2928,7 +3089,11 @@ schematic = (function() {
 			return null;
 		});
 
-		console.log("sharable link: " + strSimulator + '?value=' + this.input.value);
+		//echo encoded and decoded link to console
+		console.log('Encoded link...');
+		console.log(strSimulator + '?value=' + value_enc);
+		console.log('Decoded link...');
+		console.log(strSimulator + '?value=' + value);
 	}
 
 	Schematic.prototype.open_netlist = function() {
@@ -3169,9 +3334,9 @@ schematic = (function() {
 
 		// graph the result and display in a window
 		var graph2 = this.graph(x_values,i18n.log_Frequency,z_values,i18n.degrees);
-		this.window(i18n.AC_Phase,graph2);
+		this.window(i18n.AC_Phase,graph2,0,true);
 		var graph1 = this.graph(x_values,i18n.log_Frequency,y_values,'dB');
-		this.window(i18n.AC_Magnitude,graph1,50);
+		this.window(i18n.AC_Magnitude,graph1,50,true);
 		}
 	}
 
@@ -3272,7 +3437,7 @@ schematic = (function() {
 
 				// graph the result and display in a window
 				var graph = sch.graph(x_values,x_legend,v_values,i18n.Voltage,i_values,i18n.Current);
-				sch.window(i18n.Transient_Analysis,graph);
+				sch.window(i18n.Transient_Analysis,graph,0, true);
 			}
 		})
 	}
@@ -4127,8 +4292,8 @@ schematic = (function() {
 		var select = document.createElement('select');
 		for (var i = 0; i < options.length; i++) {
 			var option = document.createElement('option');
-			option.value = options[i];		//QQQ value is the English field name in a dropdown list (if omitted, defaults to option.text)
-			option.text = i18n[options[i]];						//text in a dropdown list are translated here
+			option.value = options[i];			//value is the English field name in a dropdown list (if omitted, defaults to option.text)
+			option.text = i18n[options[i]];		//text in a dropdown list are translated here
 			select.add(option);
 			if (options[i] == selected) select.selectedIndex = i;
 		}
@@ -4137,7 +4302,7 @@ schematic = (function() {
 
 	Schematic.prototype.window = build_window;
 
-	function build_window(title,content,offset) {
+	function build_window(title,content,offset,showDownloadIcon) {
 	    // create the div for the top level of the window
 	    var win = document.createElement('div');
 	    win.sch = this;
@@ -4156,6 +4321,18 @@ schematic = (function() {
 	    head.style.borderBottom = '1px solid';
 	    head.style.borderColor = border_style;
 	    head.style.borderRadius = '4px 4px 0px 0px';
+	    
+	    // Add download icon to title bar of windows with graphs
+	    if (showDownloadIcon) {
+			var download_button = document.createElement("span");
+			download_button.setAttribute('class', 'fas fa-fw fa-download fa-lg');
+			//download_button.style.color = normal_style;
+		    download_button.style.cssFloat = 'left';
+		    download_button.addEventListener('click',window_download_button,false);
+		    download_button.win = win;
+		    head.appendChild(download_button);
+		};
+
 	    head.appendChild(document.createTextNode(title));
 	    head.win = win;
 	    win.head = head;
@@ -4163,14 +4340,10 @@ schematic = (function() {
 		var close_button = document.createElement("span");
 		close_button.setAttribute('class', 'fas fa-fw fa-times fa-lg');
 		close_button.style.color = cancel_style;
-	    //var close_button = new Image();
-	    //close_button.src = close_icon;
 	    close_button.style.cssFloat = 'right';
 	    close_button.addEventListener('click',window_close_button,false);
 	    close_button.win = win;
 	    head.appendChild(close_button);
-	    
-
 	    win.appendChild(head);
 
 	    // capture mouse events in title bar
@@ -4228,6 +4401,46 @@ schematic = (function() {
 		if (!event) event = window.event;
 		var src = event.target;
 		window_close(src.win);
+	}
+
+	// download csv file with plot data
+	function window_download_button(event) {
+		if (!event) event = window.event;
+		var src = event.target;
+		var c = src.win.childNodes[1];	// canvas element
+
+		// check if the horizontal scale is logarithmic
+		var x_legend = c.x_legend;
+		var logScale = (x_legend.substring(0, 3) == 'log');
+		if (logScale) x_legend = x_legend.substring(4, x_legend.length - 1);
+		
+		// legends
+		var csvStr = x_legend + ', ';		
+		for (var j = 0; j < c.y_values.length; j++) {
+			csvStr += c.y_legend + '_' + c.y_values[j][0] + ', ';
+		}
+		if (typeof c.z_values !== 'undefined') {
+			for (var k = 0; k < c.z_values.length; k++) {
+				csvStr += c.z_legend + '_' + c.z_values[k][0] +', ';
+			}
+		}
+		csvStr += '\n';
+
+		// data
+		for (var i = 0; i < c.x_values.length; i++) {
+			if (logScale) csvStr += Math.pow(10, c.x_values[i]) + ', '; // convert logHz to Hz
+			else csvStr += c.x_values[i] + ', ';
+			for (var j = 0; j < c.y_values.length; j++) {
+				csvStr += c.y_values[j][2][i] + ', ';
+			}
+			if (typeof c.z_values !== 'undefined') {
+				for (var k = 0; k < c.z_values.length; k++) {
+					csvStr += c.z_values[k][2][i] + ', ';
+				}
+			}
+			csvStr += '\n';
+		}
+		download(csvStr, "data.csv", "text/plain");
 	}
 
 	// capture mouse events in title bar of window
@@ -4399,8 +4612,7 @@ schematic = (function() {
 	//
 	///////////////////////////////////////////////////////////////////////////////
 
-	// add dashed lines!
-	// from http://davidowens.wordpress.com/2010/09/07/html-5-canvas-and-dashed-lines/
+	// dashed lines from http://davidowens.wordpress.com/2010/09/07/html-5-canvas-and-dashed-lines/
 	try {
 		if (CanvasRenderingContext2D)
 			CanvasRenderingContext2D.prototype.dashedLineTo = function(fromX, fromY, toX, toY, pattern) {
@@ -4773,7 +4985,7 @@ schematic = (function() {
 	    canvas.z_values = z_values;
 	    canvas.x_legend = x_legend;
 	    canvas.y_legend = y_legend;
-	    canvas.z_legend = y_legend;
+	    canvas.z_legend = z_legend;
 	    canvas.x_min = x_min;
 	    canvas.x_scale = x_scale;
 	    canvas.y_min = y_min;
@@ -4792,6 +5004,13 @@ schematic = (function() {
 
 	    // do something useful when user mouses over graph
 	    canvas.addEventListener('mousemove',graph_mouse_move,false);
+
+	    //console.log("x values" + x_values);		//x axis QQQ
+	    //console.log("y values" + y_values);		//primary y-axis variables
+	    //console.log("z values" + z_values);		//secondary y-axis variables
+
+	    //var csvData = [x_values,y_values];
+	    //console.log("all values" + csvData);		//all three axes
 
 	    // return our masterpiece
 	    redraw_plot(canvas);
@@ -5760,7 +5979,7 @@ schematic = (function() {
 	////////////////////////////////////////////////////////////////////////////////
 
 	var probe_colors = ['red','green','blue','cyan','magenta','orange','black','xaxis'];
-	// QQQ var probe_cnames = i18n_probe_cnames;	// color names, see i18n string file, en-US.js, etc.
+	// var probe_cnames = i18n_probe_cnames;	// color names, see i18n string file, en-US.js, etc.
 
 	var probe_colors_rgb = {
 		'red': 'rgb(232,77,57)',
@@ -5822,7 +6041,7 @@ schematic = (function() {
 		if (inside(this.bbox,x,y)) {
 			var fields = [];
 			var n = probe_colors.indexOf(this.properties['color']);
-			//QQQ fields['Plot_color'] = build_select(probe_cnames,probe_cnames[n]);
+			//fields['Plot_color'] = build_select(probe_cnames,probe_cnames[n]);
 			fields['Plot_color'] = build_select(probe_colors,probe_colors[n]);
 			fields['Plot_offset'] = build_input('text',10,this.properties['offset']);
 
@@ -6091,11 +6310,19 @@ schematic = (function() {
 	Diode.prototype.draw = function(c) {
 	    Component.prototype.draw.call(this,c);   // give superclass a shot
 	    this.draw_line(c, 0,0,0,18);
-	    this.draw_line(c,-8,18,8,18);
-	    this.draw_line(c,-8,18,0,30);
-	    this.draw_line(c, 8,18,0,30);
+	    //this.draw_line(c,-8,18,8,18);
+	    //this.draw_line(c,-8,18,0,30);
+	    //this.draw_line(c, 8,18,0,30);
 	    this.draw_line(c,-8,30,8,30);
 	    this.draw_line(c, 0,30,0,48);
+
+    	c.fillStyle = this.selected ? selected_style : component_style;
+    	c.beginPath();
+    	this.moveTo(c,-8,18);			//arrow
+    	this.lineTo(c,8,18);
+    	this.lineTo(c,0,30);
+    	this.lineTo(c,-8,18);
+    	c.fill();
 
 	    if (this.properties['type'] == 'ideal') {
 		// put a box around an ideal diode
@@ -6135,6 +6362,125 @@ schematic = (function() {
 			return true;
 		} else return false;
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	//
+	//  NPN Transistor
+	//
+	////////////////////////////////////////////////////////////////////////////////
+
+	function NPN(x,y,rotation,name,area,Ics,Ies,alphaF,alphaR) {
+	    Component.call(this,'npn',x,y,rotation);
+	    this.properties['name'] = name;
+	    this.properties['area'] = area ? area : '1';
+	    this.properties['Ics'] = Ics ? Ics : '1.0e-14';
+	    this.properties['Ies'] = Ies ? Ies : '1.0e-14';
+	    this.properties['alphaF'] = alphaF ? alphaF : '0.98';
+	    this.properties['alphaR'] = alphaR ? alphaR : '0.1';
+	    this.add_connection(0,0);   	// collector
+	    this.add_connection(-16,24);  	// base
+	    this.add_connection(0,48);  	// emitter
+	    this.bounding_box = [-16,0,0,48];
+	    this.update_coords();
+	}
+	NPN.prototype = new Component();
+	NPN.prototype.constructor = NPN;
+
+	NPN.prototype.toString = function() {
+	    return '<NPN '+this.properties['area']+' '+this.properties['Ics']+' '+this.properties['Ies']+' '+this.properties['alphaF']+' '+ this.properties['alphaR']+' ('+this.x+','+this.y+')>';
+	}
+    
+	NPN.prototype.draw = function(c) {
+	    Component.prototype.draw.call(this,c);
+	    this.draw_line(c,0,0,0,16);		//collector vertical
+	    this.draw_line(c,-8,20,0,16);	//collector slant stroke
+	    this.draw_line(c,0,33,0,48);	//emitter vertical stroke
+	    this.draw_line(c,-16,24,-8,24);	//base stroke
+	    this.draw_line(c,-8,28,0,33);	//emitter slant stroke
+    	
+    	c.fillStyle = this.selected ? selected_style : component_style;
+    	c.beginPath();
+    	this.moveTo(c,-1,28);			//arrow
+    	this.lineTo(c,1,34);
+    	this.lineTo(c,-5,34);
+    	this.lineTo(c,-1,28);
+    	c.fill();
+
+    	c.beginPath();
+    	this.moveTo(c,-7,16);			//main vertical stroke
+    	this.lineTo(c,-9,16);
+    	this.lineTo(c,-9,32);
+    	this.lineTo(c,-7,32);
+    	this.lineTo(c,-7,16);
+    	c.fill();
+
+    	if (this.properties['name'])
+			this.draw_text(c,this.properties['name'],0,19,0,property_size);
+	}
+
+	NPN.prototype.clone = function(x,y) {
+	    return new NPN(x,y,this.rotation,this.properties['name'],this.properties['area'],this.properties['Ics'],this.properties['Ies'],this.properties['alphaF'],this.properties['alphaR']);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	//
+	//  PNP Transistor
+	//
+	////////////////////////////////////////////////////////////////////////////////
+
+	function PNP(x,y,rotation,name,area,Ics,Ies,alphaF,alphaR) {
+	    Component.call(this,'pnp',x,y,rotation);
+	    this.properties['name'] = name;
+	    this.properties['area'] = area ? area : '1';
+	    this.properties['Ics'] = Ics ? Ics : '1.0e-14';
+	    this.properties['Ies'] = Ies ? Ies : '1.0e-14';
+	    this.properties['alphaF'] = alphaF ? alphaF : '0.98';
+	    this.properties['alphaR'] = alphaR ? alphaR : '0.1';
+	    this.add_connection(0,0);   	// collector
+	    this.add_connection(-16,24);  	// base
+	    this.add_connection(0,48);  	// emitter
+	    this.bounding_box = [-16,0,0,48];
+	    this.update_coords();
+	}
+	PNP.prototype = new Component();
+	PNP.prototype.constructor = PNP;
+
+	PNP.prototype.toString = function() {
+	    return '<PNP '+this.properties['area']+' '+this.properties['Ics']+' '+this.properties['Ies']+' '+this.properties['alphaF']+' '+ this.properties['alphaR']+' ('+this.x+','+this.y+')>';
+	}
+    
+	PNP.prototype.draw = function(c) {
+	    Component.prototype.draw.call(this,c);   // give superclass a shot
+	    this.draw_line(c,0,0,0,16);		//collector vertical
+	    this.draw_line(c,-8,20,0,16);	//collector slant stroke
+	    this.draw_line(c,0,33,0,48);	//emitter vertical stroke
+	    this.draw_line(c,-16,24,-8,24);	//base stroke
+	    this.draw_line(c,-8,28,0,33);	//emitter slant stroke
+
+    	c.fillStyle = this.selected ? selected_style : component_style;
+    	c.beginPath();
+    	this.moveTo(c,-1,28);			//arrow
+    	this.lineTo(c,-7,28);
+    	this.lineTo(c,-5,34);
+    	this.lineTo(c,-1,28);
+    	c.fill();
+
+    	c.beginPath();
+    	this.moveTo(c,-7,16);			//main vertical stroke
+    	this.lineTo(c,-9,16);
+    	this.lineTo(c,-9,32);
+    	this.lineTo(c,-7,32);
+    	this.lineTo(c,-7,16);
+    	c.fill();
+
+    	if (this.properties['name'])
+			this.draw_text(c,this.properties['name'],0,19,0,property_size);
+    }
+
+	PNP.prototype.clone = function(x,y) {
+	    return new PNP(x,y,this.rotation,this.properties['name'],this.properties['area'],this.properties['Ics'],this.properties['Ies'],this.properties['alphaF'],this.properties['alphaR']);
+	}
+
 
 	////////////////////////////////////////////////////////////////////////////////
 	//

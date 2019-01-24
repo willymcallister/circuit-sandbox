@@ -148,6 +148,10 @@ orange: 'naranja',
 black: 'negro',
 xaxis: 'eje x',
 
+Ics: 'Ics',
+Ies: 'Ies',
+alphaF: '\u03B1F',
+alphaR: '\u03B1R',
 last_line: 'última líena, sin coma'
 };
 
