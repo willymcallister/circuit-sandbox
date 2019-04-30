@@ -5,7 +5,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 // Copyright (C) 2011 Massachusetts Institute of Technology
-// Copyright (C) 2015-2019 Modifications by Khan Academy and Spinning Numbers.
+// Copyright (C) 2015-2019 Modifications by Khan Academy and Willy McAllister, Spinning Numbers.
 
 // create a circuit for simulation using "new cktsim.Circuit()"
 
@@ -383,7 +383,7 @@ var cktsim = (function() {
 	function pick_step(ckt, step_index) {
 		var min_shrink_factor = 1.0/lte_step_decrease_factor;
 		var max_growth_factor = time_step_increase_factor;
-		var N = ckt.N;
+		//var N = ckt.N;		//WMc not used
 		var p = interp_coeffs(ckt.time, ckt.oldt, ckt.old2t, ckt.old3t);
 		var trapcoeff = 0.5*(ckt.time - ckt.oldt)/(ckt.time - ckt.old3t);
 		var maxlteratio = 0.0;
@@ -860,8 +860,8 @@ var cktsim = (function() {
 	    	ratio = parse_number(ratio,undefined);
 	    	if (ratio === undefined) return undefined;
 	    }
-	    let dd = new Fet(dd,g,s,ratio,name,'p');
-	    return this.add_device(d, name);
+	    let dd = new Fet(d,g,s,ratio,name,'p');
+	    return this.add_device(dd, name);
 	};
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -1047,12 +1047,12 @@ var cktsim = (function() {
     			dest[j][i] = src[i][j];
     }
 
-
 	// Uses GE to determine rank.
 	function mat_rank(Mo) {
 	    var Nr = Mo.length;  // Number of rows
 	    var Nc = Mo[0].length;  // Number of columns
-	    var temp,i,j;
+	    //var temp,i,j;
+	    var temp;		//WMc i,j not used
 	    // Make a copy to avoid overwriting
 	    var M = mat_make(Nr, Nc);
 	    mat_copy(Mo,M);
@@ -1587,7 +1587,8 @@ var cktsim = (function() {
 		var nvals = tv_pairs.length;
 		if (repeat)
 		src.period = tv_pairs[nvals-2];  // Repeat period of source
-	    if (nvals % 2 == 1) npts -= 1;   // make sure it's even!
+	    //if (nvals % 2 == 1) npts -= 1;   // make sure it's even!  WMc bug, npts should be nvals
+	    if (nvals % 2 == 1) nvals -= 1;    // make sure nvals is even! (equal number of v and t values)
 
 	    if (nvals <= 2) {
 			// handle degenerate case
@@ -2062,27 +2063,31 @@ var cktsim = (function() {
 	    }
 	    var vgs = this.type_sign * ckt.get_two_terminal(this.g, this.s, soln);
 	    var vgst = vgs - this.vt;
-	    with (this) {
-	    	var gmgs,ids,gds;
-			if (vgst > 0.0 ) { // vgst < 0, transistor off, no subthreshold here.
-				if (vgst < vds) { /* Saturation. */
-					gmgs =  beta * (1 + (lambda * vds)) * vgst;
-					ids = type_sign * 0.5 * gmgs * vgst;
-					gds = 0.5 * beta * vgst * vgst * lambda;
-				} else {  /* Linear region */
-					gmgs =  beta * (1 + lambda * vds);
-					ids = type_sign * gmgs * vds * (vgst - 0.50 * vds);
-					gds = gmgs * (vgst - vds) + beta * lambda * vds * (vgst - 0.5 * vds);
-					gmgs *= vds;
-				}
-			    ckt.add_to_rhs(d,-ids,rhs);		// current flows into the drain
-			    ckt.add_to_rhs(s, ids,rhs);		// and out the source		    
-			    ckt.add_conductance(d,s,gds);
-			    ckt.add_to_G(s,s, gmgs);
-			    ckt.add_to_G(d,s,-gmgs);
-			    ckt.add_to_G(d,g, gmgs);
-			    ckt.add_to_G(s,g,-gmgs);
+    	var gmgs,ids,gds;
+    	let beta = this.beta,
+    		g = this.g,
+    		d = this.d,
+    		s = this.s,
+    		lambda = this.lambda,
+    		type_sign = this.type_sign;
+		if (vgst > 0.0 ) { // vgst < 0, transistor off, no subthreshold here.
+			if (vgst < vds) { /* Saturation. */
+				gmgs =  beta * (1 + (lambda * vds)) * vgst;
+				ids = type_sign * 0.5 * gmgs * vgst;
+				gds = 0.5 * beta * vgst * vgst * lambda;
+			} else {  /* Linear region */
+				gmgs =  beta * (1 + lambda * vds);
+				ids = type_sign * gmgs * vds * (vgst - 0.50 * vds);
+				gds = gmgs * (vgst - vds) + beta * lambda * vds * (vgst - 0.5 * vds);
+				gmgs *= vds;
 			}
+		    ckt.add_to_rhs(d,-ids,rhs);		// current flows into the drain
+		    ckt.add_to_rhs(s, ids,rhs);		// and out the source		    
+		    ckt.add_conductance(d,s,gds);
+		    ckt.add_to_G(s,s, gmgs);
+		    ckt.add_to_G(d,s,-gmgs);
+		    ckt.add_to_G(d,g, gmgs);
+		    ckt.add_to_G(s,g,-gmgs);
 		}
 	};
 
@@ -2241,6 +2246,7 @@ schematic = (function() {
     };
 
 	// global clipboard
+	var sch_clipboard
 	if (typeof sch_clipboard == 'undefined')
 		sch_clipboard = [];
 
@@ -2772,7 +2778,7 @@ schematic = (function() {
 	};
 
 	Schematic.prototype.help = function() {
-	/* Embedded help strings can be found in i18n strings files: en-US.js, es.js, and the like.	*/
+	/* Embedded help strings come from i18n files: en-US.js, es.js, and the like.	*/
 		let strHelp = strSHelp + strAddC + strAddW + strSel + strMove + strDel + strRot + strProp + strNum;
 		window.confirm(strHelp);
 	};
@@ -3215,7 +3221,7 @@ schematic = (function() {
 		this.unselect_all(-1);
 		this.redraw_background();
 
-		var npts_lbl = 'points_per_decade';	//'Number of points per decade';	//not used
+		//var npts_lbl = 'points_per_decade';	//'Number of points per decade';	//not used
 		var fstart_lbl = 'Starting_frequency';
 		var fstop_lbl = 'Ending_frequency';
 		var source_name_lbl = 'source_for_ac';		//'Name of V or I source for ac';
@@ -3349,7 +3355,7 @@ schematic = (function() {
 		this.unselect_all(-1);
 		this.redraw_background();
 
-		var npts_lbl = 'Minimum_number_of_timepoints';	//not used
+		//var npts_lbl = 'Minimum_number_of_timepoints';	//not used
 		var tstop_lbl = 'Stop_time_seconds';
 		var probes = this.find_probes();
 		if (probes.length == 0) {
@@ -4603,7 +4609,7 @@ schematic = (function() {
 	var cut_icon    = 'fas fa-fw fa-cut';
 	var copy_icon   = 'fas fa-fw fa-copy';
 	var paste_icon  = 'fas fa-fw fa-paste';
-	var close_icon  = 'fas fa-fw fa-times';
+	//var close_icon  = 'fas fa-fw fa-times';	//WMc not used
 	var grid_icon   = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAABtUlEQVQ4EZXUXU8TURSF4aGCxKAiIGBiDDXhSrngyv//H7yWeqEkbcEPQCKQVtczM2dyQqIJO3ln9qyz1/lum6aLzbzmYRIed9LwPEmGOtSo5eEd4n2yZbgMB+FRWAu74WePnKZNjdpF4G1WwsewH7aDmAWdCu3axDT8abOmGeW91+ff8p6u5vEsbASNQl53VOt1R3Tf6vXRxnGet+FHOAxPg8bXwYiQ07SpUcvD25iROAuWYQSmqyDuQpnFefLfxIQaOg/vsJyyFJoNLFHr/83NyCm8CUawbrnTMdrzUPaIfhHUvep1OX2q+DQ4Wh2Km6BAaF9vs3/ri7TPzIipGHnuf9NEvbRO6Z6D19Q/BCfg8r0L7tROeBu+98hfBm1q1PLwjszISF+CZcgt1dEKt7fM5GtyRkEDD++ybGTZn2jDXj0oLx1txWWtRvAjfBLc2BeBBjlNmxoaD2/78Tlvp6ZA1MtR7AqIcvRyE3DLdeSSzu3Rr2CkcszXycu+6MhPQtDLCemIR9D10cZRnu6D2YyDAfzn7AWnAzlN2zio5eEdwvTnYRLc6jo+5eOkFpLrUC1Pu/S/4t9w0AFTPOoAAAAASUVORK5CYII=';
 	var delete_icon = 'fas fa-fw fa-times';		
 	var rotate_icon = 'fas fa-fw fa-redo';
@@ -4930,8 +4936,8 @@ schematic = (function() {
 			    c.fillText(engineering_notation(z,2),left_margin + pwidth + tick_length + 2,temp);
 			}
 
-			var z;
-			var nz;
+			//var z;	//WMc z,nz initialized inside for loop
+			//var nz;
 			c.lineWidth = 3;
 			for (let plot = z_values.length - 1; plot >= 0; --plot) {
 				let color = probe_colors_rgb[z_values[plot][0]];
@@ -5303,7 +5309,7 @@ schematic = (function() {
 
 	function part_mouse_up(event) {
 		if (!event) event = window.event;
-		var part = event.target.partw;		//WMc
+		let part = event.target.partw;		//WMc
 
 		    //part.select(false);					// commented out for touch 
 		    //part.sch.new_part = undefined;		// for touch, place parts with touch-touch instead of drag
