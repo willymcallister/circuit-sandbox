@@ -4525,7 +4525,8 @@ schematic = (function() {
 		}
 		else {
 			tool = document.createElement('span');
-			tool.style.font = 'small-caps sans-serif';
+			//tool.style.font = 'small-caps sans-serif';
+			tool.style.fontSize = 'large';
 			tool.style.color = icon_style;
 			var label = document.createTextNode(icon);
 			tool.appendChild(label);
@@ -4606,16 +4607,15 @@ schematic = (function() {
 	}
 
 	var help_icon   = 'fas fa-fw fa-question';
-	var cut_icon    = 'fas fa-fw fa-cut';
-	var copy_icon   = 'fas fa-fw fa-copy';
-	var paste_icon  = 'fas fa-fw fa-paste';
-	//var close_icon  = 'fas fa-fw fa-times';	//WMc not used
-	var grid_icon   = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABcSAAAXEgFnn9JSAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAABtUlEQVQ4EZXUXU8TURSF4aGCxKAiIGBiDDXhSrngyv//H7yWeqEkbcEPQCKQVtczM2dyQqIJO3ln9qyz1/lum6aLzbzmYRIed9LwPEmGOtSo5eEd4n2yZbgMB+FRWAu74WePnKZNjdpF4G1WwsewH7aDmAWdCu3axDT8abOmGeW91+ff8p6u5vEsbASNQl53VOt1R3Tf6vXRxnGet+FHOAxPg8bXwYiQ07SpUcvD25iROAuWYQSmqyDuQpnFefLfxIQaOg/vsJyyFJoNLFHr/83NyCm8CUawbrnTMdrzUPaIfhHUvep1OX2q+DQ4Wh2Km6BAaF9vs3/ri7TPzIipGHnuf9NEvbRO6Z6D19Q/BCfg8r0L7tROeBu+98hfBm1q1PLwjszISF+CZcgt1dEKt7fM5GtyRkEDD++ybGTZn2jDXj0oLx1txWWtRvAjfBLc2BeBBjlNmxoaD2/78Tlvp6ZA1MtR7AqIcvRyE3DLdeSSzu3Rr2CkcszXycu+6MhPQtDLCemIR9D10cZRnu6D2YyDAfzn7AWnAzlN2zio5eEdwvTnYRLc6jo+5eOkFpLrUC1Pu/S/4t9w0AFTPOoAAAAASUVORK5CYII=';
-	var delete_icon = 'fas fa-fw fa-times';		
+	var cut_icon    = 'fas fa-fw fa-cut fa-lg';
+	var copy_icon   = 'fas fa-fw fa-copy fa-lg';
+	var paste_icon  = 'fas fa-fw fa-paste fa-lg';
+	var grid_icon	= 'fas fa-fw fa-border-all fa-lg';
+	var delete_icon = 'fas fa-fw fa-times fa-lg';		
 	var rotate_icon = 'fas fa-fw fa-redo';
-	var save_icon   = 'fas fa-fw fa-save';
-	var open_icon   = 'fas fa-fw fa-folder-open';
-	var link_icon   = 'fas fa-fw fa-link';
+	var save_icon   = 'fas fa-fw fa-save fa-lg';
+	var open_icon   = 'fas fa-fw fa-folder-open fa-lg';
+	var link_icon   = 'fas fa-fw fa-link fa-lg';
 
 	///////////////////////////////////////////////////////////////////////////////
 	//
