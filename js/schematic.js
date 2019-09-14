@@ -919,7 +919,7 @@ var cktsim = (function() {
 			this.Gl[i][j] += g;
 	};
 
-	// add individual conductance to Gl matrix
+	// add individual conductance to G matrix
 	Circuit.prototype.add_to_G = function(i,j,g) {
 		if (i >=0 && j >= 0)
 			this.G[i][j] += g;
