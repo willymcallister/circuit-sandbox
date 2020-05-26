@@ -2,11 +2,10 @@
 
 A simulator for experimenting with circuits. Click and draw. There's no installation.
 
-[circuit sandbox](https://willymcallister.github.io/circuit-sandbox/index.html) (English)
-
-[circuit sandbox](https://willymcallister.github.io/circuit-sandbox/index-es.html) (Español)
-
-[circuit sandbox](https://willymcallister.github.io/circuit-sandbox/index-zh.html) (简体中文)
+* [Run in English](https://spinningnumbers.org/circuit-sandbox/index.html)  
+* [Ejecutar en español](https://spinningnumbers.org/circuit-sandbox/index-es.html)  
+* [运行简体中文版](https://spinningnumbers.org/circuit-sandbox/index-zh.html) (simplified Chinese)
+* [を日本語で実行する](https://spinningnumbers.org/circuit-sandbox/index-ja.html) (Japanese)
 
 Can you help translate Circuit Sandbox into other languages? It's easy. Contact me at willy@spinningnumbers.org.
 
