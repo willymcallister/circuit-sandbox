@@ -2212,21 +2212,43 @@ function getURLParameterByName(name, url) {
 }
 
 schematic = (function() {
-	var element_style = 'rgb(255,255,255)';
-	var background_style = 'rgb(246,247,247)';	// KA gray97 #F6F7F7
-	var grid_style = 'rgb(246,247,247)';		// KA gray97 #F6F7F7
-	var border_style = 'rgb(214,216,218)';		// KA gray85 #D6D8DA
-	var stroke_style = 'rgb(186,190,194)';		// KA gray76 #BABEC2 on-schematic icons
-    var normal_style = 'rgb(0,0,0)';  			// black wire drawing color
-    var component_style = 'rgb(60,145,229)';  	// KA default5 #3C91E5 unselected components
-    var selected_style = 'rgb(116,207,112)';	// KA CS2 #74CF70 highlight selected components
-    var icon_style = 'rgb(33,36,44)';			// KA gray17 #21242C main menu icons 
-    var annotation_style = 'rgb(249,104,93)';	// KA humanities5 #F9685D v and i annotations 
-    var cancel_style = 'rgb(186,190,194)';		// KA gray76 #BABEC2 cancel X icon 
-    var ok_style = 'rgb(113,179,7)';			// KA Exerxise #71B307 ok checkmark icon 
-    var property_size = 7;  					// point size for Component property text
-    var annotation_size = 7;  					// point size for diagram annotations
+	function setLightMode() {
+		element_style 		= '#FFFFFF';		// white graph background, popup background
+		background_style 	= '#F6F7F7';		// KA gray97 #F6F7F7 background of schematic area
+		grid_style 			= '#F6F7F7';		// KA gray97 #F6F7F7 grid
+		border_style 		= '#D6D8DA';		// KA gray85 #D6D8DA
+		stroke_style 		= '#BABEC2';		// KA gray76 #BABEC2 icons, plot cursor
+	    normal_style 		= '#000000';  		// black wire color, text
+	    component_style 	= '#3C91E5';  		// KA default5 #3C91E5 components (unselected)
+	    selected_style 		= '#74CF70';		// KA CS2 #74CF70 highlight selected components
+	    icon_style 			= '#21242C';		// KA gray17 #21242C main menu icons 
+	    annotation_style 	= '#F9685D';		// KA humanities5 #F9685D v and i annotations 
+	    cancel_style 		= '#BABEC2';		// KA gray76 #BABEC2 cancel X icon 
+	    ok_style 			= '#71B307';		// KA Exercise #71B307 ok checkmark icon 
+	};
+	function setDarkMode() {
+		element_style 		= '#3B3E40';		// KA gray25 #3B3E40 graph background, popup background
+		background_style 	= '#353535';		// Spinning Numbers #353535 background of schematic area
+		grid_style 			= '#353535';		// Spinning Numbers #353535 grid
+		border_style 		= '#D6D8DA';		// KA gray85 #D6D8DA borders
+		stroke_style 		= '#BABEC2';		// KA gray76 #BABEC2 icons, plot cursor
+	    normal_style 		= '#BABEC2';  		// KA gray76 #BABEC2 wire color, text
+	    component_style 	= '#3C91E5';  		// KA default5 #3C91E5 components (unselected)
+	    selected_style 		= '#74CF70';		// KA CS2 #74CF70 highlight selected components
+	    icon_style 			= '#BABEC2';		// KA gray76 #BABEC2 main menu icons 
+	    annotation_style 	= '#F9685D';		// KA humanities5 #F9685D v and i annotations 
+	    cancel_style 		= '#BABEC2';		// KA gray76 #BABEC2 cancel X icon 
+	    ok_style 			= '#71B307';		// KA Exercise #71B307 ok checkmark icon 
+	};
+	const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+	if (isDarkMode) {
+		setDarkMode();
+	} else {
+		setLightMode();
+	};
 
+	var property_size = 7;  					// point size for Component property text
+	var annotation_size = 7;  					// point size for diagram annotations
     var parts_map = {
     	'g': [Ground, i18n.Ground_connection],
     	'L': [Label, i18n.Node_label],
@@ -4192,6 +4214,7 @@ schematic = (function() {
 	    body.appendChild(content);
 	    body.style.padding = '5px';
 	    body.style.font = '10pt sans-serif';
+	    body.style.color = normal_style;
 	    dialog.appendChild(body);
 
 	    var ok_button = document.createElement('span');
@@ -4292,6 +4315,8 @@ schematic = (function() {
 		var input = document.createElement('input');
 		input.type = type;
 		input.size = size;
+		input.style.backgroundColor = element_style;
+		input.style.color = normal_style;
 	    input.className = 'property';  // make this easier to find later
 	    if (value == undefined) input.value = '';
 	    else input.value = value.toString();
@@ -4301,6 +4326,9 @@ schematic = (function() {
 	// build a select widget using the strings found in the options array
 	function build_select(options,selected) {
 		var select = document.createElement('select');
+		select.style.backgroundColor = element_style;
+		select.style.color = normal_style;
+
 		for (let i = 0; i < options.length; i++) {
 			var option = document.createElement('option');
 			option.value = options[i];			//value is the English field name in a dropdown list (if omitted, defaults to option.text)
@@ -4323,9 +4351,9 @@ schematic = (function() {
 
 	    // div to hold the title
 	    var head = document.createElement('div');
-	    head.style.backgroundColor = 'white'; //'rgb(202,51,124)';		// KA Science1
+	    head.style.backgroundColor = element_style;
 	    head.style.font = '10pt sans-serif';
-	    head.style.color = 'black';
+	    head.style.color = normal_style; //'black';
 	    head.style.fontWeight = 'bold';
 	    head.style.textAlign = 'center';
 	    head.style.padding = '5px';
@@ -4337,7 +4365,7 @@ schematic = (function() {
 	    if (showDownloadIcon) {
 			var download_button = document.createElement("span");
 			download_button.setAttribute('class', 'fas fa-fw fa-download fa-lg');
-			//download_button.style.color = normal_style;
+			download_button.style.color = icon_style;
 		    download_button.style.cssFloat = 'left';
 		    download_button.addEventListener('click',window_download_button,false);
 		    download_button.win = win;
@@ -4370,7 +4398,7 @@ schematic = (function() {
 	    win.top = this.canvas.mouse_y + offset;
 
 	    // add to DOM
-	    win.style.background = 'white';
+	    win.style.background = element_style;
 	    win.style.position = 'absolute';
 	    win.style.left = win.left + 'px';
 	    win.style.top = win.top + 'px';
@@ -5995,7 +6023,7 @@ schematic = (function() {
 		'blue': 'rgb(35,110,201)',
 		'cyan': 'rgb(99,217,234)',
 		'magenta': 'rgb(237,95,166)',
-	//	'yellow': 'rgb(244,211,69)',
+	  	'yellow': 'rgb(244,211,69)',
 		'orange': 'rgb(255,156,57)',
 		'black': 'rgb(0,0,0)',
 		'xaxis': undefined
