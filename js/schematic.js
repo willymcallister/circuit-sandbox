@@ -2538,6 +2538,7 @@ schematic = (function() {
 	    	this.status_div.style.marginRight = '94px';
 	    	this.status_div.style.textAlign = "right";
 	    	this.status_div.style.font = '10pt sans-serif';
+	    	this.status_div.style.color = normal_style;
 	    } else this.status_div = undefined;
 
         this.connection_points = []; // location string => list of cp's
