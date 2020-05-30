@@ -1,0 +1,17 @@
+* {font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;}
+
+a { color: #3C91E5; text-decoration: none; } 
+a:hover { text-decoration: underline; }
+
+html { 
+  	--background-color: #fdfdfd;
+  	--text-color: #000;
+}
+@media (prefers-color-scheme: dark) {
+	html {
+  		--background-color: #353535;
+  		--text-color: #BABEC2;
+	}
+}
+body {background-color:var(--background-color);}
+p {color:var(--text-color);}
