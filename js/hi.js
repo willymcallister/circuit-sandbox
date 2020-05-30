@@ -11,6 +11,8 @@ Op_Amp: 'आपरेशनल एम्पलीफायर',
 Diode: 'डायोड',
 NFet: 'ऐनफेट',
 PFet: 'पीफेट',
+NPN: 'ऐनपीऐन',
+PNP: 'पीऐनपी',
 Voltage_probe: 'वोल्टेज की जांच',
 Current_probe: 'विद्युत धारा जांच',
 drag_onto_diagram: ': डालने के लिए खींचें या टैप करें',
@@ -135,7 +137,7 @@ ideal: 'आदर्श',
 WL: 'डब्ल्यू / एल',
 A: 'ए',
 Plot_color: 'प्लॉट का रंग',
-Plot_offset: 'प्लॉट की भरपाई',
+Plot_offset: 'प्लॉट ऑफसेट',
 dc: 'डीसी',
 
 red: 'लाल',
@@ -150,8 +152,8 @@ xaxis: 'एक्स अक्ष',
 
 Ics: 'Ics',
 Ies: 'Ies',
-alphaF: '\u03B1F',
-alphaR: '\u03B1R',
+alphaF: '\u03B1एफ',
+alphaR: '\u03B1आर',
 last_line: 'last line, no comma'
 };
 

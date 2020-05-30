@@ -2261,8 +2261,8 @@ schematic = (function() {
     	'd': [Diode, i18n.Diode],
     	'n': [NFet, i18n.NFet],
     	'p': [PFet, i18n.PFet],
-	    'npn': [NPN, 'NPN'],
-	    'pnp': [PNP, 'PNP'],
+	    'npn': [NPN, i18n.NPN],
+	    'pnp': [PNP, i18n.PNP],
     	's': [Probe, i18n.Voltage_probe],
     	'a': [Ammeter, i18n.Current_probe]
     };
@@ -3524,7 +3524,7 @@ schematic = (function() {
 		var c = this.bg_image.getContext('2d');
 		//c.scale(2,2);	//retina display - doesn't look good
 
-		c.lineCap = 'butt';	// butt(D) | *round | square
+		c.lineCap = 'round';	// butt(D) | *round | square
 
 	    // paint background color
 	    c.fillStyle = element_style;
@@ -6554,10 +6554,10 @@ schematic = (function() {
 
 	    var dim = this.properties.WL;
 	    if (this.properties.name) {
-	    	this.draw_text(c,this.properties.name,2,22,6,property_size);
-	    	this.draw_text(c,dim,2,26,0,property_size);
+	    	this.draw_text(c,this.properties.name,6,22,6,property_size);
+	    	this.draw_text(c,dim,6,26,0,property_size);
 	    } else
-	    this.draw_text(c,dim,2,24,3,property_size);
+	    this.draw_text(c,dim,6,24,3,property_size);
 	};
 
 	NFet.prototype.clone = function(x,y) {
@@ -6600,10 +6600,10 @@ schematic = (function() {
 
 	    var dim = this.properties.WL;
 	    if (this.properties.name) {
-	    	this.draw_text(c,this.properties.name,2,22,6,property_size);
-	    	this.draw_text(c,dim,2,26,0,property_size);
+	    	this.draw_text(c,this.properties.name,6,22,6,property_size);
+	    	this.draw_text(c,dim,6,26,0,property_size);
 	    } else
-	    this.draw_text(c,dim,2,24,3,property_size);
+	    this.draw_text(c,dim,6,24,3,property_size);
 	};
 
 	PFet.prototype.clone = function(x,y) {
@@ -6689,7 +6689,7 @@ schematic = (function() {
 	    this.draw_circle(c,0,24,12,false);
 	    this.draw_line(c,0,36,0,48);
 
-	    if (this.type == 'v') {  // voltage source
+	    if (this.type == 'v') {  		// voltage source
 		// draw + and -
 		this.draw_line(c,0,15,0,21);
 		this.draw_line(c,-3,18,3,18);
@@ -6703,8 +6703,13 @@ schematic = (function() {
 
 		if (this.properties.name)
 			this.draw_text(c,this.properties.name,-16,24,5,property_size);
-		if (this.properties.value)
-			this.draw_text(c,this.properties.value,16,24,3,property_size);
+		if (this.properties.value) {
+			//this.draw_text(c,this.properties.value,16,24,3,property_size);
+			let index = this.properties.value.indexOf('(');
+			let fun = i18n[this.properties.value.slice(0,index)];   // translation of function name before the "("
+			let params = this.properties.value.slice(index);   		// parameters after the "("
+			this.draw_text(c,fun+params,16,24,3,property_size);
+		}
 	};
 
 // map source function name to labels for each source parameter
