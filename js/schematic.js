@@ -2259,10 +2259,10 @@ schematic = (function() {
     	'l': [Inductor, i18n.Inductor],
     	'o': [OpAmp, i18n.Op_Amp],
     	'd': [Diode, i18n.Diode],
-    	'n': [NFet, i18n.NFet],
     	'p': [PFet, i18n.PFet],
-	    'npn': [NPN, i18n.NPN],
+    	'n': [NFet, i18n.NFet],
 	    'pnp': [PNP, i18n.PNP],
+	    'npn': [NPN, i18n.NPN],
     	's': [Probe, i18n.Voltage_probe],
     	'a': [Ammeter, i18n.Current_probe]
     };
@@ -6452,7 +6452,7 @@ schematic = (function() {
     	c.fill();
 
     	if (this.properties.name)
-			this.draw_text(c,this.properties.name,0,19,0,property_size);
+			this.draw_text(c,this.properties.name,2,20,0,property_size);
 	};
 
 	NPN.prototype.clone = function(x,y) {
@@ -6511,7 +6511,7 @@ schematic = (function() {
     	c.fill();
 
     	if (this.properties.name)
-			this.draw_text(c,this.properties.name,0,19,0,property_size);
+			this.draw_text(c,this.properties.name,2,20,0,property_size);
     };
 
 	PNP.prototype.clone = function(x,y) {
