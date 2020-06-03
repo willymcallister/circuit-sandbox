@@ -1,4 +1,4 @@
-var i18n = {
+var i18n = { 
 error1: '抱歉，启动原理图工具时出现浏览器错误。我们建议使用最新版本的Firefox和Chrome。',
 Ground_connection: '接地连接',
 Node_label: '节点标签',
