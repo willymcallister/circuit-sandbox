@@ -140,6 +140,10 @@ Plot_color: '绘制颜色',
 Plot_offset: '绘图偏移',
 dc: 'dc',
 
+Gain: 'A',
+Rin: 'Rin',
+Rout: 'Rout',
+
 red: '红色',
 green: '绿色',
 blue: '蓝色',

@@ -140,6 +140,10 @@ Plot_color: 'प्लॉट का रंग',
 Plot_offset: 'प्लॉट ऑफसेट',
 dc: 'डीसी',
 
+Gain: 'A',
+Rin: 'Rin',
+Rout: 'Rout',
+
 red: 'लाल',
 green: 'हरा',
 blue: 'नीला',

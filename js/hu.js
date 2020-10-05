@@ -140,6 +140,10 @@ Plot_color: 'Grafikon színe',
 Plot_offset: 'Grafikon kitérése',
 dc: 'dc',
 
+Gain: 'A',
+Rin: 'Rin',
+Rout: 'Rout',
+
 red: 'piros',
 green: 'zöld',
 blue: 'kék',

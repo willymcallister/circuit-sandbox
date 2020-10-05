@@ -140,6 +140,10 @@ Plot_color: 'Cor do gráfico',
 Plot_offset: 'Deslocamento do gráfico',
 dc: 'dc',
 
+Gain: 'A',
+Rin: 'Rin',
+Rout: 'Rout',
+
 red: 'vermelho',
 green: 'verde',
 blue: 'azul',

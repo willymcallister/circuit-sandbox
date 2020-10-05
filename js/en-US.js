@@ -140,6 +140,10 @@ Plot_color: 'Plot color',
 Plot_offset: 'Plot offset',
 dc: 'dc',
 
+Gain: 'A',
+Rin: 'Rin',
+Rout: 'Rout',
+
 red: 'red',
 green: 'green',
 blue: 'blue',

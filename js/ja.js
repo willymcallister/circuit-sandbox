@@ -140,6 +140,10 @@ Plot_color: 'プロットカラー',
 Plot_offset: 'プロットオフセット',
 dc: 'dc',
 
+Gain: 'A',
+Rin: 'Rin',
+Rout: 'Rout',
+
 red: 'レッド',
 green: 'グリーン',
 blue: 'ブルー',

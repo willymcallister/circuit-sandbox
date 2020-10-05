@@ -140,6 +140,10 @@ Plot_color: 'Color del gráfico',
 Plot_offset: 'Compensar gráfica',
 dc: 'dc',
 
+Gain: 'A',
+Rin: 'Rin',
+Rout: 'Rout',
+
 red: 'rojo',
 green: 'verde',
 blue: 'azul',
