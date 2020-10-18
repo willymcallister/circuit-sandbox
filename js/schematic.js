@@ -5,6 +5,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Copyright (C) 2011 Massachusetts Institute of Technology
+// Original work by Chris Terman and Jacob White
+// Copyright (C) 2018, Joe Steinmeyer (front-end rewritten) jodalyst@mit.edu
 // Copyright (C) 2015-2020 Modifications by Khan Academy and Willy McAllister, Spinning Numbers.
 
 /*jshint esversion: 6 */
@@ -16,6 +18,11 @@
 // other attributes you can add to the input tag:
 //   width -- width in pixels of diagram
 //   height -- height//  sch :=  [part, part, ...]
+//   parts -- comma-separated list of parts for parts bin (see parts_map),
+//            parts="" disables editing of diagram
+
+// JSON schematic representation:
+//  sch :=  [part, part, ...]
 //  part := [type, coords, properties, connections]
 //  type := string (see parts_map)
 //  coords := [number, ...]  // (x,y,rot) or (x1,y1,x2,y2)
@@ -33,8 +40,7 @@
 // set up each schematic entry widget
 function update_schematics() {
     // set up each schematic on the page
-    //var schematics = $('.schematic');
-    var schematics = document.getElementsByClassName('schematic');	//WMc restored from MIT version
+    var schematics = document.getElementsByClassName('schematic');
 
     for (let i = 0; i < schematics.length; ++i)
     	if (schematics[i].getAttribute("loaded") != "true") {
@@ -65,17 +71,7 @@ function add_schematic_handler(other_onload) {
 	};
 }
 
-// WMc The window.onload line below was removed by EdX (SJSU), with the following warning
-/*
-+ * THK: Attaching update_schematic to window.onload is rather presumptuous...
-+ *      The function is called for EVERY page load, whether in courseware or in
-+ *      course info, in 6.002x or the public health course. It is also redundant
-+ *      because courseware includes an explicit call to update_schematic after
-+ *      each ajax exchange. In this case, calling update_schematic twice appears 
-+ *      to contribute to a bug in Firefox that does not render the schematic
-+ *      properly depending on timing.
-*/
-window.onload = add_schematic_handler(window.onload);	// restored from earlier EdX version
+window.onload = add_schematic_handler(window.onload);
 
 // ask each schematic input widget to update its value field for submission
 /*function prepare_schematics() {						// not used
@@ -98,6 +94,32 @@ function getURLParameterByName(name, url) {
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+// adjust resolution:
+//taken from: https://stackoverflow.com/questions/15661339/how-do-i-fix-blurry-text-in-my-html5-canvas
+
+var PIXEL_RATIO = (function () {
+    var ctx = document.createElement("canvas").getContext("2d"),
+        dpr = window.devicePixelRatio || 1,
+        bsr = ctx.webkitBackingStorePixelRatio ||
+              ctx.mozBackingStorePixelRatio ||
+              ctx.msBackingStorePixelRatio ||
+              ctx.oBackingStorePixelRatio ||
+              ctx.backingStorePixelRatio || 1;
+
+    return dpr / bsr;
+})();
+
+createHiDPICanvas = function(w, h, ratio) {
+    if (!ratio) { ratio = PIXEL_RATIO; }
+    var can = document.createElement("canvas");
+    can.width = w * ratio;
+    can.height = h * ratio;
+    can.style.width = w + "px";
+    can.style.height = h + "px";
+    can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+    return can;
 }
 
 schematic = (function() {
@@ -152,7 +174,7 @@ schematic = (function() {
 	    'pnp': [PNP, i18n.PNP],
 	    'npn': [NPN, i18n.NPN],
     	'o': [OpAmp, i18n.Op_Amp],
-    	'o2': [OpAmp2, "Opamp2"],
+    	'o2': [OpAmp2, i18n.Op_Amp],
     	's': [Probe, i18n.Voltage_probe],
     	'a': [Ammeter, i18n.Current_probe]
     };
@@ -259,15 +281,14 @@ schematic = (function() {
 
 			this.tools.delete = this.add_tool(delete_icon,i18n.Delete,this.delete_selected);
 			this.tools.rotate = this.add_tool(rotate_icon,i18n.Rotate,this.rotate_selected);
-			//this.tools.spacer = this.add_tool(spacer_icon,'',this.rotate_selected);
 		}
 
-	    // simulation interface if cktsim.js is loaded
+	    // simulation interface if cktsim.js script is loaded
 	    if (typeof cktsim != 'undefined') {
 	    	if (analyses.indexOf('dc') != -1) {
 	    		this.tools.dc = this.add_tool('DC',i18n.Perform_DC_Analysis,this.dc_analysis);
 	    		this.enable_tool('dc',true);
-		    this.dc_max_iters = '1000';  // default values dc solution
+		    	this.dc_max_iters = '1000';  // default values dc solution
 			}
 
 			if (analyses.indexOf('ac') != -1) {
@@ -288,14 +309,16 @@ schematic = (function() {
 		}
 
 	    // set up schematic diagram canvas
-	    this.canvas = document.createElement('canvas');
+	    //this.canvas = document.createElement('canvas');
 	    this.width = input.getAttribute('width');
 	    this.width = parseInt(this.width == undefined ? '400' : this.width);
-	    this.canvas.width = this.width;
+	    //this.canvas.width = this.width;
 	    this.height = input.getAttribute('height');
 	    this.height = parseInt(this.height == undefined ? '300' : this.height);
-	    this.canvas.height = this.height;
-	    this.canvas.style.display = 'block'; //gets rid of the little sliver of default padding at the bottom.
+	    //this.canvas.height = this.height;
+	    //this.canvas.style.display = 'block'; //gets rid of the little sliver of default padding at the bottom.
+		//Create canvas with the device resolution.
+		this.canvas = createHiDPICanvas(this.width,this.height);
 
 	    this.sctl_r = 16;   				// scrolling control parameters
 	    this.sctl_x = this.sctl_r + 8;
@@ -315,9 +338,10 @@ schematic = (function() {
 		this.dctl_y = this.rctl_y + this.rctl_r + 8 + this.dctl_r;	    
 
 	    // repaint simply draws this buffer and then adds selected elements on top
-	    this.bg_image = document.createElement('canvas');
-	    this.bg_image.width = this.width;
-	    this.bg_image.height = this.height;
+	    //this.bg_image = document.createElement('canvas');
+	    //this.bg_image.width = this.width;
+	    //this.bg_image.height = this.height;
+	    this.bg_image = createHiDPICanvas(this.width,this.height);
 
 	    if (!this.diagram_only) {
 		this.canvas.tabIndex = 1; // so we get keystrokes
@@ -501,7 +525,9 @@ schematic = (function() {
 
 	    // fill in parts_table
 	    var parts_per_column = Math.floor(this.height / (part_h + 5));  // mysterious extra padding
-	    for (let i = 0; i < parts_per_column; ++i) {
+		// Try to keep a two-column case balanced.
+	    parts_per_column = Math.min(parts_per_column,
+					Math.ceil(this.parts_bin.length/2));	    for (let i = 0; i < parts_per_column; ++i) {
 	    	tr = document.createElement('tr');
 	    	parts_table.appendChild(tr);
 	    	for (let j = i; j < this.parts_bin.length; j += parts_per_column) {
@@ -1412,7 +1438,6 @@ schematic = (function() {
 	// Also redraws dynamic portion.
 	Schematic.prototype.redraw_background = function() {
 		var c = this.bg_image.getContext('2d');
-		//c.scale(2,2);	//retina display - doesn't look good
 
 		c.lineCap = 'round';	// butt(D) | *round | square
 
@@ -1459,8 +1484,7 @@ schematic = (function() {
 		var c = this.canvas.getContext('2d');
 
 	    // put static image in the background
-	    c.drawImage(this.bg_image, 0, 0);
-
+	    c.drawImage(this.bg_image, 0, 0,this.bg_image.width/PIXEL_RATIO,this.bg_image.height/PIXEL_RATIO);
 	    // selected components
 	    var min_x = this.unsel_bbox[0];   // compute bounding box for diagram
 	    var max_x = this.unsel_bbox[2];
@@ -1846,15 +1870,15 @@ schematic = (function() {
 
 	    if (sx*sx + sy*sy <= sch.sctl_r*sch.sctl_r) {   // clicked in scrolling control
 		// check which quadrant
-		if (Math.abs(sy) > Math.abs(sx)) {  // N or S
-			let delta = sch.height / 8;
+		if (Math.abs(sy) > Math.abs(sx)) {  	// N or S
+			let delta = sch.height / 32;		// vertical scroll increment
 			if (sy > 0) delta = -delta;
-			let temp = sch.origin_y - delta;
+			let temp = sch.origin_y + delta;	// + is natural scroll, - is traditional scroll
 			if (temp > origin_min*sch.grid && temp < origin_max*sch.grid) sch.origin_y = temp;
-		} else {			    			// E or W
-			let delta = sch.width / 8;
+		} else {			    				// E or W
+			let delta = sch.width / 32;			// horizontal scroll increment
 			if (sx < 0) delta = -delta;
-			let temp = sch.origin_x + delta;
+			let temp = sch.origin_x - delta;	// - is natural scroll, + is traditional scroll
 			if (temp > origin_min*sch.grid && temp < origin_max*sch.grid) sch.origin_x = temp;
 		}
 	    } else if (zx >= -zw/2 && zx < zw/2 && zy >= 0 && zy < zh) {   // clicked in zoom control
@@ -2673,17 +2697,18 @@ schematic = (function() {
 	    var w = pwidth + left_margin + right_margin;
 	    var h = pheight + top_margin + bottom_margin;
 
-	    var canvas = document.createElement('canvas');
-	    canvas.width = w;
-	    canvas.height = h;
-	    canvas.style.display = 'block';		//gets rid of the little sliver of default padding at the bottom.
-
+	    //var canvas = document.createElement('canvas');
+	    //canvas.width = w;
+	    //canvas.height = h;
+	    //canvas.style.display = 'block';		//gets rid of the little sliver of default padding at the bottom.
+		var canvas = createHiDPICanvas(w,h);
 
 	    // the graph itself will be drawn here and this image will be copied
 	    // onto canvas, where it can be overlayed with mouse cursors, etc.
-	    var bg_image = document.createElement('canvas');
-	    bg_image.width = w;
-	    bg_image.height = h;
+	    //var bg_image = document.createElement('canvas');
+	    //bg_image.width = w;
+	    //bg_image.height = h;
+	    var bg_image = createHiDPICanvas(w,h);
 	    canvas.bg_image = bg_image;	// so we can find it during event handling
 
 	    // start by painting an opaque background
@@ -3051,7 +3076,7 @@ schematic = (function() {
 
 	function redraw_plot(graph) {
 		var c = graph.getContext('2d');
-		c.drawImage(graph.bg_image,0,0);
+	    c.drawImage(graph.bg_image,0,0,graph.bg_image.width/PIXEL_RATIO,graph.bg_image.height/PIXEL_RATIO);
 
 		if (graph.cursor1_x != undefined) plot_cursor(c,graph,graph.cursor1_x,4);
 		if (graph.cursor2_x != undefined) plot_cursor(c,graph,graph.cursor2_x,30);
@@ -3088,17 +3113,18 @@ schematic = (function() {
 		this.component = undefined;
 		this.selected = false;
 
-	    // set up canvas
-	    this.canvas = document.createElement('canvas');
+	    // set up canvas for each part
+	    this.canvas = createHiDPICanvas(part_w, part_h);
+	    //this.canvas = document.createElement('canvas');
+
 	    this.canvas.style.borderStyle = 'solid';
 	    this.canvas.style.borderWidth = '1px';
 	    this.canvas.style.borderColor = background_style;
 	    //this.canvas.style.position = 'absolute';
 	    this.canvas.style.cursor = 'default';
-	    this.canvas.height = part_w;
-	    this.canvas.width = part_h;
-	    //this.canvas.part = this;
-	    this.canvas.partw = this;	//WMc suspect canvas.part name collision in Chrome 74
+	    //this.canvas.height = part_w;
+	    //this.canvas.width = part_h;
+	    this.canvas.partw = this;	//WMc "canvas.part" has a name collision in Chrome 74
 
 	    this.canvas.addEventListener('mouseover',part_enter,false);
 	    this.canvas.addEventListener('mouseout',part_leave,false);
@@ -4549,7 +4575,7 @@ schematic = (function() {
 	    this.draw_line(c,10,16,14,16);
 
 	    if (this.properties.name)
-	    	this.draw_text(c,this.properties.name,32,-8,0,property_size);
+	    	this.draw_text(c,this.properties.name,32,-10,0,property_size);
 	};
 
 	OpAmp.prototype.clone = function(x,y) {
@@ -4576,6 +4602,7 @@ schematic = (function() {
 	    this.bounding_box = [0,-12,48,28];
 	    this.update_coords();
 	}
+	
 	OpAmp2.prototype = new Component();
 	OpAmp2.prototype.constructor = OpAmp2;
 
