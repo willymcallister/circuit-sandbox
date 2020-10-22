@@ -3918,7 +3918,6 @@ schematic = (function() {
 	Label.prototype.draw = function(c) {
 	    Component.prototype.draw.call(this,c);   // give superclass a shot
 	    this.draw_line(c,0,0,8,0);
-	    //this.draw_line(c,0,-4,16,4);			// debug, corners of bounding box WMc
 	    this.draw_text(c,this.properties.label,9,0,3,property_size);
 	};
 
@@ -4250,10 +4249,12 @@ schematic = (function() {
 
 	var diode_types = ['normal','ideal'];
 
-	function Diode(x,y,rotation,name,area,type) {
+	function Diode(x,y,rotation,name,area,is,vt,type) {
 		Component.call(this,'d',x,y,rotation);
 		this.properties.name = name;
 		this.properties.area = area ? area : '1';
+	    this.properties.is = is ? is : '1.0e-14';
+	    this.properties.Vt = vt ? vt : '0.026';
 		this.properties.type = type ? type : 'normal';
 	    this.add_connection(0,0);   // anode
 	    this.add_connection(0,48);  // cathode
@@ -4264,15 +4265,13 @@ schematic = (function() {
 	Diode.prototype.constructor = Diode;
 
 	Diode.prototype.toString = function() {
-		return '<Diode '+this.properties.area+' ('+this.x+','+this.y+')>';
+	  //return '<Diode '+this.properties.area+'                                                   ('+this.x+','+this.y+')>';
+	    return '<Diode '+this.properties.area+' '+this.properties.is+' '+this.properties.Vt+' '+' ('+this.x+','+this.y+')>';
 	};
 
 	Diode.prototype.draw = function(c) {
 	    Component.prototype.draw.call(this,c);   // give superclass a shot
 	    this.draw_line(c, 0,0,0,18);
-	    //this.draw_line(c,-8,18,8,18);
-	    //this.draw_line(c,-8,18,0,30);
-	    //this.draw_line(c, 8,18,0,30);
 	    this.draw_line(c,-8,30,8,30);
 	    this.draw_line(c, 0,30,0,48);
 
@@ -4299,7 +4298,8 @@ schematic = (function() {
 	};
 
 	Diode.prototype.clone = function(x,y) {
-		return new Diode(x,y,this.rotation,this.properties.name,this.properties.area,this.properties.type);
+	  //return new Diode(x,y,this.rotation,this.properties.name,this.properties.area,                                      this.properties.type);
+	    return new Diode(x,y,this.rotation,this.properties.name,this.properties.area,this.properties.is,this.properties.Vt,this.properties.type);
 	};
 
 	Diode.prototype.edit_properties = function(x,y) {
@@ -4307,6 +4307,8 @@ schematic = (function() {
 			var fields = [];
 			fields.name = build_input('text',10,this.properties.name);
 			fields.area = build_input('text',10,this.properties.area);
+			fields.is = build_input('text',10,this.properties.is);
+			fields.Vt = build_input('text',10,this.properties.Vt);
 			fields.type = build_select(diode_types,this.properties.type);
 
 			var content = build_table(fields);
@@ -4316,6 +4318,8 @@ schematic = (function() {
 			this.sch.dialog(i18n.Edit_Properties,content,function(content) {
 				content.component.properties.name = content.fields.name.value;
 				content.component.properties.area = content.fields.area.value;
+				content.component.properties.is = content.fields.is.value;
+				content.component.properties.Vt = content.fields.Vt.value;
 				content.component.properties.type = diode_types[content.fields.type.selectedIndex];
 				content.component.sch.redraw_background();
 			});
