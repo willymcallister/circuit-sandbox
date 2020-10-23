@@ -104,7 +104,7 @@ Duty_cycle: 'Ciclo de trabajo (%)',
 
 triangle: 'triángulo',
 ramp: 'rampa',
-Slope: 'Pendiente (voltios por seg)',
+Slope: 'Pendiente (voltios/seg)',
 
 pwl: 'pwl',
 pwl_repeating: 'pwl (repitiendo)',
