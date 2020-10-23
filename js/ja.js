@@ -103,6 +103,8 @@ Frequency: '周波数 (Hz)',
 Duty_cycle: 'デューティサイクル (%)',
 
 triangle: '三角',
+ramp: 'ランプ',
+Slope: 'スロープ (ボルト/秒)',
 
 pwl: 'pwl',
 pwl_repeating: 'pwl (反復)',

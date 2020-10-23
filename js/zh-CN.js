@@ -103,6 +103,8 @@ Frequency: '频率 (Hz)',
 Duty_cycle: '占空比 (%)',
 
 triangle: '三角波',
+ramp: '坡道',
+Slope: '坡 (伏/秒)',
 
 pwl: '分段线性',
 pwl_repeating: '分段线性 (重复)',

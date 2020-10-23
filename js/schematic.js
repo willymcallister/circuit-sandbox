@@ -4721,6 +4721,9 @@ schematic = (function() {
 			'Plateau_value',
 			'Frequency'],
 
+	    'ramp': ['Initial_value',
+		     'Slope'],
+
 		'pwl': ['Comma_separated_list'],
 
 		'pwl_repeating': ['Comma_separated_list'],

@@ -103,6 +103,8 @@ Frequency: 'फ्रीक्वेंसी (हर्ट्ज)',
 Duty_cycle: 'साइकिल शुल्क (%)',
 
 triangle: 'त्रिकोण',
+ramp: 'ramp',
+Slope: 'Slope (volts/sec)',
 
 pwl: 'पीडब्लूऐल',
 pwl_repeating: 'पीडब्लूऐल(दोहरा)',

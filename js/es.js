@@ -103,6 +103,8 @@ Frequency: 'Frecuencia (Hz)',
 Duty_cycle: 'Ciclo de trabajo (%)',
 
 triangle: 'triángulo',
+ramp: 'rampa',
+Slope: 'Pendiente (voltios por seg)',
 
 pwl: 'pwl',
 pwl_repeating: 'pwl (repitiendo)',
