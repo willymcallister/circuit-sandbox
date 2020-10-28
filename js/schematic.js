@@ -3361,7 +3361,7 @@ schematic = (function() {
 	};
 
 	Component.prototype.rotate = function(amount) {
-		var old_rotation = this.rotation;
+		//var old_rotation = this.rotation;
 		this.rotation = (this.rotation + amount) % 8;
 		this.update_coords();
 
@@ -3462,17 +3462,17 @@ schematic = (function() {
 	};
 
 	var rot_angle = [
-	     0.0,		// NORTH (identity)
-	     Math.PI/2,	// EAST (rot270)
-	     Math.PI,	// SOUTH (rot180)
-	     3*Math.PI/2,  // WEST (rot90)
-	     0.0,		// RNORTH (negy)
-	     Math.PI/2,	// REAST (int-neg)
-	     Math.PI,	// RSOUTH (negx)
+	     0.0,			// NORTH (identity)
+	     Math.PI/2,		// EAST (rot270)
+	     Math.PI,		// SOUTH (rot180)
+	     3*Math.PI/2,	// WEST (rot90)
+	     0.0,			// RNORTH (negy)
+	     Math.PI/2,		// REAST (int-neg)
+	     Math.PI,		// RSOUTH (negx)
 	     3*Math.PI/2,	// RWEST (int-pos)
 	     ];
 
-     Component.prototype.draw_arc = function(c,x,y,radius,start_radians,end_radians) {
+/*    Component.prototype.draw_arc = function(c,x,y,radius,start_radians,end_radians) {
      	c.strokeStyle = this.selected ? selected_style :
      	this.type == 'w' ? normal_style : component_style;
      	var nx = this.transform_x(x,y) + this.x;
@@ -3480,6 +3480,21 @@ schematic = (function() {
      	this.sch.draw_arc(c,nx,ny,radius,
      		start_radians+rot_angle[this.rotation],end_radians+rot_angle[this.rotation],
      		false,1,false);
+     };
+*/
+    Component.prototype.draw_arc = function(c,x,y,radius,start_radians,end_radians) {
+     	c.strokeStyle = this.selected ? selected_style :
+     	this.type == 'w' ? normal_style : component_style;
+     	let nx = this.transform_x(x,y) + this.x;
+     	let ny = this.transform_y(x,y) + this.y;
+
+     	let start_rad = start_radians + rot_angle[this.rotation];
+     	let end_rad   = end_radians   + rot_angle[this.rotation];
+    	if (this.rotation >= 4) {	//reflect arc across y-axis
+			start_rad = -end_radians   + rot_angle[this.rotation] + Math.PI;
+			end_rad   = -start_radians + rot_angle[this.rotation] + Math.PI;
+		}
+     	this.sch.draw_arc(c,nx,ny,radius,start_rad,end_rad,false,1,false);
      };
 
 	Component.prototype.draw = function(c) {
@@ -3491,7 +3506,7 @@ schematic = (function() {
 	    */
 	};
 
-	// result of rotating an alignment [rot*9 + align]
+	// result of rotating and alignment [rot*9 + align]
 	var aOrient = [
 	   0, 1, 2, 3, 4, 5, 6, 7, 8,		// NORTH (identity)
 	   2, 5, 8, 1, 4, 7, 0, 3, 6, 		// EAST (rot270)
@@ -3941,15 +3956,15 @@ schematic = (function() {
 	// var probe_cnames = i18n_probe_cnames;	// color names, see i18n string file, en-US.js, etc.
 
 	var probe_colors_rgb = {
-		'red': 'rgb(232,77,57)',
-		'green': 'rgb(31,171,84)',
-		'blue': 'rgb(35,110,201)',
-		'cyan': 'rgb(99,217,234)',
-		'magenta': 'rgb(237,95,166)',
-	  	'yellow': 'rgb(244,211,69)',
-		'orange': 'rgb(255,156,57)',
-		'black': 'rgb(0,0,0)',
-		'xaxis': undefined
+		'red': 		'rgb(232,77,57)',
+		'green': 	'rgb(31,171,84)',
+		'blue': 	'rgb(35,110,201)',
+		'cyan': 	'rgb(99,217,234)',
+		'magenta': 	'rgb(237,95,166)',
+	  	'yellow': 	'rgb(244,211,69)',
+		'orange': 	'rgb(255,156,57)',
+		'black': 	'rgb(0,0,0)',
+		'xaxis': 	 undefined
 	};
 
 	function Probe(x,y,rotation,color,offset) {
@@ -3957,7 +3972,7 @@ schematic = (function() {
 		this.add_connection(0,0);
 		this.properties.color = color ? color : 'cyan';
 		this.properties.offset = (offset==undefined || offset=='') ? '0' : offset;
-		this.bounding_box = [0,0,27,-21];
+		this.bounding_box = [0,-24,32,0];
 		this.update_coords();
 	}
 	Probe.prototype = new Component();
@@ -3975,6 +3990,11 @@ schematic = (function() {
 	    this.draw_line(c,6,-2,21,-17);
 	    this.draw_line(c,17,-21,21,-17);
 	    this.draw_arc(c,19,-11,8,3*Math.PI/2,0);
+	    //this.draw_arc(c,19,-12,8,3*Math.PI/2,7*Math.PI/4);	// debug: shorter arc to identify start
+	    //this.draw_arc(c,0,0,32,3*Math.PI/2,7*Math.PI/4);		// debug: test arc
+	    //this.draw_line(c,0,0,0,-24);	// debug: y edge of bounding box
+	    //this.draw_line(c,0,0,19,-11);	// debug: line to center of arc
+	    //this.draw_line(c,0,0,32,0);	// debug: x edge of bounding box
 
 	    // fill body with plot color
 	    var color = probe_colors_rgb[this.properties.color];

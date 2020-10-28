@@ -103,6 +103,8 @@ Frequency: 'Frekvencia (Hz)',
 Duty_cycle: 'Munka ciklus (%)',
 
 triangle: 'háromszög',
+ramp: 'rámpa',
+Slope: 'Lejtő (volt/mp)',
 
 pwl: 'szakaszosan lineáris',
 pwl_repeating: 'szak-lin (ismétlődő)',
