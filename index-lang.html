@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+
+	<title>Circuit Sandbox</title>
+
+	<link rel="icon" href="./favicon.ico" type="image/x-icon">
+	<link rel="canonical" href="https://spinningnumbers.org/circuit-sandbox/">
+	<link rel="stylesheet" href="sandbox.css">	
+	<script type="text/javascript" src="js/hammer.min.js"></script>  	
+	<script src="https://kit.fontawesome.com/9defb49fb8.js"></script>
+	<script type="text/javascript" src="js/download.js"></script>
+
+	<script>
+		var head = document.getElementsByTagName('head')[0];
+		var script = document.createElement("script");
+	    script.type = "text/javascript";
+
+		var lang = navigator.language;	// detect browser preferred language
+		switch(lang) {
+		  case "es":
+		    script.src = "js/es.js";
+		    break;
+		  case "ja":
+		    script.src = "js/ja.js";
+		    break;  
+		  case "hu":
+		    script.src = "js/hu.js";
+		    break;
+		  case "hi":
+		    script.src = "js/hi.js";
+		    break;
+		  case "pt":
+		  case "pt-BR":
+		  case "pt-PT":
+		    script.src = "js/pt.js";
+		    break;
+		  case "zh":
+		  case "zh-CN":
+		    script.src = "js/zh-CN.js";
+		    break;
+		  default:
+		    script.src = "js/en-US.js";
+		}
+		document.head.appendChild(script);
+	</script>
+	<script>
+		var head = document.getElementsByTagName('head')[0];
+		var script = document.createElement("script");
+	    script.type = "text/javascript";
+	    script.src = "js/cktsimvsp_sn.js";
+	    document.head.appendChild(script);
+	</script>
+	<script>
+		var head = document.getElementsByTagName('head')[0];
+		var script = document.createElement("script");
+	    script.type = "text/javascript";
+	    script.src = "js/schematic.js";
+	    document.head.appendChild(script);
+	</script>
+
+	<!--script type="text/javascript" src="js/en-US.js"></script-->
+	<script defer type="text/javascript" src="js/fet_vsp.js"></script>
+	<script defer type="text/javascript" src="js/fet_vsparms.js"></script>
+	<!--script defer type="text/javascript" src="js/cktsimvsp_sn.js"></script-->
+	<!--script defer type="text/javascript" src="js/schematic.js"></script-->		
+</head>
+
+<body>
+	<input type="hidden" class="schematic" height='460' width='800' />
+
+	<p>Circuit Sandbox simulator from <a href="https://spinningnumbers.org">spinningnumbers.org</a> &#8275; <a href="https://spinningnumbers.org/a/circuit-sandbox.html">help</a> &#8275; <a href="https://github.com/willymcallister/circuit-sandbox">github</a></p>	
+	<p><em><small>© 2017-2020 Willy McAllister, © 2016 Khan Academy, Inc.,  © 2012 EdX,  © 2011, 2018 MIT EECS</small></em></p>
+</body>
+</html> 
