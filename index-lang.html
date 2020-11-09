@@ -1,93 +1,109 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"
+    />
 
-	<title>Circuit Sandbox</title>
+    <title>Circuit Sandbox</title>
 
-	<link rel="icon" href="./favicon.ico" type="image/x-icon">
-	<link rel="canonical" href="https://spinningnumbers.org/circuit-sandbox/">
-	<link rel="stylesheet" href="sandbox.css">	
-	<script type="text/javascript" src="js/hammer.min.js"></script>  	
-	<script src="https://kit.fontawesome.com/9defb49fb8.js"></script>
-	<script type="text/javascript" src="js/download.js"></script>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="canonical" href="https://spinningnumbers.org/circuit-sandbox/" />
+    <link rel="stylesheet" href="sandbox.css" />
+    <script type="text/javascript" src="js/hammer.min.js"></script>
+    <script src="https://kit.fontawesome.com/9defb49fb8.js"></script>
+    <script type="text/javascript" src="js/download.js"></script>
 
-	<script>
-		var head = document.getElementsByTagName('head')[0];
-		var script = document.createElement("script");
-	    script.type = "text/javascript";
-
-		var lang = navigator.language;	// detect browser preferred language
-		var language;
-		switch(lang) {
-		  case "es":
-		    script.src = "js/es.js";
-		    language = "Idioma: español"
-		    break;
-		  case "ja":
-		    script.src = "js/ja.js";
-		    language = "言語：日本語 (Japanese)";
-		    break;  
-		  case "hu":
-		    script.src = "js/hu.js";
-		    language = "Nyelv: magyar (Hungarian)"
-		    break;
-		  case "hi":
-		    script.src = "js/hi.js";
-		    language = "भाषा: हिंदी (Hindi)";
-		    break;
-		  case "pt":
-		  case "pt-BR":
-		  case "pt-PT":
-		    script.src = "js/pt.js";
-		    language = "Idioma: portugues";
-		    break;
-		  case "zh":
-		  case "zh-CN":
-		    script.src = "js/zh-CN.js";
-		    language = "语言：简体中文 (Simplified Chinese)";
-		    break;
-		  default:
-		    script.src = "js/en-US.js";
-		    language = "Language: English";
+    <script>
+		function switchLanguage(_lang) {
+			var head = document.getElementsByTagName('head')[0];
+      		var script = document.createElement('script');
+      		script.type = 'text/javascript';
+			switch (_lang) {
+				case 'es':
+					script.src = 'js/es.js';
+					break;
+				case 'ja':
+					script.src = 'js/ja.js';
+					break;
+				case 'hu':
+					script.src = 'js/hu.js';
+					break;
+				case 'hi':
+					script.src = 'js/hi.js';
+					break;
+				case 'pt':
+				case 'pt-BR':
+				case 'pt-PT':
+					script.src = 'js/pt.js';
+					break;
+				case 'zh':
+				case 'zh-CN':
+					script.src = 'js/zh-CN.js';
+					break;
+				default:
+					script.src = 'js/en-US.js';
+			}
+			document.head.appendChild(script);
 		}
-		document.head.appendChild(script);
-	</script>
-	<script>
-		var head = document.getElementsByTagName('head')[0];
-		var script = document.createElement("script");
-	    script.type = "text/javascript";
-	    script.src = "js/cktsimvsp_sn.js";
-	    document.head.appendChild(script);
-	</script>
-	<script>
-		var head = document.getElementsByTagName('head')[0];
-		var script = document.createElement("script");
-	    script.type = "text/javascript";
-	    script.src = "js/schematic.js";
-	    document.head.appendChild(script);
-	</script>
 
-	<!--script type="text/javascript" src="js/en-US.js"></script-->
-	<script defer type="text/javascript" src="js/fet_vsp.js"></script>
-	<script defer type="text/javascript" src="js/fet_vsparms.js"></script>
-	<!--script defer type="text/javascript" src="js/cktsimvsp_sn.js"></script-->
-	<!--script defer type="text/javascript" src="js/schematic.js"></script-->		
-</head>
+		var browserLang = navigator.language; 						// detect browser language
+		var userLang = window.localStorage.getItem('language');		// detect saved language preference
+		var lang = userLang ? userLang : browserLang;
+		switchLanguage(lang);
+    </script>
+ 
+    <script>
+      var head = document.getElementsByTagName('head')[0];
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'js/cktsimvsp_sn.js';
+      document.head.appendChild(script);
+    </script>
+    <script>
+      var head = document.getElementsByTagName('head')[0];
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'js/schematic.js';
+      document.head.appendChild(script);
+    </script>
 
-<body>
-	<input type="hidden" class="schematic" height='460' width='800' />
+    <script defer type="text/javascript" src="js/fet_vsp.js"></script>
+    <script defer type="text/javascript" src="js/fet_vsparms.js"></script>
+  </head>
 
-	<p>Circuit Sandbox simulator from <a href="https://spinningnumbers.org">spinningnumbers.org</a> &#8275; <a href="https://spinningnumbers.org/a/circuit-sandbox.html">help</a> &#8275; <a href="https://github.com/willymcallister/circuit-sandbox">github</a></p>	
-	
-	<script>
-	  var h = document.createElement("p");
-	  var t = document.createTextNode(language);
-	  h.appendChild(t);
-	  document.body.appendChild(h);
-	</script>
+  <body>
+    <input type="hidden" class="schematic" height="460" width="800" />
 
-	<p><em><small>© 2017-2020 Willy McAllister, © 2016 Khan Academy, Inc.,  © 2012 EdX,  © 2011, 2018 MIT EECS</small></em></p>
-</body>
-</html> 
+    <p>
+	    Circuit Sandbox simulator,
+	    <a href="https://spinningnumbers.org">spinningnumbers.org</a> &#8275;
+	    <a href="https://spinningnumbers.org/a/circuit-sandbox.html">help</a> &#8275; 
+	    <a href="https://github.com/willymcallister/circuit-sandbox">github</a> &#8275; 
+
+		<select id="languageSelect" onchange="dropdownChange()" style="border: none;">
+		<option value="en-US">Language: English</option>
+		<option value="es">Idioma: español</option>
+		<option value="pt">Idioma: portugues</optionvalue>
+		<option value="hu">Nyelv: magyar (Hungarian)</option>
+		<option value="ja">言語：日本語 (Japanese)</option>
+		<option value="hi">भाषा: हिंदी (Hindi)</option>
+		<option value="zh-CN">语言：简体中文 (Simplified Chinese)</option>
+		</select>
+	</p>
+    <script>			
+		var dropdown = document.getElementById('languageSelect');
+		dropdown.value = lang; 		// set the dropdown default value
+			
+		function dropdownChange() {
+			var selectedLang = dropdown.options[dropdown.selectedIndex].value;
+			switchLanguage(selectedLang);
+			window.localStorage.setItem('language', selectedLang);
+   		}
+   	</script>
+
+    <p><em><small>© 2016-2020 Willy McAllister, © 2012 EdX, © 2011, 2018 MIT EECS</small></em></p>
+  </body>
+</html>

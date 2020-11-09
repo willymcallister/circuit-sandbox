@@ -15,3 +15,7 @@ html {
 }
 body {background-color:var(--background-color);}
 p {color:var(--text-color);}
+
+select {
+  font-size: 15px;
+}

@@ -161,22 +161,22 @@ schematic = (function() {
 	var property_size = 7;  					// point size for Component property text
 	var annotation_size = 7;  					// point size for diagram annotations
     var parts_map = {
-    	'g': [Ground, i18n.Ground_connection],
-    	'L': [Label, i18n.Node_label],
-    	'v': [VSource, i18n.Voltage_source],
-    	'i': [ISource, i18n.Current_source],
-    	'r': [Resistor, i18n.Resistor],
-    	'c': [Capacitor, i18n.Capacitor],
-    	'l': [Inductor, i18n.Inductor],
-    	'd': [Diode, i18n.Diode],
-    	'p': [PFet, i18n.PFet],
-    	'n': [NFet, i18n.NFet],
-	    'pnp': [PNP, i18n.PNP],
-	    'npn': [NPN, i18n.NPN],
-    	'o': [OpAmp, i18n.Op_Amp],
-    	'o2': [OpAmp2, i18n.Op_Amp],
-    	's': [Probe, i18n.Voltage_probe],
-    	'a': [Ammeter, i18n.Current_probe]
+    	'g': [Ground, "Ground_connection"],
+    	'L': [Label, "Node_label"],
+    	'v': [VSource, "Voltage_source"],
+    	'i': [ISource, "Current_source"],
+    	'r': [Resistor, "Resistor"],
+    	'c': [Capacitor, "Capacitor"],
+    	'l': [Inductor, "Inductor"],
+    	'd': [Diode, "Diode"],
+    	'p': [PFet, "PFet"],
+    	'n': [NFet, "NFet"],
+	    'pnp': [PNP, "PNP"],
+	    'npn': [NPN, "NPN"],
+    	'o': [OpAmp, "Op_Amp"],
+    	'o2': [OpAmp2, "Op_Amp"],
+    	's': [Probe, "Voltage_probe"],
+    	'a': [Ammeter, "Current_probe"]
     };
 
 	// global clipboard
@@ -3224,6 +3224,7 @@ schematic = (function() {
 
 	    canvas.style.borderColor = border_style;
 	    part.sch.message(part.tip+i18n.drag_onto_diagram);
+	    part.sch.message(i18n[part.tip]+i18n.drag_onto_diagram);
 	    //part.sch.message(part.tip);
 	    return false;
 	}
