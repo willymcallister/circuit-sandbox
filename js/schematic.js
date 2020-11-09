@@ -485,7 +485,7 @@ schematic = (function() {
 			table.style.borderWidth = '1px';
 			table.style.borderColor = border_style;
 			table.style.backgroundColor = background_style;
-			table.style.borderRadius = '4px';
+			//table.style.borderRadius = '4px';	// doesn't work
 		}
 
 	    // add tools to DOM
