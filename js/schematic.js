@@ -259,40 +259,40 @@ schematic = (function() {
 	    this.toolbar = [];
 
 	    if (!this.diagram_only) {
-	    	this.tools.help = this.add_tool(help_icon,i18n.Help,this.help);
+	    	this.tools.help = this.add_tool(help_icon,"Help",this.help);
 	    	this.enable_tool('help',true);		} 
 
 		if (this.edits_allowed) {
-			this.tools.grid = this.add_tool(grid_icon,i18n.Grid,this.toggle_grid);
+			this.tools.grid = this.add_tool(grid_icon,"Grid",this.toggle_grid);
 			this.enable_tool('grid',true);
 
-		    this.tools.open = this.add_tool(open_icon,i18n.Open_netlist,this.open_netlist);
+		    this.tools.open = this.add_tool(open_icon,"Open_netlist",this.open_netlist);
 		    this.enable_tool('open',true);
 
-		    this.tools.save = this.add_tool(save_icon,i18n.Save_netlist,this.save_netlist);
+		    this.tools.save = this.add_tool(save_icon,"Save_netlist",this.save_netlist);
 		    this.enable_tool('save',true);   
 
-			this.tools.link = this.add_tool(link_icon,i18n.Link_tip,this.share_link);
+			this.tools.link = this.add_tool(link_icon,"Link_tip",this.share_link);
 			this.enable_tool('link',true);
 
-			this.tools.cut = this.add_tool(cut_icon,i18n.Cut,this.cut);
-			this.tools.copy = this.add_tool(copy_icon,i18n.Copy,this.copy);
-			this.tools.paste = this.add_tool(paste_icon,i18n.Paste,this.paste);
+			this.tools.cut = this.add_tool(cut_icon,"Cut",this.cut);
+			this.tools.copy = this.add_tool(copy_icon,"Copy",this.copy);
+			this.tools.paste = this.add_tool(paste_icon,"Paste",this.paste);
 
-			this.tools.delete = this.add_tool(delete_icon,i18n.Delete,this.delete_selected);
-			this.tools.rotate = this.add_tool(rotate_icon,i18n.Rotate,this.rotate_selected);
+			this.tools.delete = this.add_tool(delete_icon,"Delete",this.delete_selected);
+			this.tools.rotate = this.add_tool(rotate_icon,"Rotate",this.rotate_selected);
 		}
 
 	    // simulation interface if cktsim.js script is loaded
 	    if (typeof cktsim != 'undefined') {
 	    	if (analyses.indexOf('dc') != -1) {
-	    		this.tools.dc = this.add_tool('DC',i18n.Perform_DC_Analysis,this.dc_analysis);
+	    		this.tools.dc = this.add_tool('DC',"Perform_DC_Analysis",this.dc_analysis);
 	    		this.enable_tool('dc',true);
 		    	this.dc_max_iters = '1000';  // default values dc solution
 			}
 
 			if (analyses.indexOf('ac') != -1) {
-				this.tools.ac = this.add_tool('AC',i18n.Perform_AC_Analysis,this.setup_ac_analysis);
+				this.tools.ac = this.add_tool('AC',"Perform_AC_Analysis",this.setup_ac_analysis);
 				this.enable_tool('ac',true);
 			    this.ac_npts = '50'; // default values for AC Analysis
 			    this.ac_fstart = '10';
@@ -301,7 +301,7 @@ schematic = (function() {
 			}
 
 			if (analyses.indexOf('tran') != -1) {
-				this.tools.tran = this.add_tool('TRAN',i18n.Perform_Transient_Analysis,this.transient_analysis);
+				this.tools.tran = this.add_tool('TRAN',"Perform_Transient_Analysis",this.transient_analysis);
 				this.enable_tool('tran',true);
 			    this.tran_npts = '100';  // default values for transient analysis
 			    this.tran_tstop = '0.01';
@@ -2522,7 +2522,8 @@ schematic = (function() {
 
 		if (tool.enabled) {
 			tool.style.borderColor = border_style;
-			tool.sch.message(tool.tip);
+			//tool.sch.message(tool.tip);	//QQQ
+			tool.sch.message(i18n[tool.tip]);
 			tool.opacity = 1.0;
 		}
 	}
