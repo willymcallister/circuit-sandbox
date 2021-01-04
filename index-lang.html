@@ -55,7 +55,7 @@
 		switchLanguage(lang);
     </script>
  
-    <script>
+    <script>	// load language-sensitive scripts after i18n object is created
       var head = document.getElementsByTagName('head')[0];
       var script = document.createElement('script');
       script.type = 'text/javascript';
@@ -78,16 +78,16 @@
     <input type="hidden" class="schematic" height="460" width="800" />
 
     <p>
-	    Circuit Sandbox simulator,
+	    Circuit Sandbox simulator  &nbsp; &nbsp; &nbsp; &nbsp;
 	    <a href="https://spinningnumbers.org">spinningnumbers.org</a> &#8275;
 	    <a href="https://spinningnumbers.org/a/circuit-sandbox.html">help</a> &#8275; 
-	    <a href="https://github.com/willymcallister/circuit-sandbox">github</a> &#8275; 
+	    <a href="https://github.com/willymcallister/circuit-sandbox">github</a> &nbsp; &nbsp; &nbsp; &nbsp; 
 
-		<select id="languageSelect" onchange="dropdownChange()" style="border: none;">
+		<select id="languageSelect" onchange="dropdownChange()">
 		<option value="en-US">Language: English</option>
-		<option value="es">Idioma: español</option>
-		<option value="pt">Idioma: portugues</optionvalue>
-		<option value="hu">Nyelv: magyar (Hungarian)</option>
+		<option value="es">Idioma: Español</option>
+		<option value="pt">Idioma: Portugues</optionvalue>
+		<option value="hu">Nyelv: Magyar (Hungarian)</option>
 		<option value="ja">言語：日本語 (Japanese)</option>
 		<option value="hi">भाषा: हिंदी (Hindi)</option>
 		<option value="zh-CN">语言：简体中文 (Simplified Chinese)</option>

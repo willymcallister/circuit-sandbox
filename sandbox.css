@@ -4,14 +4,14 @@ html {
   	--background-color: #fdfdfd;
   	--text-color: #000;
   	--select-background: #F6F7F7;
-  	--select-border: 1px solid #D6D8DA;		// KA gray85 #D6D8DA
+  	--select-border: 1px solid #D6D8DA;		  // KA gray85 D6D8DA
 }
 @media (prefers-color-scheme: dark) {
 	html {
   		--background-color: #353535;
   		--text-color: #BABEC2;
-  		--select-background: #353535;  		// $grey-color-darkish
-  		--select-border: 1px solid #D6D8DA;	// KA gray85 #D6D8DA
+  		--select-background: #353535;  		   // $grey-color-darkish
+  		--select-border: 1px solid #D6D8DA;	 // KA gray85 D6D8DA
 	}
 }
 

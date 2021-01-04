@@ -174,7 +174,7 @@ schematic = (function() {
 	    'pnp': [PNP, "PNP"],
 	    'npn': [NPN, "NPN"],
     	'o': [OpAmp, "Op_Amp"],
-    	'o2': [OpAmp2, "Op_Amp"],
+    	'o2':[OpAmp2, "Op_Amp"],
     	's': [Probe, "Voltage_probe"],
     	'a': [Ammeter, "Current_probe"]
     };
