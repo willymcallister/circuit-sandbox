@@ -160,8 +160,8 @@ xaxis: 'एक्स अक्ष',
 
 Ics: 'Ics',
 Ies: 'Ies',
-alphaF: '\u03B1एफ',
-alphaR: '\u03B1आर',
+alphaF: '𝛼एफ',
+alphaR: '𝛼आर',
 last_line: 'last line, no comma'
 };
 
