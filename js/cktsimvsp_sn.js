@@ -11,7 +11,8 @@
 
 // for modified nodal analysis (MNA) stamps see
 // http://www.analog-electronics.eu/analog-electronics/modified-nodal-analysis/modified-nodal-analysis.xhtml
-// tutorial on MNA: https://lpsa.swarthmore.edu/Systems/Electrical/mna/MNA2.html
+// for a tutorial on MNA see 
+//https://lpsa.swarthmore.edu/Systems/Electrical/mna/MNA2.html
 
 /*jshint esversion: 6 */
 
@@ -223,9 +224,9 @@ cktsim = (function() {
 		else if (type == 'pnp')	// pnp bipolar transistor
 		    this.pBJT(connections[0],connections[1],connections[2],properties['area'],properties['Ics'],properties['Ies'],properties['alphaF'],properties['alphaR'],name);
 		else if (type == 'n') 	// n fet
-		    this.n(connections[0],connections[1],connections[2],properties.WL,name);	//WMc removed slash from W/L property name
+		    this.n(connections[0],connections[1],connections[2],properties.WL,properties.Vt,properties.lambda,name);
 		else if (type == 'p') 	// p fet
-		    this.p(connections[0],connections[1],connections[2],properties.WL,name);	//WMc removed slash from W/L property name
+		    this.p(connections[0],connections[1],connections[2],properties.WL,properties.Vt,properties.lambda,name);
 		else if (type == 'n_vs') // n vs fet
 		    this.fet_vs(connections[0],connections[1],connections[2],connections[3],properties['W'],properties['deltaVt'],name,type);
 		else if (type == 'p_vs') // p fet
@@ -1101,23 +1102,39 @@ cktsim = (function() {
 	    return this.add_device(d, name);
 	}
 
-        Circuit.prototype.n = function(d,g,s, ratio, name) {
+        Circuit.prototype.n = function(d,g,s,ratio,vt,lambda,name) {
 	    // try to convert string value into numeric value, barf if we can't
 	    if ((typeof ratio) == 'string') {
 		ratio = parse_number_alert(ratio);
 		if (ratio === undefined) return undefined;
 	    }
-	    var d = new Fet(d,g,s,ratio,name,'n');
+	    if ((typeof vt) == 'string') {
+		vt = parse_number_alert(vt);
+		if (vt === undefined) return undefined;
+	    }
+	    if ((typeof lambda) == 'string') {
+		lambda = parse_number_alert(lambda);
+		if (lambda === undefined) return undefined;
+	    }
+	    var d = new Fet(d,g,s,ratio,vt,lambda,name,'n');
 	    return this.add_device(d, name);
 	}
 
-        Circuit.prototype.p = function(d,g,s, ratio, name) {
+        Circuit.prototype.p = function(d,g,s,ratio,vt,lambda,name) {
 	    // try to convert string value into numeric value, barf if we can't
 	    if ((typeof ratio) == 'string') {
 		ratio = parse_number_alert(ratio);
 		if (ratio === undefined) return undefined;
 	    }
-	    var d = new Fet(d,g,s,ratio,name,'p');
+	    if ((typeof vt) == 'string') {
+		vt = parse_number_alert(vt);
+		if (vt === undefined) return undefined;
+	    }
+	    if ((typeof lambda) == 'string') {
+		lambda = parse_number_alert(lambda);
+		if (lambda === undefined) return undefined;
+	    }
+	    var d = new Fet(d,g,s,ratio,vt,lambda,name,'p');
 	    return this.add_device(d, name);
 	}
 
@@ -2743,7 +2760,7 @@ cktsim = (function() {
 	//
 	///////////////////////////////////////////////////////////////////////////////
 
-    function Fet(d,g,s,ratio,name,type) {
+    function Fet(d,g,s,ratio,Vt,lambda,name,type) {
 	    Device.call(this);
 	    this.d = d;
 	    this.g = g;
@@ -2754,10 +2771,14 @@ cktsim = (function() {
 	    { throw 'fet type is not n or p';
 	    }
 	    this.type_sign = (type == 'n') ? 1 : -1;
-	    this.vt = 0.5;
+	    this.vt = Vt;
+	    if (Vt) {this.vt = 0.5;}			//default
+	    if (Vt < 0) {this.vt = 0;}
+	    this.lambda = lambda;
+	    if (lambda) {this.lambda = 0.05;}	//default
+	    if (lambda < 0) {this.lambda = 0;}
 	    this.kp = 20e-6;
-            this.beta = this.kp * this.ratio;
-	    this.lambda = 0.05;
+        this.beta = this.kp * this.ratio;
 	}
 	Fet.prototype = new Device();
         Fet.prototype.constructor = Fet;
@@ -2960,7 +2981,7 @@ cktsim = (function() {
 		Nom = R;
 	    }
 
-            ckt.add_to_rhs(nds[D],-this.type_sign*Nom[0],crnt);//-i out of drn
+        ckt.add_to_rhs(nds[D],-this.type_sign*Nom[0],crnt);//-i out of drn
 	    ckt.add_to_rhs(nds[S], this.type_sign*Nom[0],crnt);//+i in to src
    
 	    // Deal with charges if flag says to.

@@ -4474,10 +4474,12 @@ schematic = (function() {
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
-	function NFet(x,y,rotation,name,w_over_l) {
+	function NFet(x,y,rotation,name,w_over_l,Vt,lambda) {
 		Component.call(this,'n',x,y,rotation);
 		this.properties.name = name;
 		this.properties.WL = w_over_l ? w_over_l : '2';
+		this.properties.Vt = Vt ? Vt : '0.5';
+		this.properties.lambda = lambda ? lambda : '0.05';
 	    this.add_connection(0,0);   // drain
 	    this.add_connection(-24,24);  // gate
 	    this.add_connection(0,48);  // source
@@ -4488,7 +4490,7 @@ schematic = (function() {
 	NFet.prototype.constructor = NFet;
 
 	NFet.prototype.toString = function() {
-		return '<NFet '+this.properties.WL+' ('+this.x+','+this.y+')>';
+		return '<NFet '+this.properties.WL+' '+this.properties.Vt+' '+this.properties.lambda+' ('+this.x+','+this.y+')>';
 	};
 
 	NFet.prototype.draw = function(c) {
@@ -4510,7 +4512,7 @@ schematic = (function() {
 	};
 
 	NFet.prototype.clone = function(x,y) {
-		return new NFet(x,y,this.rotation,this.properties.name,this.properties.WL);
+		return new NFet(x,y,this.rotation,this.properties.name,this.properties.WL,this.properties.Vt,this.properties.lambda);
 	};
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -4519,10 +4521,12 @@ schematic = (function() {
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
-	function PFet(x,y,rotation,name,w_over_l) {
+	function PFet(x,y,rotation,name,w_over_l,Vt,lambda) {
 		Component.call(this,'p',x,y,rotation);
 		this.properties.name = name;
 		this.properties.WL = w_over_l ? w_over_l : '2';
+		this.properties.Vt = Vt ? Vt : '0.5';
+		this.properties.lambda = lambda ? lambda : '0.05';
 	    this.add_connection(0,0);   // drain
 	    this.add_connection(-24,24);  // gate
 	    this.add_connection(0,48);  // source
@@ -4533,7 +4537,7 @@ schematic = (function() {
 	PFet.prototype.constructor = PFet;
 
 	PFet.prototype.toString = function() {
-		return '<PFet '+this.properties.WL+' ('+this.x+','+this.y+')>';
+		return '<PFet '+this.properties.WL+' '+this.properties.Vt+' '+this.properties.lambda+' ('+this.x+','+this.y+')>';
 	};
 
 	PFet.prototype.draw = function(c) {
@@ -4556,7 +4560,7 @@ schematic = (function() {
 	};
 
 	PFet.prototype.clone = function(x,y) {
-		return new PFet(x,y,this.rotation,this.properties.name,this.properties.WL);
+		return new PFet(x,y,this.rotation,this.properties.name,this.properties.WL,this.properties.Vt,this.properties.lambda);
 	};
 
 	////////////////////////////////////////////////////////////////////////////////
