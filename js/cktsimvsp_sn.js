@@ -2772,10 +2772,10 @@ cktsim = (function() {
 	    }
 	    this.type_sign = (type == 'n') ? 1 : -1;
 	    this.vt = Vt;
-	    if (Vt) {this.vt = 0.5;}			//default
+	    if (Vt == null) {this.vt = 0.5;}			//default
 	    if (Vt < 0) {this.vt = 0;}
 	    this.lambda = lambda;
-	    if (lambda) {this.lambda = 0.05;}	//default
+	    if (lambda == null) {this.lambda = 0.05;}	//default
 	    if (lambda < 0) {this.lambda = 0;}
 	    this.kp = 20e-6;
         this.beta = this.kp * this.ratio;
