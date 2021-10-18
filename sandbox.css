@@ -6,6 +6,7 @@ a:hover { text-decoration: underline; }
 html { 
   	--background-color: #fdfdfd;
   	--text-color: #000;
+	height: 100%;
 }
 @media (prefers-color-scheme: dark) {
 	html {
@@ -13,5 +14,12 @@ html {
   		--text-color: #BABEC2;
 	}
 }
-body {background-color:var(--background-color);}
+body {background-color:var(--background-color);
+    height: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
 p {color:var(--text-color);}
