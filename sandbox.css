@@ -1,17 +1,39 @@
 * {font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;}
 
-a { color: #3C91E5; text-decoration: none; } 
-a:hover { text-decoration: underline; }
-
 html { 
   	--background-color: #fdfdfd;
   	--text-color: #000;
+  	--select-background: #F6F7F7;
+  	--select-border: 1px solid #D6D8DA;		  // KA gray85 D6D8DA
+  height: 100%;
 }
 @media (prefers-color-scheme: dark) {
 	html {
   		--background-color: #353535;
   		--text-color: #BABEC2;
+  		--select-background: #353535;  		   // $grey-color-darkish
+  		--select-border: 1px solid #D6D8DA;	 // KA gray85 D6D8DA
 	}
 }
-body {background-color:var(--background-color);}
+
+body {background-color:var(--background-color);
+    height: 100%;
+    margin: 0.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    }
+
 p {color:var(--text-color);}
+
+select {
+  font-size: 15px;
+  color: var(--text-color);
+  border:  var(--select-border);
+  background: var(--select-background);
+  border-radius: 4px;
+}
+
+a { color: #3C91E5; text-decoration: none; } 
+a:hover { text-decoration: underline; }

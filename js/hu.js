@@ -65,7 +65,7 @@ ckt_alert8: 'AC elemzés sikertelen, ismeretlen forrás.',
 //ckt_error5: 'Rows or cols > rows or cols of dest',
 //ckt_error6: 'Rows or cols > cols or rows of dest',	    	    
 
-log_Frequency: 'log(Frekvencia Hz-ben)',
+log_Frequency: 'log10(Frekvencia Hz-ben)',
 degrees: 'szög',
 AC_Phase: 'Váltóáram fázis',
 AC_Magnitude: 'Váltóáram nagyság',
@@ -139,6 +139,7 @@ ideal: 'ideális',
 is: 'Is',
 Vt: 'Vt',
 WL: 'SZ/H',
+lambda: 'λ',
 A: 'A',
 Plot_color: 'Grafikon színe',
 Plot_offset: 'Grafikon kitérése',
@@ -160,8 +161,8 @@ xaxis: 'x tengely',
 
 Ics: 'Ics',
 Ies: 'Ies',
-alphaF: '\u03B1F',
-alphaR: '\u03B1R',
+alphaF: '𝛼F',
+alphaR: '𝛼R',
 last_line: 'Utolsó sor, nincs vessző'
 };
 

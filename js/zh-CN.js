@@ -65,7 +65,7 @@ ckt_alert8: 'AC 分析失败, 未知源',
 //ckt_error5: '行或列 > dest的行或列',
 //ckt_error6: '行或列 > dest的列或行',
 
-  log_Frequency: 'log(频率单位 Hz)',
+log_Frequency: 'log10(频率单位 Hz)',
 degrees: 'degrees',
 AC_Phase: 'AC 相位',
 AC_Magnitude: 'AC 幅度',
@@ -139,6 +139,7 @@ ideal: 'ideal',
 is: 'Is',
 Vt: 'Vt',
 WL: 'W/L',
+lambda: 'λ',
 A: 'A',
 Plot_color: '绘制颜色',
 Plot_offset: '绘图偏移',
@@ -160,8 +161,8 @@ xaxis: 'x 轴',
 
 Ics: 'Ics',
 Ies: 'Ies',
-alphaF: '\u03B1F',
-alphaR: '\u03B1R',
+alphaF: '𝛼F',
+alphaR: '𝛼R',
 last_line: '最后一行，没有逗号'
 };
 

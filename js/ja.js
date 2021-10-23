@@ -65,7 +65,7 @@ ckt_alert8: 'AC 解析に失敗しました。未知のソース。',
 //ckt_error5: 'Rows or cols > rows or cols of dest',
 //ckt_error6: 'Rows or cols > cols or rows of dest',	    	    
 
-log_Frequency: 'ログ (周波数 Hz)',
+log_Frequency: 'ログ10(周波数 Hz)',
 degrees: '度',
 AC_Phase: '交流位相',
 AC_Magnitude: 'AC の大きさ',
@@ -139,6 +139,7 @@ ideal: '理想的',
 is: 'Is',
 Vt: 'Vt',
 WL: '幅/長さ',
+lambda: 'λ',
 A: 'A',
 Plot_color: 'プロットカラー',
 Plot_offset: 'プロットオフセット',
@@ -160,8 +161,8 @@ xaxis: 'x 軸',
 
 Ics: 'Ics',
 Ies: 'Ies',
-alphaF: '\u03B1F',
-alphaR: '\u03B1R',
+alphaF: '𝛼F',
+alphaR: '𝛼R',
 last_line: '最後の行、コンマ無し'
 };
 

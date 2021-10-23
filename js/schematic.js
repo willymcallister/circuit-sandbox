@@ -161,22 +161,22 @@ schematic = (function() {
 	var property_size = 7;  					// point size for Component property text
 	var annotation_size = 7;  					// point size for diagram annotations
     var parts_map = {
-    	'g': [Ground, i18n.Ground_connection],
-    	'L': [Label, i18n.Node_label],
-    	'v': [VSource, i18n.Voltage_source],
-    	'i': [ISource, i18n.Current_source],
-    	'r': [Resistor, i18n.Resistor],
-    	'c': [Capacitor, i18n.Capacitor],
-    	'l': [Inductor, i18n.Inductor],
-    	'd': [Diode, i18n.Diode],
-    	'p': [PFet, i18n.PFet],
-    	'n': [NFet, i18n.NFet],
-	    'pnp': [PNP, i18n.PNP],
-	    'npn': [NPN, i18n.NPN],
-    	'o': [OpAmp, i18n.Op_Amp],
-    	'o2': [OpAmp2, i18n.Op_Amp],
-    	's': [Probe, i18n.Voltage_probe],
-    	'a': [Ammeter, i18n.Current_probe]
+    	'g': [Ground, "Ground_connection"],
+    	'L': [Label, "Node_label"],
+    	'v': [VSource, "Voltage_source"],
+    	'i': [ISource, "Current_source"],
+    	'r': [Resistor, "Resistor"],
+    	'c': [Capacitor, "Capacitor"],
+    	'l': [Inductor, "Inductor"],
+    	'd': [Diode, "Diode"],
+    	'p': [PFet, "PFet"],
+    	'n': [NFet, "NFet"],
+	    'pnp': [PNP, "PNP"],
+	    'npn': [NPN, "NPN"],
+    	'o': [OpAmp, "Op_Amp"],
+    	'o2':[OpAmp2, "Op_Amp"],
+    	's': [Probe, "Voltage_probe"],
+    	'a': [Ammeter, "Current_probe"]
     };
 
 	// global clipboard
@@ -259,40 +259,40 @@ schematic = (function() {
 	    this.toolbar = [];
 
 	    if (!this.diagram_only) {
-	    	this.tools.help = this.add_tool(help_icon,i18n.Help,this.help);
+	    	this.tools.help = this.add_tool(help_icon,"Help",this.help);
 	    	this.enable_tool('help',true);		} 
 
 		if (this.edits_allowed) {
-			this.tools.grid = this.add_tool(grid_icon,i18n.Grid,this.toggle_grid);
+			this.tools.grid = this.add_tool(grid_icon,"Grid",this.toggle_grid);
 			this.enable_tool('grid',true);
 
-		    this.tools.open = this.add_tool(open_icon,i18n.Open_netlist,this.open_netlist);
+		    this.tools.open = this.add_tool(open_icon,"Open_netlist",this.open_netlist);
 		    this.enable_tool('open',true);
 
-		    this.tools.save = this.add_tool(save_icon,i18n.Save_netlist,this.save_netlist);
+		    this.tools.save = this.add_tool(save_icon,"Save_netlist",this.save_netlist);
 		    this.enable_tool('save',true);   
 
-			this.tools.link = this.add_tool(link_icon,i18n.Link_tip,this.share_link);
+			this.tools.link = this.add_tool(link_icon,"Link_tip",this.share_link);
 			this.enable_tool('link',true);
 
-			this.tools.cut = this.add_tool(cut_icon,i18n.Cut,this.cut);
-			this.tools.copy = this.add_tool(copy_icon,i18n.Copy,this.copy);
-			this.tools.paste = this.add_tool(paste_icon,i18n.Paste,this.paste);
+			this.tools.cut = this.add_tool(cut_icon,"Cut",this.cut);
+			this.tools.copy = this.add_tool(copy_icon,"Copy",this.copy);
+			this.tools.paste = this.add_tool(paste_icon,"Paste",this.paste);
 
-			this.tools.delete = this.add_tool(delete_icon,i18n.Delete,this.delete_selected);
-			this.tools.rotate = this.add_tool(rotate_icon,i18n.Rotate,this.rotate_selected);
+			this.tools.delete = this.add_tool(delete_icon,"Delete",this.delete_selected);
+			this.tools.rotate = this.add_tool(rotate_icon,"Rotate",this.rotate_selected);
 		}
 
 	    // simulation interface if cktsim.js script is loaded
 	    if (typeof cktsim != 'undefined') {
 	    	if (analyses.indexOf('dc') != -1) {
-	    		this.tools.dc = this.add_tool('DC',i18n.Perform_DC_Analysis,this.dc_analysis);
+	    		this.tools.dc = this.add_tool('DC',"Perform_DC_Analysis",this.dc_analysis);
 	    		this.enable_tool('dc',true);
 		    	this.dc_max_iters = '1000';  // default values dc solution
 			}
 
 			if (analyses.indexOf('ac') != -1) {
-				this.tools.ac = this.add_tool('AC',i18n.Perform_AC_Analysis,this.setup_ac_analysis);
+				this.tools.ac = this.add_tool('AC',"Perform_AC_Analysis",this.setup_ac_analysis);
 				this.enable_tool('ac',true);
 			    this.ac_npts = '50'; // default values for AC Analysis
 			    this.ac_fstart = '10';
@@ -301,7 +301,7 @@ schematic = (function() {
 			}
 
 			if (analyses.indexOf('tran') != -1) {
-				this.tools.tran = this.add_tool('TRAN',i18n.Perform_Transient_Analysis,this.transient_analysis);
+				this.tools.tran = this.add_tool('TRAN',"Perform_Transient_Analysis",this.transient_analysis);
 				this.enable_tool('tran',true);
 			    this.tran_npts = '100';  // default values for transient analysis
 			    this.tran_tstop = '0.01';
@@ -485,7 +485,7 @@ schematic = (function() {
 			table.style.borderWidth = '1px';
 			table.style.borderColor = border_style;
 			table.style.backgroundColor = background_style;
-			table.style.borderRadius = '4px';
+			//table.style.borderRadius = '4px';	// doesn't work
 		}
 
 	    // add tools to DOM
@@ -2522,7 +2522,8 @@ schematic = (function() {
 
 		if (tool.enabled) {
 			tool.style.borderColor = border_style;
-			tool.sch.message(tool.tip);
+			//tool.sch.message(tool.tip);	//QQQ
+			tool.sch.message(i18n[tool.tip]);
 			tool.opacity = 1.0;
 		}
 	}
@@ -3224,6 +3225,7 @@ schematic = (function() {
 
 	    canvas.style.borderColor = border_style;
 	    part.sch.message(part.tip+i18n.drag_onto_diagram);
+	    part.sch.message(i18n[part.tip]+i18n.drag_onto_diagram);
 	    //part.sch.message(part.tip);
 	    return false;
 	}
@@ -4472,10 +4474,12 @@ schematic = (function() {
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
-	function NFet(x,y,rotation,name,w_over_l) {
+	function NFet(x,y,rotation,name,w_over_l,Vt,lambda) {
 		Component.call(this,'n',x,y,rotation);
 		this.properties.name = name;
 		this.properties.WL = w_over_l ? w_over_l : '2';
+		this.properties.Vt = Vt ? Vt : '0.5';
+		this.properties.lambda = lambda ? lambda : '0.05';
 	    this.add_connection(0,0);   // drain
 	    this.add_connection(-24,24);  // gate
 	    this.add_connection(0,48);  // source
@@ -4486,7 +4490,7 @@ schematic = (function() {
 	NFet.prototype.constructor = NFet;
 
 	NFet.prototype.toString = function() {
-		return '<NFet '+this.properties.WL+' ('+this.x+','+this.y+')>';
+		return '<NFet '+this.properties.WL+' '+this.properties.Vt+' '+this.properties.lambda+' ('+this.x+','+this.y+')>';
 	};
 
 	NFet.prototype.draw = function(c) {
@@ -4508,7 +4512,7 @@ schematic = (function() {
 	};
 
 	NFet.prototype.clone = function(x,y) {
-		return new NFet(x,y,this.rotation,this.properties.name,this.properties.WL);
+		return new NFet(x,y,this.rotation,this.properties.name,this.properties.WL,this.properties.Vt,this.properties.lambda);
 	};
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -4517,10 +4521,12 @@ schematic = (function() {
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
-	function PFet(x,y,rotation,name,w_over_l) {
+	function PFet(x,y,rotation,name,w_over_l,Vt,lambda) {
 		Component.call(this,'p',x,y,rotation);
 		this.properties.name = name;
 		this.properties.WL = w_over_l ? w_over_l : '2';
+		this.properties.Vt = Vt ? Vt : '0.5';
+		this.properties.lambda = lambda ? lambda : '0.05';
 	    this.add_connection(0,0);   // drain
 	    this.add_connection(-24,24);  // gate
 	    this.add_connection(0,48);  // source
@@ -4531,7 +4537,7 @@ schematic = (function() {
 	PFet.prototype.constructor = PFet;
 
 	PFet.prototype.toString = function() {
-		return '<PFet '+this.properties.WL+' ('+this.x+','+this.y+')>';
+		return '<PFet '+this.properties.WL+' '+this.properties.Vt+' '+this.properties.lambda+' ('+this.x+','+this.y+')>';
 	};
 
 	PFet.prototype.draw = function(c) {
@@ -4554,7 +4560,7 @@ schematic = (function() {
 	};
 
 	PFet.prototype.clone = function(x,y) {
-		return new PFet(x,y,this.rotation,this.properties.name,this.properties.WL);
+		return new PFet(x,y,this.rotation,this.properties.name,this.properties.WL,this.properties.Vt,this.properties.lambda);
 	};
 
 	////////////////////////////////////////////////////////////////////////////////

@@ -5,12 +5,14 @@
 //////////////////////////////////////////////////////////////////////////////
 
 // Copyright (C) 2011 Massachusetts Institute of Technology
-// Copyright (C) 2020 William McAllister, spinningsumbers.org, internationalization
+// Copyright (C) 2020 William McAllister, spinningsumbers.org, cktsimvsp_sn has internationalization
 
 // create a circuit for simulation using "new cktsim.Circuit()"
 
 // for modified nodal analysis (MNA) stamps see
 // http://www.analog-electronics.eu/analog-electronics/modified-nodal-analysis/modified-nodal-analysis.xhtml
+// for a tutorial on MNA see 
+//https://lpsa.swarthmore.edu/Systems/Electrical/mna/MNA2.html
 
 /*jshint esversion: 6 */
 
@@ -222,9 +224,9 @@ cktsim = (function() {
 		else if (type == 'pnp')	// pnp bipolar transistor
 		    this.pBJT(connections[0],connections[1],connections[2],properties['area'],properties['Ics'],properties['Ies'],properties['alphaF'],properties['alphaR'],name);
 		else if (type == 'n') 	// n fet
-		    this.n(connections[0],connections[1],connections[2],properties['W/L'],name);
+		    this.n(connections[0],connections[1],connections[2],properties.WL,properties.Vt,properties.lambda,name);
 		else if (type == 'p') 	// p fet
-		    this.p(connections[0],connections[1],connections[2],properties['W/L'],name);
+		    this.p(connections[0],connections[1],connections[2],properties.WL,properties.Vt,properties.lambda,name);
 		else if (type == 'n_vs') // n vs fet
 		    this.fet_vs(connections[0],connections[1],connections[2],connections[3],properties['W'],properties['deltaVt'],name,type);
 		else if (type == 'p_vs') // p fet
@@ -245,7 +247,7 @@ cktsim = (function() {
 	// If converges: updates this.xs[0], this.x_max, returns iter count
 	// otherwise: return undefined and set this.problem_node
 	// Load should compute -F and dF/dx (note the sign pattern!)
-        Circuit.prototype.find_solution = function(load,maxiters) {
+    Circuit.prototype.find_solution = function(load,maxiters) {
 	    var soln = this.xs[0];
 	    var rhs = this.rhs;
 	    var matrix = this.matrix;
@@ -1100,23 +1102,39 @@ cktsim = (function() {
 	    return this.add_device(d, name);
 	}
 
-        Circuit.prototype.n = function(d,g,s, ratio, name) {
+        Circuit.prototype.n = function(d,g,s,ratio,vt,lambda,name) {
 	    // try to convert string value into numeric value, barf if we can't
 	    if ((typeof ratio) == 'string') {
 		ratio = parse_number_alert(ratio);
 		if (ratio === undefined) return undefined;
 	    }
-	    var d = new Fet(d,g,s,ratio,name,'n');
+	    if ((typeof vt) == 'string') {
+		vt = parse_number_alert(vt);
+		if (vt === undefined) return undefined;
+	    }
+	    if ((typeof lambda) == 'string') {
+		lambda = parse_number_alert(lambda);
+		if (lambda === undefined) return undefined;
+	    }
+	    var d = new Fet(d,g,s,ratio,vt,lambda,name,'n');
 	    return this.add_device(d, name);
 	}
 
-        Circuit.prototype.p = function(d,g,s, ratio, name) {
+        Circuit.prototype.p = function(d,g,s,ratio,vt,lambda,name) {
 	    // try to convert string value into numeric value, barf if we can't
 	    if ((typeof ratio) == 'string') {
 		ratio = parse_number_alert(ratio);
 		if (ratio === undefined) return undefined;
 	    }
-	    var d = new Fet(d,g,s,ratio,name,'p');
+	    if ((typeof vt) == 'string') {
+		vt = parse_number_alert(vt);
+		if (vt === undefined) return undefined;
+	    }
+	    if ((typeof lambda) == 'string') {
+		lambda = parse_number_alert(lambda);
+		if (lambda === undefined) return undefined;
+	    }
+	    var d = new Fet(d,g,s,ratio,vt,lambda,name,'p');
 	    return this.add_device(d, name);
 	}
 
@@ -1137,14 +1155,14 @@ cktsim = (function() {
 	///////////////////////////////////////////////////////////////////////////////
 	//
 	//  Support for creating conductance and capacitance matrices associated with
-        //  modified nodal analysis (unknowns are node voltages and inductor and voltage
-        //  source currents). 
-        //  The linearized circuit is written as 
-        //          C d/dt x = G x + rhs
-        //  x - vector of node voltages and element currents
-        //  rhs - vector of source values
-        //  C - Matrix whose values are capacitances and inductances, has many zero rows.
-        //  G - Matrix whose values are conductances and +-1's.
+    //  modified nodal analysis (unknowns are node voltages and inductor and voltage
+    //  source currents). 
+    //  The linearized circuit is written as 
+    //          C d/dt x = G x + rhs
+    //  x - vector of node voltages and element currents
+    //  rhs - vector of source values
+    //  C - Matrix whose values are capacitances and inductances, has many zero rows.
+    //  G - Matrix whose values are conductances and +-1's.
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
@@ -1229,16 +1247,17 @@ cktsim = (function() {
 	//
 	//  Generic matrix support - making, copying, factoring, rank, etc
 	//  Note, Matrices are stored using nested javascript arrays.
-	////////////////////////////////////////////////////////////////////////////////
+	//
+	///////////////////////////////////////////////////////////////////////////////
 
         // Allocate an NxM matrix, array of arrays, each row is an array.
         function mat_make(N,M) {
 	    var mat = new Array(N);	
 	    for (var i = N - 1; i >= 0; --i) {	    
-		mat[i] = new Array(M);
-		for (var j = M - 1; j >= 0; --j) {	    
-		    mat[i][j] = 0.0;
-		}
+			mat[i] = new Array(M);
+			for (var j = M - 1; j >= 0; --j) {	    
+			    mat[i][j] = 0.0;
+			}
 	    }
 	    return mat;
 	}
@@ -1624,8 +1643,8 @@ cktsim = (function() {
 	Device.prototype.finalize = function() {
 	}
 
-        // Load the linear elements in to Gl and Cl
-        Device.prototype.load_linear = function(ckt) {
+    // Load the linear elements in to Gl and Cl
+    Device.prototype.load_linear = function(ckt) {
 	}
 
 	// load nonlinear currents for dc analysis
@@ -2422,56 +2441,56 @@ cktsim = (function() {
 	    var nInt = this.nInt
 	    var vPN = ckt.get_two_terminal(nP, nN, soln);
 	    if (vPN > 0) {
-		// First compute internal node updates
-		var vIn = ckt.get_two_terminal(this.nInP, this.nInN, soln);
-		var G = this.gain*this.Gint;
-		var iInt = G*vIn;
-		var nSi = nP; //out->nN or nP->out
-		// Adjust current draw node and slew rate.
-		if (iInt < 0) {
-		    nSi = nN;
-		    if (iInt < -this.iMax) {
-			iInt = -this.iMax;
-			G = iInt/vIn;
-		    }
-		} else if (iInt > this.iMax) {
-			iInt = this.iMax;
-			G = iInt/vIn;
-		}
-		//var nS = (iInt>0) ? nP : nN;//out->nN or nP->out
-		ckt.add_to_rhs(nInt,iInt,rhs); 
-		ckt.add_to_G(nInt,this.nInP,-G);
-		ckt.add_to_G(nInt,this.nInN,G);
-		ckt.add_to_rhs(nSi,-iInt,rhs); 
-		ckt.add_to_G(nSi,this.nInP,G);
-		ckt.add_to_G(nSi,this.nInN,-G);
+			// First compute internal node updates
+			var vIn = ckt.get_two_terminal(this.nInP, this.nInN, soln);
+			var G = this.gain*this.Gint;
+			var iInt = G*vIn;
+			var nSi = nP; //out->nN or nP->out
+			// Adjust current draw node and slew rate.
+			if (iInt < 0) {
+			    nSi = nN;
+			    if (iInt < -this.iMax) {
+				iInt = -this.iMax;
+				G = iInt/vIn;
+			    }
+			} else if (iInt > this.iMax) {
+				iInt = this.iMax;
+				G = iInt/vIn;
+			}
+			//var nS = (iInt>0) ? nP : nN;	//out->nN or nP->out
+			ckt.add_to_rhs(nInt,iInt,rhs); 
+			ckt.add_to_G(nInt,this.nInP,-G);
+			ckt.add_to_G(nInt,this.nInN,G);
+			ckt.add_to_rhs(nSi,-iInt,rhs); 
+			ckt.add_to_G(nSi,this.nInP,G);
+			ckt.add_to_G(nSi,this.nInN,-G);
 
-		// Diodes to limit internal voltage to between vN and vP.
-		var vd = this.vdOff + ckt.get_two_terminal(nInt, nP, soln);
-		var IdGd = diodeEval(vd, this.vt, this.areaIs);
-		ckt.add_to_rhs(nInt,-IdGd[0],rhs); 
-		ckt.add_to_rhs(nP,IdGd[0],rhs); 
-		ckt.add_conductance(nInt,nP,IdGd[1]);
+			// Diodes to limit internal voltage to between vN and vP.
+			var vd = this.vdOff + ckt.get_two_terminal(nInt, nP, soln);
+			var IdGd = diodeEval(vd, this.vt, this.areaIs);
+			ckt.add_to_rhs(nInt,-IdGd[0],rhs); 
+			ckt.add_to_rhs(nP,IdGd[0],rhs); 
+			ckt.add_conductance(nInt,nP,IdGd[1]);
 
-		var vdN = this.vdOff + ckt.get_two_terminal(nN, nInt, soln);
-		var IdGdN = diodeEval(vdN, this.vt, this.areaIs);
-		ckt.add_to_rhs(nN,-IdGdN[0],rhs); 
-		ckt.add_to_rhs(nInt,IdGdN[0],rhs); 
-		ckt.add_conductance(nN,nInt,IdGdN[1]);
+			var vdN = this.vdOff + ckt.get_two_terminal(nN, nInt, soln);
+			var IdGdN = diodeEval(vdN, this.vt, this.areaIs);
+			ckt.add_to_rhs(nN,-IdGdN[0],rhs); 
+			ckt.add_to_rhs(nInt,IdGdN[0],rhs); 
+			ckt.add_conductance(nN,nInt,IdGdN[1]);
 
-		// Now compute the output, switching current draw from
-		// Plus supply or minus supply depending on sign.
-		var nO = this.nO;
-		var vInPiNo = ckt.get_two_terminal(this.nInt, nO, soln);
-		var gO = this.Go;
-		var iOut = gO*vInPiNo
-		var nS = (iOut<0) ? this.nN : this.nP;//out->nN or nP->out
-		ckt.add_to_rhs(nO,iOut,rhs); 
-		ckt.add_to_rhs(nS,-iOut,rhs); 
-		ckt.add_to_G(nO,nO,gO);
-		ckt.add_to_G(nS,nO,-gO);
-		ckt.add_to_G(nO,this.nInt,-gO);
-		ckt.add_to_G(nS,this.nInt,gO);
+			// Now compute the output, switching current draw from
+			// Plus supply or minus supply depending on sign.
+			var nO = this.nO;
+			var vInPiNo = ckt.get_two_terminal(this.nInt, nO, soln);
+			var gO = this.Go;
+			var iOut = gO*vInPiNo
+			var nS = (iOut<0) ? this.nN : this.nP;//out->nN or nP->out
+			ckt.add_to_rhs(nO,iOut,rhs); 
+			ckt.add_to_rhs(nS,-iOut,rhs); 
+			ckt.add_to_G(nO,nO,gO);
+			ckt.add_to_G(nS,nO,-gO);
+			ckt.add_to_G(nO,this.nInt,-gO);
+			ckt.add_to_G(nS,this.nInt,gO);
 	    }
 	}
 
@@ -2741,8 +2760,7 @@ cktsim = (function() {
 	//
 	///////////////////////////////////////////////////////////////////////////////
 
-
-        function Fet(d,g,s,ratio,name,type) {
+    function Fet(d,g,s,ratio,Vt,lambda,name,type) {
 	    Device.call(this);
 	    this.d = d;
 	    this.g = g;
@@ -2753,10 +2771,14 @@ cktsim = (function() {
 	    { throw 'fet type is not n or p';
 	    }
 	    this.type_sign = (type == 'n') ? 1 : -1;
-	    this.vt = 0.5;
+	    this.vt = Vt;
+	    if (Vt == null) {this.vt = 0.5;}			//default
+	    if (Vt < 0) {this.vt = 0;}
+	    this.lambda = lambda;
+	    if (lambda == null) {this.lambda = 0.05;}	//default
+	    if (lambda < 0) {this.lambda = 0;}
 	    this.kp = 20e-6;
-            this.beta = this.kp * this.ratio;
-	    this.lambda = 0.05;
+        this.beta = this.kp * this.ratio;
 	}
 	Fet.prototype = new Device();
         Fet.prototype.constructor = Fet;
@@ -2959,7 +2981,7 @@ cktsim = (function() {
 		Nom = R;
 	    }
 
-            ckt.add_to_rhs(nds[D],-this.type_sign*Nom[0],crnt);//-i out of drn
+        ckt.add_to_rhs(nds[D],-this.type_sign*Nom[0],crnt);//-i out of drn
 	    ckt.add_to_rhs(nds[S], this.type_sign*Nom[0],crnt);//+i in to src
    
 	    // Deal with charges if flag says to.

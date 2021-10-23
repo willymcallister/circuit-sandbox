@@ -65,7 +65,7 @@ ckt_alert8: 'AC analysis failed, unknown source.',
 //ckt_error5: 'Rows or cols > rows or cols of dest',
 //ckt_error6: 'Rows or cols > cols or rows of dest',	    	    
 
-log_Frequency: 'log(Frequency in Hz)',
+log_Frequency: 'log10(Frequency in Hz)',
 degrees: 'degrees',
 AC_Phase: 'AC Phase',
 AC_Magnitude: 'AC Magnitude',
@@ -139,6 +139,7 @@ ideal: 'ideal',
 is: 'Is',
 Vt: 'Vt',
 WL: 'W/L',
+lambda: 'λ',
 A: 'A',
 Plot_color: 'Plot color',
 Plot_offset: 'Plot offset',
@@ -160,8 +161,8 @@ xaxis: 'x axis',
 
 Ics: 'Ics',
 Ies: 'Ies',
-alphaF: '\u03B1F',
-alphaR: '\u03B1R',
+alphaF: '𝛼F',
+alphaR: '𝛼R',
 last_line: 'last line, no comma'
 };
 
