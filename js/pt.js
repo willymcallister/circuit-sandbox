@@ -65,7 +65,7 @@ ckt_alert8: 'A análise AC falhou, fonte desconhecida.',
 //ckt_error5: 'Linhas ou colunas > linhas ou colunas do dest',
 //ckt_error6: 'Linhas ou colunas > colunas ou linhas de dest',
 
-log_Frequency: 'log(Frequência em Hz)',
+log_Frequency: 'log10(Frequência em Hz)',
 degrees: 'graus',
 AC_Phase: 'Ângulo de fase AC',
 AC_Magnitude: 'Magnitude AC',

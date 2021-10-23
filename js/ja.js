@@ -65,7 +65,7 @@ ckt_alert8: 'AC 解析に失敗しました。未知のソース。',
 //ckt_error5: 'Rows or cols > rows or cols of dest',
 //ckt_error6: 'Rows or cols > cols or rows of dest',	    	    
 
-log_Frequency: 'ログ (周波数 Hz)',
+log_Frequency: 'ログ10(周波数 Hz)',
 degrees: '度',
 AC_Phase: '交流位相',
 AC_Magnitude: 'AC の大きさ',

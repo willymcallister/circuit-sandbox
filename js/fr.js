@@ -65,7 +65,7 @@ ckt_alert8: "L'analyse AC a échoué, source inconnue.",
 //ckt_error5: 'Rows or cols > rows or cols of dest',
 //ckt_error6: 'Rows or cols > cols or rows of dest',	    	    
 
-log_Frequency: 'log (fréquence en Hz)',
+log_Frequency: 'log10(fréquence en Hz)',
 degrees: 'degrés',
 AC_Phase: 'Phase AC',
 AC_Magnitude: 'Amplitude AC',

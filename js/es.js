@@ -65,7 +65,7 @@ ckt_alert8: 'Análisis AC falló, fuente desconocida.',
 //ckt_error5: 'Renglones o columnas > renglones o columnas de destino',
 //ckt_error6: 'Renglones o columnas > columnas o renglones de destino',	 
 
-log_Frequency: 'log (Frecuencia en Hz)',
+log_Frequency: 'log10(Frecuencia en Hz)',
 degrees: 'grados',
 AC_Phase: 'Fase AC',
 AC_Magnitude: 'Magnitud de AC',

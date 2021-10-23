@@ -65,7 +65,7 @@ ckt_alert8: 'एसी विश्लेषण विफल, अज्ञात
 //ckt_error5: 'Rows or cols > rows or cols of dest',
 //ckt_error6: 'Rows or cols > cols or rows of dest',	    	    
 
-log_Frequency: 'लॉग (Hz में फ़्रिक्वेंसी)',
+log_Frequency: 'लॉग10(Hz में फ़्रिक्वेंसी)',
 degrees: 'डिग्री',
 AC_Phase: 'एसी चरण',
 AC_Magnitude: 'एसी परिमाण',

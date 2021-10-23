@@ -65,7 +65,7 @@ ckt_alert8: 'AC elemzés sikertelen, ismeretlen forrás.',
 //ckt_error5: 'Rows or cols > rows or cols of dest',
 //ckt_error6: 'Rows or cols > cols or rows of dest',	    	    
 
-log_Frequency: 'log(Frekvencia Hz-ben)',
+log_Frequency: 'log10(Frekvencia Hz-ben)',
 degrees: 'szög',
 AC_Phase: 'Váltóáram fázis',
 AC_Magnitude: 'Váltóáram nagyság',

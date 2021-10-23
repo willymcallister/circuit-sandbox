@@ -65,7 +65,7 @@ ckt_alert8: 'AC 分析失败, 未知源',
 //ckt_error5: '行或列 > dest的行或列',
 //ckt_error6: '行或列 > dest的列或行',
 
-  log_Frequency: 'log(频率单位 Hz)',
+log_Frequency: 'log10(频率单位 Hz)',
 degrees: 'degrees',
 AC_Phase: 'AC 相位',
 AC_Magnitude: 'AC 幅度',
