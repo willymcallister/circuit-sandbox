@@ -9,6 +9,9 @@ function switchLanguage(_lang) {
 		case 'fr':
 			script.src = 'js/fr.js';
 			break;
+		case 'it':
+			script.src = 'js/it.js';
+			break;
 		case 'ja':
 			script.src = 'js/ja.js';
 			break;
