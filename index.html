@@ -14,8 +14,9 @@
     <link rel="stylesheet" href="sandbox.css" />
 
     <script type="text/javascript" src="js/hammer.min.js"></script>
-    <!-- Consider replacing hammer.js with contact.js, https://biodiv.github.io/contactjs/documentation/general/ -->
-    <script src="https://kit.fontawesome.com/9defb49fb8.js"></script>
+    <!-- Consider replacing hammer.js with contact.js, https://biodiv.github.io/contactjs/documentation/general/, or https://interactjs.io/ -->
+    <link href="fontawesome-free-5.15.4-web/css/fontawesome.min.css" rel="stylesheet">
+		<link href="fontawesome-free-5.15.4-web/css/solid.css" rel="stylesheet">
     <script type="text/javascript" src="js/download.js"></script>
     <script type="text/javascript" src="js/language.js"></script>
     <script type="text/javascript" src="js/fet_vsp.js"></script>
@@ -47,7 +48,7 @@
 	</p>
     <script>			
 		var dropdown = document.getElementById('languageSelect');
-		dropdown.value = lang; 		// set the dropdown default value
+		dropdown.value = lang; 		// set the dropdown language to lang, which is defined in language.js
 			
 		function dropdownChange() {
 			var selectedLang = dropdown.options[dropdown.selectedIndex].value;
