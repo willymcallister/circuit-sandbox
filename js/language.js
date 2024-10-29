@@ -31,6 +31,9 @@ function switchLanguage(_lang) {
 		case 'zh-CN':
 			script.src = 'js/zh-CN.js';
 			break;
+		case 'cz':
+			script.src = 'js/cz.js';
+			break;
 		default:
 			script.src = 'js/en-US.js';
 	}
