@@ -92,7 +92,7 @@ impulse: 'Impuls',
 Height: 'Výška',
 Width: 'Šířka (s)',
 
-step: 'krok',
+step: 'skok',
 Initial_value: 'Počáteční hodnota',
 Plateau_value: 'Hodnota plató',
 Delay_until_step: 'Zpoždění do kroku (s)',
