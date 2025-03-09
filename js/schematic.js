@@ -355,6 +355,12 @@ schematic = (function() {
 
 		this.canvas.schematic = this;
 		if (this.edits_allowed) {
+			this.canvas.addEventListener
+			('wheel', function(event) {
+				if (!event) event = window.event;
+				var sch = event.target.schematic;
+				schematic_scroll(event, sch);
+			}, false);
 			this.canvas.addEventListener('mousemove', function(event) {
 				if (!event) event = window.event;
 				var sch = event.target.schematic;
@@ -748,27 +754,33 @@ schematic = (function() {
 	var origin_min = -200;    // in grids
 	var origin_max = 200;
 
-	Schematic.prototype.zoomin = function() {
+
+	Schematic.prototype.zoomin = function(dx,dy) {
 		var nscale = this.scale * zoom_factor;
 		if (nscale < zoom_max) {
-		// keep center of view unchanged
-		this.origin_x += (this.width/2)*(1.0/this.scale - 1.0/nscale);
-		this.origin_y += (this.height/2)*(1.0/this.scale - 1.0/nscale);
-		this.scale = nscale;
-		this.redraw_background();
+			this.applyzoom(nscale, dx, dy)
 		}
 	};
 
-	Schematic.prototype.zoomout = function() {
+	Schematic.prototype.zoomout = function(dx,dy) {
 		var nscale = this.scale / zoom_factor;
 		if (nscale > zoom_min) {
-			// keep center of view unchanged
-			this.origin_x += (this.width/2)*(1.0/this.scale - 1.0/nscale);
-			this.origin_y += (this.height/2)*(1.0/this.scale - 1.0/nscale);
-			this.scale = nscale;
-			this.redraw_background();
+			this.applyzoom(nscale, dx, dy)
 		}
 	};
+
+	Schematic.prototype.applyzoom = function(nscale, dx, dy) {
+		if (dx == undefined) {
+			// use the halfway point as the invariant by default
+			dx = 1/2;
+			dy = 1/2;
+		}
+		// keep the invarient point the same relative position on the screen
+		this.origin_x += dx * this.width *(1.0/this.scale - 1.0/nscale);
+		this.origin_y += dy * this.height *(1.0/this.scale - 1.0/nscale);
+		this.scale = nscale;
+		this.redraw_background();
+	}
 
 	Schematic.prototype.zoomall = function() {
 	    // w,h for schematic including a 25% margin on all sides
@@ -1933,8 +1945,11 @@ schematic = (function() {
 				if (!reselect) sch.unselect_all(which);
 
 				// if there's nothing to drag, set up a selection rectangle
-				if (!sch.dragging) sch.select_rect = [sch.canvas.mouse_x,sch.canvas.mouse_y,
-					sch.canvas.mouse_x,sch.canvas.mouse_y];
+				// unless the we want to pan the screen around
+				if (!(sch.dragging  || (event.ctrlKey && (event.buttons & 1)) || event.buttons & 4))
+				{ 
+					sch.select_rect = [sch.canvas.mouse_x,sch.canvas.mouse_y, sch.canvas.mouse_x,sch.canvas.mouse_y];
+				}
 			}
 		}
 		}
@@ -1961,7 +1976,18 @@ schematic = (function() {
 		sch.redraw_background();
 		return false;
 		}
-
+	
+	function schematic_scroll(event, sch){
+		var dx = sch.canvas.mouse_x/sch.width;
+		var dy = sch.canvas.mouse_y/sch.height;
+		let dir = event.deltaY;
+		if (dir < 0) {
+			sch.zoomin(dx, dy);
+		} else {
+			sch.zoomout(dx, dy);
+		}
+	}
+		
 	function schematic_mouse_move(event, sch) {
 		var x = sch.canvas.mouse_x/sch.scale + sch.origin_x;
 		var y = sch.canvas.mouse_y/sch.scale + sch.origin_y;
@@ -1991,6 +2017,12 @@ schematic = (function() {
 			// update moving corner of selection rectangle
 			sch.select_rect[2] = sch.canvas.mouse_x;
 			sch.select_rect[3] = sch.canvas.mouse_y;
+		} else if ((event.ctrlKey && (event.buttons & 1)) || event.buttons & 4){
+			// if control + left mouse button or middle mouse button
+			// pan the screen around however much we have moved
+			sch.origin_y += -event.movementY / sch.scale
+			sch.origin_x += -event.movementX / sch.scale
+			sch.redraw_background();
 		}
 
 	    // just redraw dynamic components
