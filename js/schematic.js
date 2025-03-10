@@ -1924,23 +1924,21 @@ schematic = (function() {
 		    //If we uncomment the unselect_all above, it would unselect the pending new component and it does not get placed. 
 		    //Side effect: Commenting out unselect_all above leaves any currently selected parts still selected.
 		    sch.wire = [sch.cursor_x,sch.cursor_y,sch.cursor_x,sch.cursor_y];
-		} else {
+		} else if (!((event.ctrlKey && (event.buttons & 1)) || event.buttons & 4)) {
 		    // give all components a shot at processing the selection event
 		    var which = -1;
-			if(!((event.ctrlKey && (event.buttons & 1)) || event.buttons & 4)){
-				for (let i = sch.components.length - 1; i >= 0; --i)
-					if (sch.components[i].select(x,y,event.shiftKey)) {
-						if (sch.components[i].selected) {
-							sch.drag_begin();
-							which = i;  // keep track of component we found
-						}
-						break;
+			for (let i = sch.components.length - 1; i >= 0; --i)
+				if (sch.components[i].select(x,y,event.shiftKey)) {
+					if (sch.components[i].selected) {
+						sch.drag_begin();
+						which = i;  // keep track of component we found
 					}
-			}
+					break;
+				}
 		    // did we just click on a previously selected component?
 		    var reselect = which!=-1 && sch.components[which].was_previously_selected;
 
-		    if (!(event.shiftKey || (event.ctrlKey && (event.buttons & 1)) || event.buttons & 4)) {
+		    if (!event.shiftKey) {
 				// if shift key isn't pressed and we didn't click on component
 				// that was already selected, unselect everyone except component
 				// we just clicked on
