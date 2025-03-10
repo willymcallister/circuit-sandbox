@@ -1927,18 +1927,20 @@ schematic = (function() {
 		} else {
 		    // give all components a shot at processing the selection event
 		    var which = -1;
-		    for (let i = sch.components.length - 1; i >= 0; --i)
-		    	if (sch.components[i].select(x,y,event.shiftKey)) {
-		    		if (sch.components[i].selected) {
-		    			sch.drag_begin();
-						which = i;  // keep track of component we found
+			if(!((event.ctrlKey && (event.buttons & 1)) || event.buttons & 4)){
+				for (let i = sch.components.length - 1; i >= 0; --i)
+					if (sch.components[i].select(x,y,event.shiftKey)) {
+						if (sch.components[i].selected) {
+							sch.drag_begin();
+							which = i;  // keep track of component we found
+						}
+						break;
 					}
-					break;
-				}
+			}
 		    // did we just click on a previously selected component?
 		    var reselect = which!=-1 && sch.components[which].was_previously_selected;
 
-		    if (!event.shiftKey) {
+		    if (!(event.shiftKey || (event.ctrlKey && (event.buttons & 1)) || event.buttons & 4)) {
 				// if shift key isn't pressed and we didn't click on component
 				// that was already selected, unselect everyone except component
 				// we just clicked on
@@ -1946,7 +1948,7 @@ schematic = (function() {
 
 				// if there's nothing to drag, set up a selection rectangle
 				// unless the we want to pan the screen around
-				if (!(sch.dragging  || (event.ctrlKey && (event.buttons & 1)) || event.buttons & 4))
+				if (!sch.dragging)
 				{ 
 					sch.select_rect = [sch.canvas.mouse_x,sch.canvas.mouse_y, sch.canvas.mouse_x,sch.canvas.mouse_y];
 				}
