@@ -360,6 +360,7 @@ schematic = (function() {
 				if (!event) event = window.event;
 				var sch = event.target.schematic;
 				schematic_scroll(event, sch);
+				event.preventDefault();
 			}, false);
 			this.canvas.addEventListener('mousemove', function(event) {
 				if (!event) event = window.event;
