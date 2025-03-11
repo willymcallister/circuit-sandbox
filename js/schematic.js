@@ -749,24 +749,39 @@ schematic = (function() {
 	};
 
 	var zoom_factor = 1.25;    // scaling is some power of zoom_factor
-	//var zoom_wheel_factor = 1.05;		//removed for mobile, see comment in schematic_mouse_wheel
+	var zoom_factor_scroll = 1.1;
 	var zoom_min = 0.5;
 	var zoom_max = 4.0;
 	var origin_min = -200;    // in grids
 	var origin_max = 200;
 
-
 	Schematic.prototype.zoomin = function(dx,dy) {
 		var nscale = this.scale * zoom_factor;
 		if (nscale < zoom_max) {
-			this.applyzoom(nscale, dx, dy)
+			this.applyzoom(nscale, dx, dy);
 		}
 	};
 
 	Schematic.prototype.zoomout = function(dx,dy) {
 		var nscale = this.scale / zoom_factor;
 		if (nscale > zoom_min) {
-			this.applyzoom(nscale, dx, dy)
+			this.applyzoom(nscale, dx, dy);
+		}
+	};
+
+	Schematic.prototype.zoomin_scroll = function(delta, dx,dy) {
+		let proportion = Math.min(Math.max(0, delta/100.0), 1);
+		var nscale = this.scale * (1 + (zoom_factor_scroll - 1) * proportion);
+		if (nscale < zoom_max) {
+			this.applyzoom(nscale, dx, dy);
+		}
+	};
+
+	Schematic.prototype.zoomout_scroll = function(delta, dx,dy) {
+		let proportion = Math.min(Math.max(0, delta/100.0), 1);
+		var nscale = this.scale / (1 + (zoom_factor_scroll - 1) * proportion);
+		if (nscale > zoom_min) {
+			this.applyzoom(nscale, dx, dy);
 		}
 	};
 
@@ -1981,11 +1996,11 @@ schematic = (function() {
 	function schematic_scroll(event, sch){
 		var dx = sch.canvas.mouse_x/sch.width;
 		var dy = sch.canvas.mouse_y/sch.height;
-		let dir = event.deltaY;
-		if (dir < 0) {
-			sch.zoomin(dx, dy);
+		let delta = event.deltaY;
+		if (delta < 0) {
+			sch.zoomin_scroll(Math.abs(delta), dx, dy);
 		} else {
-			sch.zoomout(dx, dy);
+			sch.zoomout_scroll(Math.abs(delta), dx, dy);
 		}
 	}
 		
