@@ -725,7 +725,7 @@ schematic = (function() {
 
 	Schematic.prototype.help = function() {
 	/* Embedded help strings come from i18n files: en-US.js, es.js, and the like.	*/
-		let strHelp = strSHelp + strAddC + strAddW + strSel + strMove + strDel + strRot + strProp + strNum;
+		let strHelp = strSHelp + strAddC + strAddW + strSel + strMove + strDel + strRot + strView + strProp + strNum;
 		window.confirm(strHelp);
 	};
 
@@ -1897,18 +1897,18 @@ schematic = (function() {
 		var zh = sch.zctl_h;
 
 	    if (sx*sx + sy*sy <= sch.sctl_r*sch.sctl_r) {   // clicked in scrolling control
-		// check which quadrant
-		if (Math.abs(sy) > Math.abs(sx)) {  	// N or S
-			let delta = sch.height / 32;		// vertical scroll increment
-			if (sy > 0) delta = -delta;
-			let temp = sch.origin_y + delta;	// + is natural scroll, - is traditional scroll
-			if (temp > origin_min*sch.grid && temp < origin_max*sch.grid) sch.origin_y = temp;
-		} else {			    				// E or W
-			let delta = sch.width / 32;			// horizontal scroll increment
-			if (sx < 0) delta = -delta;
-			let temp = sch.origin_x - delta;	// - is natural scroll, + is traditional scroll
-			if (temp > origin_min*sch.grid && temp < origin_max*sch.grid) sch.origin_x = temp;
-		}
+			// check which quadrant
+			if (Math.abs(sy) > Math.abs(sx)) {  	// N or S
+				let delta = sch.height / 32;		// vertical scroll increment
+				if (sy > 0) delta = -delta;
+				let temp = sch.origin_y + delta;	// + is natural scroll, - is traditional scroll
+				if (temp > origin_min*sch.grid && temp < origin_max*sch.grid) sch.origin_y = temp;
+			} else {			    				// E or W
+				let delta = sch.width / 32;			// horizontal scroll increment
+				if (sx < 0) delta = -delta;
+				let temp = sch.origin_x - delta;	// - is natural scroll, + is traditional scroll
+				if (temp > origin_min*sch.grid && temp < origin_max*sch.grid) sch.origin_x = temp;
+			}
 	    } else if (zx >= -zw/2 && zx < zw/2 && zy >= 0 && zy < zh) {   // clicked in zoom control
 	    	if (zy < zh/3) sch.zoomin();
 	    	else if (zy < 2*zh/3) sch.zoomout();
@@ -1923,51 +1923,51 @@ schematic = (function() {
 	    	sch.delete_selected();
 	    	event.preventDefault();
 	    	return false;
-	    } else {											//clicked in schematic area
+	    } else if (!((event.altKey && (event.buttons & 1)) || event.buttons & 4)) { //clicked in schematic area and not attempting to pan
 	    	var x = mx/sch.scale + sch.origin_x;
 	    	var y = my/sch.scale + sch.origin_y;
 	    	sch.cursor_x = Math.round(x/sch.grid) * sch.grid;
 	    	sch.cursor_y = Math.round(y/sch.grid) * sch.grid;
 
-		// is mouse over a connection point?  If so, start dragging a wire
-		var cplist = sch.connection_points[sch.cursor_x + ',' + sch.cursor_y];
-		if (cplist && !event.shiftKey) {
-		    //sch.unselect_all(-1);		//commented out for touch
-		    //With touch, we can't drag a new part onto the schematic (there isn't a "touch_enter" event).
-		    //So we do a "tap-tap" sequence to add parts. 
-		    //Parts are selected from the bin and added to the component list (add_part). 
-		    //The next tap inside the schematic area places the new part.
-		    //If we uncomment the unselect_all above, it would unselect the pending new component and it does not get placed. 
-		    //Side effect: Commenting out unselect_all above leaves any currently selected parts still selected.
-		    sch.wire = [sch.cursor_x,sch.cursor_y,sch.cursor_x,sch.cursor_y];
-		} else if (!((event.ctrlKey && (event.buttons & 1)) || event.buttons & 4)) {
-		    // give all components a shot at processing the selection event
-		    var which = -1;
-			for (let i = sch.components.length - 1; i >= 0; --i)
-				if (sch.components[i].select(x,y,event.shiftKey)) {
-					if (sch.components[i].selected) {
-						sch.drag_begin();
-						which = i;  // keep track of component we found
+			// is mouse over a connection point?  If so, start dragging a wire
+			var cplist = sch.connection_points[sch.cursor_x + ',' + sch.cursor_y];
+			if (cplist && !event.shiftKey) {
+				//sch.unselect_all(-1);		//commented out for touch
+				//With touch, we can't drag a new part onto the schematic (there isn't a "touch_enter" event).
+				//So we do a "tap-tap" sequence to add parts. 
+				//Parts are selected from the bin and added to the component list (add_part). 
+				//The next tap inside the schematic area places the new part.
+				//If we uncomment the unselect_all above, it would unselect the pending new component and it does not get placed. 
+				//Side effect: Commenting out unselect_all above leaves any currently selected parts still selected.
+				sch.wire = [sch.cursor_x,sch.cursor_y,sch.cursor_x,sch.cursor_y];
+			} else {
+				// give all components a shot at processing the selection event
+				var which = -1;
+				for (let i = sch.components.length - 1; i >= 0; --i)
+					if (sch.components[i].select(x,y,event.shiftKey)) {
+						if (sch.components[i].selected) {
+							sch.drag_begin();
+							which = i;  // keep track of component we found
+						}
+						break;
 					}
-					break;
-				}
-		    // did we just click on a previously selected component?
-		    var reselect = which!=-1 && sch.components[which].was_previously_selected;
+				// did we just click on a previously selected component?
+				var reselect = which!=-1 && sch.components[which].was_previously_selected;
 
-		    if (!event.shiftKey) {
-				// if shift key isn't pressed and we didn't click on component
-				// that was already selected, unselect everyone except component
-				// we just clicked on
-				if (!reselect) sch.unselect_all(which);
+				if (!event.shiftKey) {
+					// if shift key isn't pressed and we didn't click on component
+					// that was already selected, unselect everyone except component
+					// we just clicked on
+					if (!reselect) sch.unselect_all(which);
 
-				// if there's nothing to drag, set up a selection rectangle
-				// unless the we want to pan the screen around
-				if (!sch.dragging)
-				{ 
-					sch.select_rect = [sch.canvas.mouse_x,sch.canvas.mouse_y, sch.canvas.mouse_x,sch.canvas.mouse_y];
+					// if there's nothing to drag, set up a selection rectangle
+					// unless the we want to pan the screen around
+					if (!sch.dragging)
+					{ 
+						sch.select_rect = [sch.canvas.mouse_x,sch.canvas.mouse_y, sch.canvas.mouse_x,sch.canvas.mouse_y];
+					}
 				}
 			}
-		}
 		}
 
 		if (sch.new_part) {
@@ -2005,8 +2005,21 @@ schematic = (function() {
 	}
 		
 	function schematic_mouse_move(event, sch) {
-		var x = sch.canvas.mouse_x/sch.scale + sch.origin_x;
-		var y = sch.canvas.mouse_y/sch.scale + sch.origin_y;
+		var mx = sch.canvas.mouse_x;
+		var my = sch.canvas.mouse_y;
+		var sx = mx - sch.sctl_x;
+		var sy = my - sch.sctl_y;
+
+		if (sx*sx + sy*sy <= sch.sctl_r*sch.sctl_r) {   // clicked in scrolling control
+			sch.message(i18n.New_pan);
+		}
+		else {
+			sch.message('');
+		}
+
+
+		var x = mx/sch.scale + sch.origin_x;
+		var y = my/sch.scale + sch.origin_y;
 		sch.cursor_x = Math.round(x/sch.grid) * sch.grid;
 		sch.cursor_y = Math.round(y/sch.grid) * sch.grid;
 
@@ -2033,7 +2046,7 @@ schematic = (function() {
 			// update moving corner of selection rectangle
 			sch.select_rect[2] = sch.canvas.mouse_x;
 			sch.select_rect[3] = sch.canvas.mouse_y;
-		} else if ((event.ctrlKey && (event.buttons & 1)) || event.buttons & 4){
+		} else if ((event.altKey && (event.buttons & 1)) || event.buttons & 4){
 			// if control + left mouse button or middle mouse button
 			// pan the screen around however much we have moved
 			sch.origin_y += -event.movementY / sch.scale
@@ -2558,7 +2571,8 @@ schematic = (function() {
 			// if disabling tool, remove border and tip
 			if (!which) {
 				tool.style.borderColor = background_style;
-				tool.sch.message('');
+				// I don't think this is neccassary and it messes with the "new feature" message
+				//tool.sch.message('');
 			}
 		}
 	};

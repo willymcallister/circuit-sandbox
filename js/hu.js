@@ -163,6 +163,9 @@ Ics: 'Ics',
 Ies: 'Ies',
 alphaF: '𝛼F',
 alphaR: '𝛼R',
+
+New_pan: "",
+
 last_line: 'Utolsó sor, nincs vessző'
 };
 
@@ -173,5 +176,6 @@ var strSel  = "Kiválasztás: Húzzon egy téglalapot az elemek kiválasztásáh
 var strMove = "Áthelyezés: érintse meg és húzza egy új helyre.\n\n";
 var strDel  = "Törlés: Koppintson a kiválasztásra, majd koppintson az X ikonra, vagy nyomja meg a BACKSPACE billentyűt.\n\n";
 var strRot  = "Forgatás/Invertálás: Válassza ki, majd kattintson a forgatás ikonra, vagy nyomja meg az \„r\" gombot a 90-es elforgatáshoz. Ismételje meg a további forgatásokat (összesen 8-at).\n\n";
+var strView = "";
 var strProp = "Tulajdonságok: Koppintson duplán egy elemre annak tulajdonságainak megváltoztatásához.\n\n";
 var strNum  = "A számokat műszaki jelöléssel is be lehet írni, T = 10^12, G = 10^9, M = 10^6, k = 10^3, m = 10^-3, u = 10^-6, n = 10^-9, p = 10^-12, f = 10^-15";
