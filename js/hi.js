@@ -164,7 +164,10 @@ Ies: 'Ies',
 alphaF: '𝛼एफ',
 alphaR: '𝛼आर',
 
-New_pan: "",
+scroll_ctl: "Scroll arrows. Also try Alt-drag or ⌥ Option-drag.",
+//zoom_ctl: "Zoom: in/out/fit. Also try mouse or trackpad scroll.",
+//rotate_ctl: "Rotate/Reflect",
+//delete_ctl: "Delete",
 
 last_line: 'last line, no comma'
 };

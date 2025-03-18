@@ -2011,7 +2011,7 @@ schematic = (function() {
 		var sy = my - sch.sctl_y;
 
 		if (sx*sx + sy*sy <= sch.sctl_r*sch.sctl_r) {   // clicked in scrolling control
-			sch.message(i18n.New_pan);
+			sch.message(i18n.scroll_ctl);
 		}
 		else {
 			sch.message('');
