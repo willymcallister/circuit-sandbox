@@ -165,9 +165,9 @@ alphaF: 'αF',
 alphaR: 'αR',
 
 scroll_ctl: "Scroll arrows. Also try Alt-drag or ⌥ Option-drag.",
-//zoom_ctl: "Zoom: in/out/fit. Also try mouse or trackpad scroll.",
-//rotate_ctl: "Rotate/Reflect",
-//delete_ctl: "Delete",
+zoom_ctl: "Zoom: in/out/fit. Also try mouse or trackpad scroll.",
+rotate_ctl: "Rotate/Reflect component. Also try 'R'.",
+delete_ctl: "Delete component. Also try 'Del'.",
 
 last_line: 'última linha, sem vírgula'
 };

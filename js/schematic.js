@@ -2009,10 +2009,27 @@ schematic = (function() {
 		var my = sch.canvas.mouse_y;
 		var sx = mx - sch.sctl_x;
 		var sy = my - sch.sctl_y;
+		var zx = mx - sch.zctl_x;
+		var zy = my - sch.zctl_y;
+		var rx = mx - sch.rctl_x;
+		var ry = my - sch.rctl_y;
+		var dx = mx - sch.dctl_x;
+		var dy = my - sch.dctl_y;
+		var zw = sch.zctl_w;
+		var zh = sch.zctl_h;
 
 		if (sx*sx + sy*sy <= sch.sctl_r*sch.sctl_r) {   // clicked in scrolling control
 			sch.message(i18n.scroll_ctl);
 		}
+		 else if (zx >= -zw/2 && zx < zw/2 && zy >= 0 && zy < zh) {   // clicked in zoom control
+	    	sch.message(i18n.zoom_ctl);
+	    } 
+	    else if (rx*rx + ry*ry <= sch.rctl_r*sch.rctl_r) {   // clicked in rotation control
+	    	sch.message(i18n.rotate_ctl);
+	    } 
+	    else if (dx*dx + dy*dy <= sch.rctl_r*sch.rctl_r) {   // clicked in delete control
+	    	sch.message(i18n.delete_ctl);
+	    }
 		else {
 			sch.message('');
 		}
