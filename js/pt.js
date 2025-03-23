@@ -163,6 +163,12 @@ Ics: 'Ics',
 Ies: 'Ies',
 alphaF: 'αF',
 alphaR: 'αR',
+
+scroll_ctl: "Scroll arrows. Also try Alt-drag or ⌥ Option-drag.",
+zoom_ctl: "Zoom: in/out/fit. Also try mouse or trackpad scroll.",
+rotate_ctl: "Rotate/Reflect component. Also try 'R'.",
+delete_ctl: "Delete component. Also try 'Del'.",
+
 last_line: 'última linha, sem vírgula'
 };
 
@@ -173,6 +179,7 @@ var strSel = "Selecionar: Arraste um retângulo para selecionar componentes. \n(
 var strMove = "Mover: Toque e arraste para outro local.\n\n";
 var strDel = "Deletar: Clique para selecionar, depois clique no X ou pressione BACKSPACE.\n\n";
 var strRot = "Rodar/Refletir: Clique para selecionar, e depois clique no ícone de rotação ou aperte \"r\" para rodar 90. Repetir para mais rotações e reflexões (8 total).\n\n";
+var strView = "";
 var strProp = "Propriedades: Clique duas vezes num componente para alterar suas propriedades.\n\n";
 var strNum = "Números podem ser inseridos utilizando a notação de engenharia,\n\
 T = 10^12, G = 10^9, M = 10^6, k = 10^3\n\
