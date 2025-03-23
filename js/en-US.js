@@ -163,6 +163,12 @@ Ics: 'Ics',
 Ies: 'Ies',
 alphaF: '𝛼F',
 alphaR: '𝛼R',
+
+scroll_ctl: "Scroll arrows. Also try Alt-drag or ⌥ Option-drag.",
+zoom_ctl: "Zoom: in/out/fit. Also try mouse or trackpad scroll.",
+rotate_ctl: "Rotate/Reflect component. Also try 'R'.",
+delete_ctl: "Delete component. Also try 'Del'.",
+
 last_line: 'last line, no comma'
 };
 
@@ -173,6 +179,7 @@ var strSel  = "Select: Drag a rectangle to select components. \n(desktop:) Shift
 var strMove = "Move: Touch and drag to a new location.\n\n";
 var strDel  = "Delete: Tap to select, then tap the X icon or hit BACKSPACE.\n\n";
 var strRot  = "Rotate/Reflect: Click to select, then click on the rotation icon or type the letter \"r\" to rotate 90. Repeat for more rotations and reflections (8 total).\n\n";
+var strView = "Zoom using a scroll wheel or trackpad\nPan the schematic using Alt-drag\n\n";
 var strProp = "Properties: Double tap on a component to change its properties.\n\n";
 var strNum  = "Numbers may be entered using engineering notation,\n\
 T = 10^12, G = 10^9, M = 10^6, k = 10^3\n\

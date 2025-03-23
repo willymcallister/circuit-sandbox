@@ -163,6 +163,12 @@ Ics: 'Ics',
 Ies: 'Ies',
 alphaF: '𝛼F',
 alphaR: '𝛼R',
+
+scroll_ctl: "Scroll arrows. Also try Alt-drag or ⌥ Option-drag.",
+zoom_ctl: "Zoom: in/out/fit. Also try mouse or trackpad scroll.",
+rotate_ctl: "Rotate/Reflect component. Also try 'R'.",
+delete_ctl: "Delete component. Also try 'Del'.",
+
 last_line: '最後の行、コンマ無し'
 };
 
@@ -173,6 +179,7 @@ var strSel  = "選択する: 長方形をドラッグしてコンポーネント
 var strMove = "動かす: タッチして新しい場所にドラッグする。\n\n";
 var strDel  = "削除する: タップして選び、次に X アイコンをタップするまたはバックスペースキーを押す。\n\n";
 var strRot  = "回転/反転させる: クリックして選び、次に回転アイコンをクリックするか、90度回転の場合は r のキーをタイプする。さらに回転/反転させたい場合は繰り返す (最高8回まで)。\n\n";
+var strView = "";
 var strProp = "プロパティー: プロパティーを変えるにはコンポーネントをタップする。\n\n";
 var strNum  = "エンジニアリング表記法を使って数字を入れることもできる。\n\
 T = 10^12, G = 10^9, M = 10^6, k = 10^3\n\

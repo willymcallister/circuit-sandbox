@@ -163,6 +163,12 @@ Ics: 'Ics',
 Ies: 'Ies',
 alphaF: '𝛼F',
 alphaR: '𝛼R',
+
+scroll_ctl: "Scroll arrows. Also try Alt-drag or ⌥ Option-drag.",
+zoom_ctl: "Zoom: in/out/fit. Also try mouse or trackpad scroll.",
+rotate_ctl: "Rotate/Reflect component. Also try 'R'.",
+delete_ctl: "Delete component. Also try 'Del'.",
+
 last_line: '最后一行，没有逗号'
 };
 
@@ -173,6 +179,7 @@ var strSel  = "选择：使用按住鼠标按键拖动产生的矩形选择组�
 var strMove = "移动：触摸并拖动到新的位置。\n\n";
 var strDel  = "删除：点击选择，然后点击X图标或点击退格。\n\n";
 var strRot  = "旋转/镜像：单击以选择，然后单击旋转图标或键入字母 \"r\" 来旋转90度. 重复更多的旋转和镜像（共8个）。\n\n";
+var strView = "";
 var strProp = "属性：双击组件可以改变属性，如电阻或电压。\n\n";
 var strNum  = "可以使用工程符号输入数字：\n\
 T = 10^12, G = 10^9, M = 10^6, k = 10^3\n\

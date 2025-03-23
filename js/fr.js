@@ -163,6 +163,12 @@ Ics: 'Ics',
 Ies: 'Ies',
 alphaF: '𝛼F',
 alphaR: '𝛼R',
+
+scroll_ctl: "Scroll arrows. Also try Alt-drag or ⌥ Option-drag.",
+zoom_ctl: "Zoom: in/out/fit. Also try mouse or trackpad scroll.",
+rotate_ctl: "Rotate/Reflect component. Also try 'R'.",
+delete_ctl: "Delete component. Also try 'Del'.",
+
 last_line: 'dernière ligne, pas de virgule'
 };
 
@@ -173,6 +179,7 @@ var strSel  = "Sélectionner: faites glisser un rectangle pour sélectionner des
 var strMove = "Déplacer: touchez et faites glisser vers un nouvel emplacement.\n\n";
 var strDel  = "Supprimer: appuyez pour sélectionner, puis appuyez sur l'icône X ou appuyez sur RETOUR ARRIÈRE.\n\n";
 var strRot  = "Rotation / Réflexion: Cliquez pour sélectionner, puis cliquez sur l'icône de rotation ou tapez la lettre «r» pour faire pivoter 90. Répétez pour plus de rotations et de réflexions (8 au total).\n\n";
+var strView = "";
 var strProp = "Propriétés: appuyez deux fois pour modifier ses propriétés.\n\n";
 var strNum  = "Les nombres peuvent être saisis en notation technique,\n\
 T 10^12, G 10^9, M 10^6, k 10^3, m 10^-3, u 10^-6, n 10^-9, p 10^-12, f 10^-15";
