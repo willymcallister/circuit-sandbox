@@ -180,7 +180,7 @@ var strMove = "Move: Touch and drag to a new location.\n\n";
 var strDel  = "Delete: Tap to select, then tap the X icon or hit BACKSPACE.\n\n";
 var strRot  = "Rotate/Reflect: Click to select, then click on the rotation icon or type the letter \"r\" to rotate 90. Repeat for more rotations and reflections (8 total).\n\n";
 var strProp = "Properties: Double tap on a component to change its properties.\n\n";
-var strView = "Zoom: Scroll wheel or trackpad.\n\nPan: Alt-drag or ⌥ Option-drag.\n\n";
+var strView = "Zoom: Scroll wheel or trackpad.\nPan: Alt-drag or ⌥ Option-drag.\n\n";
 var strNum  = "Numbers may be entered using engineering notation,\n\
 T = 10^12, G = 10^9, M = 10^6, k = 10^3\n\
 m = 10^-3, u = 10^-6, n = 10^-9, p = 10^-12, f = 10^-15";
