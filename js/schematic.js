@@ -725,7 +725,7 @@ schematic = (function() {
 
 	Schematic.prototype.help = function() {
 	/* Embedded help strings come from i18n files: en-US.js, es.js, and the like.	*/
-		let strHelp = strSHelp + strAddC + strAddW + strSel + strMove + strDel + strRot + strView + strProp + strNum;
+		let strHelp = strSHelp + strAddC + strAddW + strSel + strMove + strDel + strRot + strProp + strView + strNum;
 		window.confirm(strHelp);
 	};
 
