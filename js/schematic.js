@@ -33,7 +33,7 @@
 
 // TO DO:
 // - wire labels?
-// - zoom/scroll canvas
+// - zoom/scroll canvas - contributed by Spitfire972, https://github.com/Spitfire972
 // - rotate multiple objects around their center of mass
 // - rubber band wires when moving components
 
