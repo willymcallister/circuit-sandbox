@@ -164,11 +164,14 @@ Ies: 'Ies',
 alphaF: '𝛼F',
 alphaR: '𝛼R',
 
-scroll_ctl: "Scroll arrows. Also try Alt-drag or ⌥ Option-drag.",
-zoom_ctl: "Zoom: in/out/fit. Also try mouse or trackpad scroll.",
-rotate_ctl: "Rotate/Reflect component. Also try 'R'.",
-delete_ctl: "Delete component. Also try 'Del'.",
-
+scroll_ctl: "Desplazarse. También, con el ratón o el trackpad: mantenga pulsada la tecla Alt u  ⌥Opción y arrastre.",
+//scroll_ctl: "Zoom: in/out/fit. Also mouse or trackpad.",
+zoom_ctl: "Acercar/alejar/ajustar. También usar el ratón o el trackpad.",
+//zoom_ctl: "Zoom: in/out/fit. Also mouse or trackpad scroll.",
+rotate_ctl: "Rotar/Reflejar. También tecla 'r'.",
+//rotate_ctl: "Rotate/Reflect. Also 'r' key.",
+delete_ctl: "Borrar. También tecla de retroceso o suprimir.",
+//delete_ctl: "Delete. Also backspace or delete key.",
 last_line: 'última líena, sin coma'
 };
 

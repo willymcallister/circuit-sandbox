@@ -164,10 +164,10 @@ Ies: 'Ies',
 alphaF: '𝛼F',
 alphaR: '𝛼R',
 
-scroll_ctl: "Scroll arrows. Also mouse or trackpad Alt-drag or ⌥ Option-drag.",
-zoom_ctl:   "Zoom: in/out/fit. Also mouse or trackpad.",
-rotate_ctl: "Rotate/Reflect component. Also 'R' key.",
-delete_ctl: "Delete component. Also backspace or delete key.",
+scroll_ctl: "Scroll/Pan. Also mouse or trackpad Alt-drag or ⌥ Option-drag.",
+zoom_ctl:   "Zoom in/out/fit. Also mouse or trackpad.",
+rotate_ctl: "Rotate/Reflect. Also 'R' key.",
+delete_ctl: "Delete. Also backspace or delete key.",
 
 last_line: 'last line, no comma'
 };
